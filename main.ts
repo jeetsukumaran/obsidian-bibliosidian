@@ -140,7 +140,20 @@ export default class Bibliosidian extends Plugin {
 				targetFilepath: activeFile.path,
 				sourceBibTex: defaultBibTex,
 				onGenerate: (args) => {
-					console.log('Generate clicked', args);
+					// console.log('Generate clicked', args);
+					let results = generateAuthorLinks(
+						args.sourceBibTex,
+						undefined,
+						"sources/authors",
+					)
+					if (results && activeFile) {
+						updateYAMLProperty(
+							this.app,
+							activeFile.path,
+							`${this.settings.referenceSourcePropertiesPrefix}authors`,
+							results,
+						)
+					}
 				},
 				onCancel: () => {
 					console.log('Cancel clicked');
