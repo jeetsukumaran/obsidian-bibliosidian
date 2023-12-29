@@ -145,13 +145,22 @@ export async function updateYAMLProperty(
         if (frontMatterMatch) {
             let frontmatter = frontMatterMatch[1];
             let frontmatterLines: string[] = frontmatter.split("\n");
-            // let updatedLines: string[] = []
-            // let retainedLines = frontmatterLines.filter(line => !line.trim().startsWith(`${propertyName}:`));
-            // let retainedLines: string[] = []
-            // let lineCapture = true
-            // frontmatterLines.forEach( (line: string) => {
-            // })
-            // newYAML = retainedLines.concat(updatedLines).join("\n");
+            let updatedLines: string[] = []
+            let isUpdatedExisting = false
+            frontmatterLines.forEach( (line: string) => {
+				// let propRx = new RegExp(`^(\\s+)${propertyName}\\s*:\\s*$`);
+				let propRx = new RegExp(`^(\\s+)${propertyName}\\s*:\\s*$`);
+				let propMatch = line.match(propRx)
+				if (propMatch) {
+					updatedLines.push(... updatedRows)
+					isUpdatedExisting = true
+				}
+            })
+            if (!isUpdatedExisting) {
+            	updatedLines.push(`${propertyName}:`)
+            	updatedLines.push(... updatedRows)
+            }
+            newYAML = updatedLines.join("\n");
             content = content.replace(frontmatterRegex, `---\n${newYAML}\n---`);
         } else {
             newYAML = `---\n${propertyName}:\n${updatedRows.join("\n")}\n---`;
