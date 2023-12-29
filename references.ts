@@ -1,6 +1,7 @@
 import {
 	App,
 	TFile,
+	CachedMetadata,
 	// Editor,
 	// MarkdownView,
 	// Modal,
@@ -127,10 +128,23 @@ export async function updateYAMLProperty(
 ) {
     const file = app.vault.getAbstractFileByPath(filePath);
     if (file instanceof TFile) {
-		console.log(app.metadataCache.getFileCache(file))
+
+		// let frontmatter = app.metadataCache?.getFileCache(file)?.frontmatter
+		// console.log(app.metadataCache)
+		// if (frontmatter) {
+		// 	frontmatter["source-authors"] = "hello"
+		// }
+		// let frontMatter = this.metadataCache?.frontmatter
+		// console.log(frontmatter)
+
         let content = await app.vault.read(file);
         const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
         const frontMatterMatch = content.match(frontmatterRegex);
+
+		let updatedLines: string[] = []
+		let multilineValue = newValues.map(value => `  - ${value}`).join("\n");
+		updatedLines.push(`${propertyName}:\n${multilineValue}`);
+
         let newYAML;
         if (frontMatterMatch) {
             let frontmatter = frontMatterMatch[1];
@@ -140,14 +154,10 @@ export async function updateYAMLProperty(
             // let lineCapture = true
             // frontmatterLines.forEach( (line: string) => {
             // })
-            let updatedLines: string[] = []
-            let multilineValue = newValues.map(value => `  - ${value}`).join("\n");
-            updatedLines.push(`${propertyName}:\n${multilineValue}`);
             newYAML = retainedLines.concat(updatedLines).join("\n");
             content = content.replace(frontmatterRegex, `---\n${newYAML}\n---`);
         } else {
-            let multilineValue = newValues.map(value => `  - ${value}`).join("\n");
-            newYAML = `---\n${propertyName}:\n${multilineValue}\n---`;
+            newYAML = `---\n${propertyName}:\n${updatedLines.join("\n")}}\n---`;
             content = newYAML + "\n" + content;
         }
 
