@@ -19,11 +19,13 @@ import {
 interface BibliosidianSettings {
 	mySetting: string;
 	referenceSourcePropertiesPrefix: string;
+	referenceSourceBibTex: string
 }
 
 const DEFAULT_SETTINGS: BibliosidianSettings = {
 	mySetting: 'default',
 	referenceSourcePropertiesPrefix: "source-",
+	referenceSourceBibTex: "entry-bibtex",
 }
 
 
@@ -176,13 +178,25 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("References: source properties prefix")
+			.setName("Source BibTex property name")
 			.setDesc(`
-This will be prefixed to the normalized bibliographic data fields for reference bibliographic data.
+Name of text field on note that to track associated BibTeX data.
+			`)
+			.addText(text => text
+				.setPlaceholder("(YAML frontmatter property name, e.g. 'source-bibtex'")
+				.setValue(this.plugin.settings.referenceSourceBibTex)
+				.onChange(async (value) => {
+					this.plugin.settings.referenceSourceBibTex = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName("Source bibliographic data property name prefix")
+			.setDesc(`
+This will be prefixed to the normalized bibliographic (YAML frontmatter properties) data fields for reference bibliographic data.
 For example, if set to 'source-', the frontmatter YAML field will be 'source-authors' instead of just 'authors'.
 Better namespacing will come when Obsidian supports nested frontmatter YAML objects.
-`
-			)
+			`)
 			.addText(text => text
 				.setPlaceholder("(e.g., 'source-')")
 				.setValue(this.plugin.settings.referenceSourcePropertiesPrefix)
@@ -190,5 +204,6 @@ Better namespacing will come when Obsidian supports nested frontmatter YAML obje
 					this.plugin.settings.referenceSourcePropertiesPrefix = value;
 					await this.plugin.saveSettings();
 				}));
+
 	}
 }
