@@ -92,40 +92,6 @@ export default class Bibliosidian extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		// this.addRibbonIcon("package-plus", "Activate view", () => {
-		this.addRibbonIcon("book-key", "Update properties from reference data", () => {
-			let activeFile = this.app.workspace.getActiveFile();
-			if (!activeFile) {
-				return
-			}
-			let results = generateAuthorLinks(
-				`
-				  @Book{sole2000,
-					author           = {Solé, Ricard V. and Goodwin, Brian C.},
-					date             = {2000},
-					title            = {Signs of life},
-					isbn             = {0465019277},
-					location         = {New York, NY},
-					pagetotal        = {322},
-					publisher        = {Basic Books},
-					subtitle         = {How complexity pervades biology},
-					modificationdate = {2023-12-27T00:46:40},
-					ppn_gvk          = {1619306891},
-					}
-				`,
-				"sole2000",
-				"sources/authors",
-			)
-			if (results) {
-				updateYAMLProperty(
-					this.app,
-					activeFile.path,
-					`${this.settings.referenceSourcePropertiesPrefix}authors`,
-					results,
-				)
-			}
-		});
-
 		this.addRibbonIcon("book-plus", "Update properties from reference data", () => {
 			let activeFile = this.app.workspace.getActiveFile();
 			if (!activeFile) {
