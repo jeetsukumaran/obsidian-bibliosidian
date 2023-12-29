@@ -113,44 +113,11 @@ export function generateAuthorLinks(
             } = composeAuthorData(author)
             const authorFilePath = _path.join(parentFolderPath, authorFileName);
 
-            return `[[${authorFilePath}|${authorDisplayName}]]`;
+            return `"[[${authorFilePath}|${authorDisplayName}]]"`;
         });
     }
     return results;
 }
-
-// export async function updateYAMLProperty(
-// 	app: App,
-// 	filePath: string,
-// 	propertyName: string,
-// 	newValues: string[],
-// ) {
-//     const file = app.vault.getAbstractFileByPath(filePath);
-//     if (file instanceof TFile) {
-//         let content = await app.vault.read(file);
-//         const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
-//         const match = content.match(frontmatterRegex);
-//         let newYAML;
-//         if (match) {
-//             let frontmatter = match[1];
-//             let frontmatterLines: string[] = frontmatter.split("\n");
-//             let updatedLines = frontmatterLines.filter(line => !line.trim().startsWith(`${propertyName}:`));
-//             let multilineValue = newValues.map(value => `  - ${value}`).join("\n");
-//             updatedLines.push(`${propertyName}:\n${multilineValue}`);
-//             newYAML = updatedLines.join("\n");
-//             content = content.replace(frontmatterRegex, `---\n${newYAML}\n---`);
-//         } else {
-//             // No frontmatter, add new one
-//             let multilineValue = newValues.map(value => `  - ${value}`).join("\n");
-//             newYAML = `---\n${propertyName}:\n${multilineValue}\n---`;
-//             content = newYAML + "\n" + content;
-//         }
-
-//         await app.vault.modify(file, content);
-//     } else {
-//         console.error("File not found");
-//     }
-// }
 
 export async function updateYAMLProperty(
 	app: App,
@@ -160,21 +127,25 @@ export async function updateYAMLProperty(
 ) {
     const file = app.vault.getAbstractFileByPath(filePath);
     if (file instanceof TFile) {
+		console.log(app.metadataCache.getFileCache(file))
         let content = await app.vault.read(file);
         const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
-        const match = content.match(frontmatterRegex);
+        const frontMatterMatch = content.match(frontmatterRegex);
         let newYAML;
-        if (match) {
-            let frontmatter = match[1];
+        if (frontMatterMatch) {
+            let frontmatter = frontMatterMatch[1];
             let frontmatterLines: string[] = frontmatter.split("\n");
             let retainedLines = frontmatterLines.filter(line => !line.trim().startsWith(`${propertyName}:`));
-            let updatedLines = []
+            // let retainedLines: string[] = []
+            // let lineCapture = true
+            // frontmatterLines.forEach( (line: string) => {
+            // })
+            let updatedLines: string[] = []
             let multilineValue = newValues.map(value => `  - ${value}`).join("\n");
             updatedLines.push(`${propertyName}:\n${multilineValue}`);
             newYAML = retainedLines.concat(updatedLines).join("\n");
             content = content.replace(frontmatterRegex, `---\n${newYAML}\n---`);
         } else {
-            // No frontmatter, add new one
             let multilineValue = newValues.map(value => `  - ${value}`).join("\n");
             newYAML = `---\n${propertyName}:\n${multilineValue}\n---`;
             content = newYAML + "\n" + content;
