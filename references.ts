@@ -152,14 +152,19 @@ export async function updateYAMLProperty(
 				let propRx = new RegExp(`^(\\s+)${propertyName}`);
 				// let propRx = new RegExp(`^(\\s+)${propertyName}\\s*:\\s*$`);
 				let propMatch = line.match(/source-authors:/)
-				updatedLines.push(line)
 				if (propMatch) {
+					// rewrite field name in case it had inline data/values
+					// TODO: save these?
+					updatedLines.push(`${propertyName}:`)
+					// insert new rows here;
+					// previous entries will be appended after as loop proceeds
 					updatedLines.push(... updatedRows)
 					isUpdatedExisting = true
+				} else {
+					updatedLines.push(line)
 				}
             })
             if (!isUpdatedExisting) {
-            	console.log("No match!")
             	updatedLines.push(`${propertyName}:`)
             	updatedLines.push(... updatedRows)
             }
