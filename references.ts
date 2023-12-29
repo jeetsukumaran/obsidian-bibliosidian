@@ -104,8 +104,10 @@ export function generateAuthorLinks(
 		entry = bibFile.getEntry(citeKey);
 	} else {
 		if (bibFile.entries_raw && bibFile.entries_raw.length > 0) {
-			entry = bibFile.entries_raw[0]
 		}
+		// grab first key/val pair through destructuring
+		let [[ck, val]] = Object.entries(bibFile.entries$)
+		entry = val
 	}
     if (!entry) {
         return results;
