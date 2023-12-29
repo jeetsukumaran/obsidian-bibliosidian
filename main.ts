@@ -56,8 +56,8 @@ class BibTexModal extends Modal {
 
         contentEl.createEl("h4", { text: "Source BibTex" });
         this.sourceBibTexTextarea = contentEl.createEl("textarea", {
-            value: this.args.sourceBibTex
         });
+		this.sourceBibTexTextarea.textContent = this.args.sourceBibTex
 		this.sourceBibTexTextarea.style.width = "100%"
 
         let buttonContainer = contentEl.createEl("div");
@@ -130,9 +130,23 @@ export default class Bibliosidian extends Plugin {
 			if (!activeFile) {
 				return
 			}
+			let defaultBibTex = `
+			@Book{sole2000,
+				author           = {Solé, Ricard V. and Goodwin, Brian C.},
+					date             = {2000},
+					title            = {Signs of life},
+					isbn             = {0465019277},
+					location         = {New York, NY},
+					pagetotal        = {322},
+					publisher        = {Basic Books},
+					subtitle         = {How complexity pervades biology},
+					modificationdate = {2023-12-27T00:46:40},
+					ppn_gvk          = {1619306891},
+			}
+			`
 			const bibtexModal = new BibTexModal(app, {
-				targetFilepath: 'default/filepath',
-				sourceBibTex: 'default bibtex content',
+				targetFilepath: activeFile.path,
+				sourceBibTex: defaultBibTex,
 				onGenerate: (args) => {
 					console.log('Generate clicked', args);
 				},
