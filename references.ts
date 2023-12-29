@@ -105,9 +105,11 @@ export function generateAuthorLinks(
 	} else {
 		if (bibFile.entries_raw && bibFile.entries_raw.length > 0) {
 		}
-		// grab first key/val pair through destructuring
-		let [[ck, val]] = Object.entries(bibFile.entries$)
-		entry = val
+		// Destructuring to get the first key and value
+		let [[key, value]]: [string, BibEntry][] = Object.entries(bibFile.entries$);
+		// // grab first key/val pair through destructuring
+		// let [[ck, value]] = Object.entries(bibFile.entries$)
+		entry = value
 	}
     if (!entry) {
         return results;
