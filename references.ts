@@ -151,6 +151,7 @@ export async function updateYAMLProperty(
 				// let propRx = new RegExp(`^(\\s+)${propertyName}\\s*:\\s*$`);
 				let propRx = new RegExp(`^(\\s+)${propertyName}\\s*:\\s*$`);
 				let propMatch = line.match(propRx)
+				updatedLines.push(line)
 				if (propMatch) {
 					updatedLines.push(... updatedRows)
 					isUpdatedExisting = true
