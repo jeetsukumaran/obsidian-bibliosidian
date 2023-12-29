@@ -1,5 +1,6 @@
 import {
 	App,
+	CachedMetadata,
 	Editor,
 	MarkdownView,
 	Modal,
@@ -130,20 +131,11 @@ export default class Bibliosidian extends Plugin {
 			if (!activeFile) {
 				return
 			}
-			let defaultBibTex = `
-			@Book{sole2000,
-				author           = {Solé, Ricard V. and Goodwin, Brian C.},
-					date             = {2000},
-					title            = {Signs of life},
-					isbn             = {0465019277},
-					location         = {New York, NY},
-					pagetotal        = {322},
-					publisher        = {Basic Books},
-					subtitle         = {How complexity pervades biology},
-					modificationdate = {2023-12-27T00:46:40},
-					ppn_gvk          = {1619306891},
+			let defaultBibTex = ""
+			let frontmatter = app.metadataCache?.getFileCache(activeFile)?.frontmatter
+			if (frontmatter) {
+				defaultBibTex = frontmatter?.["entry-bibtex"] || defaultBibTex
 			}
-			`
 			const bibtexModal = new BibTexModal(app, {
 				targetFilepath: activeFile.path,
 				sourceBibTex: defaultBibTex,
