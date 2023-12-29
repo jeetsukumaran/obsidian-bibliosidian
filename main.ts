@@ -55,13 +55,14 @@ class BibTexModal extends Modal {
             type: "text",
             value: this.args.targetFilepath
         });
-		this.targetFilepathInput.style.width = "100%"
+		this.targetFilepathInput.style.width = "100%" // this needs to be css
 
         contentEl.createEl("h4", { text: "Source BibTex" });
         this.sourceBibTexTextarea = contentEl.createEl("textarea", {
         });
 		this.sourceBibTexTextarea.textContent = this.args.sourceBibTex
-		this.sourceBibTexTextarea.style.width = "100%"
+		this.sourceBibTexTextarea.style.width = "100%" // this needs to be css
+		this.sourceBibTexTextarea.style.height = "16rem"
 
         let buttonContainer = contentEl.createEl("div");
         buttonContainer.style.textAlign = "right"
