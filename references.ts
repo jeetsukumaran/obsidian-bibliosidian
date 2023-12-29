@@ -138,26 +138,23 @@ export async function updateYAMLProperty(
 		// console.log(frontmatter)
 
         let content = await app.vault.read(file);
+		let updatedRows = newValues.map(value => `  - ${value}`)
+        let newYAML;
         const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
         const frontMatterMatch = content.match(frontmatterRegex);
-
-		let updatedLines: string[] = []
-		let multilineValue = newValues.map(value => `  - ${value}`).join("\n");
-		updatedLines.push(`${propertyName}:\n${multilineValue}`);
-
-        let newYAML;
         if (frontMatterMatch) {
             let frontmatter = frontMatterMatch[1];
             let frontmatterLines: string[] = frontmatter.split("\n");
-            let retainedLines = frontmatterLines.filter(line => !line.trim().startsWith(`${propertyName}:`));
+            // let updatedLines: string[] = []
+            // let retainedLines = frontmatterLines.filter(line => !line.trim().startsWith(`${propertyName}:`));
             // let retainedLines: string[] = []
             // let lineCapture = true
             // frontmatterLines.forEach( (line: string) => {
             // })
-            newYAML = retainedLines.concat(updatedLines).join("\n");
+            // newYAML = retainedLines.concat(updatedLines).join("\n");
             content = content.replace(frontmatterRegex, `---\n${newYAML}\n---`);
         } else {
-            newYAML = `---\n${propertyName}:\n${updatedLines.join("\n")}}\n---`;
+            newYAML = `---\n${propertyName}:\n${updatedRows.join("\n")}\n---`;
             content = newYAML + "\n" + content;
         }
 
