@@ -25,6 +25,64 @@ const DEFAULT_SETTINGS: BibliosidianSettings = {
 	referenceSourcePropertiesPrefix: "source-",
 }
 
+
+interface BibTexModalArgs {
+    targetFilepath: string;
+    sourceBibTex: string;
+    onGenerate: (args: { targetFilepath: string, sourceBibTex: string }) => void;
+    onCancel: () => void;
+}
+
+class BibTexModal extends Modal {
+    args: BibTexModalArgs;
+    targetFilepathInput: HTMLInputElement;
+    sourceBibTexTextarea: HTMLTextAreaElement;
+
+    constructor(app: App, args: BibTexModalArgs) {
+        super(app);
+        this.args = args;
+    }
+
+    onOpen() {
+        const { contentEl } = this;
+        contentEl.createEl("h3", { text: "Reference data update" });
+
+        contentEl.createEl("h4", { text: "Target filepath" });
+        this.targetFilepathInput = contentEl.createEl("input", {
+            type: "text",
+            value: this.args.targetFilepath
+        });
+
+        contentEl.createEl("h4", { text: "Source BibTex" });
+        this.sourceBibTexTextarea = contentEl.createEl("textarea", {
+            value: this.args.sourceBibTex
+        });
+
+        let buttonContainer = contentEl.createEl("div");
+        buttonContainer.style.textAlign = "right"
+        // Buttons
+        const generateButton = buttonContainer.createEl("button", { text: "Generate" });
+        generateButton.onclick = () => {
+            this.args.onGenerate({
+                targetFilepath: this.targetFilepathInput.value,
+                sourceBibTex: this.sourceBibTexTextarea.value
+            });
+            this.close();
+        };
+
+        const cancelButton = buttonContainer.createEl("button", { text: "Cancel" });
+        cancelButton.onclick = () => {
+            this.args.onCancel();
+            this.close();
+        };
+    }
+
+    onClose() {
+        const { contentEl } = this;
+        contentEl.empty();
+    }
+}
+
 export default class Bibliosidian extends Plugin {
 	settings: BibliosidianSettings;
 
@@ -65,6 +123,25 @@ export default class Bibliosidian extends Plugin {
 			}
 		});
 
+		this.addRibbonIcon("book-plus", "Update properties from reference data", () => {
+			let activeFile = this.app.workspace.getActiveFile();
+			if (!activeFile) {
+				return
+			}
+			const bibtexModal = new BibTexModal(app, {
+				targetFilepath: 'default/filepath',
+				sourceBibTex: 'default bibtex content',
+				onGenerate: (args) => {
+					console.log('Generate clicked', args);
+				},
+				onCancel: () => {
+					console.log('Cancel clicked');
+				}
+			});
+			bibtexModal.open();
+		});
+
+
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
 
@@ -90,6 +167,23 @@ export default class Bibliosidian extends Plugin {
 		await this.saveData(this.settings);
 	}
 }
+
+// Usage Example
+// const app = new App(); // Placeholder for the actual app instance
+// const modal = new BibTexModal(app, {
+//     targetFilepath: 'default/filepath',
+//     sourceBibTex: 'default bibtex content',
+//     onGenerate: (args) => {
+//         console.log('Generate clicked', args);
+//     },
+//     onCancel: () => {
+//         console.log('Cancel clicked');
+//     }
+// });
+
+// modal.open();
+
+
 
 class BibliosidianSettingTab extends PluginSettingTab {
 	plugin: Bibliosidian;
