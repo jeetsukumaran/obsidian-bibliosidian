@@ -148,9 +148,10 @@ export async function updateYAMLProperty(
             let updatedLines: string[] = []
             let isUpdatedExisting = false
             frontmatterLines.forEach( (line: string) => {
+				// let propRx = new RegExp(`^(\\s+)${propertyName}`);
+				let propRx = new RegExp(`^(\\s+)${propertyName}`);
 				// let propRx = new RegExp(`^(\\s+)${propertyName}\\s*:\\s*$`);
-				let propRx = new RegExp(`^(\\s+)${propertyName}\\s*:\\s*$`);
-				let propMatch = line.match(propRx)
+				let propMatch = line.match(/source-authors:/)
 				updatedLines.push(line)
 				if (propMatch) {
 					updatedLines.push(... updatedRows)
@@ -158,6 +159,7 @@ export async function updateYAMLProperty(
 				}
             })
             if (!isUpdatedExisting) {
+            	console.log("No match!")
             	updatedLines.push(`${propertyName}:`)
             	updatedLines.push(... updatedRows)
             }
