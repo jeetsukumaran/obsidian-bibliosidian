@@ -17,7 +17,7 @@ import {
 	parseBibFile,
 	normalizeFieldValue,
 	BibEntry,
-	FieldValue
+	FieldValue,
 } from "bibtex";
 // import { parseBibFile } from "bibtex";
 import * as _path from "path";
@@ -94,13 +94,19 @@ function composeAuthorData(author: Author): {
 
 export function generateAuthorLinks(
     bibFileData: string,
-    citeKey: string,
-    parentFolderPath: string
+    citeKey?: string,
+    parentFolderPath: string = "",
 ): string[] {
     let results: string[] = [];
     const bibFile = parseBibFile(bibFileData);
-    const entry = bibFile.getEntry(citeKey);
-
+    let entry: BibEntry | undefined;
+    if (citeKey) {
+		entry = bibFile.getEntry(citeKey);
+	} else {
+		if (bibFile.entries_raw && bibFile.entries_raw.length > 0) {
+			entry = bibFile.entries_raw[0]
+		}
+	}
     if (!entry) {
         return results;
     }
