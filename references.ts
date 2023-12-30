@@ -22,7 +22,8 @@ import {
 
 import {
 	FilePropertyData,
-	updateFrontmatterYaml
+	updateFileProperties,
+	// updateFrontmatterYaml,
 } from "./fileProperties"
 
 
@@ -96,29 +97,20 @@ export function generateSourceFrontmatter(
     refProperties[bibToYamlLabelFn("year")] = normalizeFieldValue( bibEntry.getField("year") )
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
     refProperties[bibToYamlLabelFn("title")] = normalizeFieldValue( bibEntry.getField("title") )
-    console.log(refProperties)
 
+    updateFileProperties(
+    	this.app,
+    	targetFilePath,
+    	refProperties,
+    	true,
+    )
 
-	let updateProperty = (bibTexField: string, values: string | string[]) => {
-		let propertyName = bibToYamlLabelFn(bibTexField)
-		if (values) {
-			updateFrontmatterYaml(
-				app,
-				targetFilePath,
-				propertyName,
-				values,
-			)
-		} else {
-			// clear?
-		}
-	}
-
-	// Authors
-	let authorLinks = generateAuthorLinks(
-		bibEntry,
-		"sources/authors", // abstract away later; path to that author notes are stored
-	)
-	updateProperty("author", authorLinks)
+	// // Authors
+	// let authorLinks = generateAuthorLinks(
+	// 	bibEntry,
+	// 	"sources/authors", // abstract away later; path to that author notes are stored
+	// )
+	// updateProperty("author", authorLinks)
 
 }
 
