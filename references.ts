@@ -94,7 +94,7 @@ export function generateSourceFrontmatter(
 		"sources/authors", // abstract away later; path to that author notes are stored
 	)
     refProperties[bibToYamlLabelFn("year")] = normalizeFieldValue( bibEntry.getField("year") )
-    refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") )
+    refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
     refProperties[bibToYamlLabelFn("title")] = normalizeFieldValue( bibEntry.getField("title") )
     console.log(refProperties)
 
