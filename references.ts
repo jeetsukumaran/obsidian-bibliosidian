@@ -35,6 +35,7 @@ interface Author {
     jrs: string[]
 }
 
+
 function composeAuthorData(author: Author): {
     displayName: string,
     normalizedFileName: string,
@@ -75,7 +76,27 @@ export function generateSourceFrontmatter(
 	// 	return
 	// }
 	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${fieldNamePrefix}${bibStr}`
-	let authorsYamlLabel = bibToYamlLabelFn("author")
+	let updateProperty = (bibTexField: string, values: string | string[]) => {
+		let propertyName = bibToYamlLabelFn(bibTexField)
+		if (values) {
+			updateFrontmatterYaml(
+				app,
+				targetFilePath,
+				propertyName,
+				values,
+			)
+		} else {
+			// clear?
+		}
+	}
+
+	// Authors
+	let authorLinks = generateAuthorLinks(
+		bibFileData, // expecting single entry data
+		undefined, // no citekey: first entry
+		"sources/authors", // abstract away later; path to that author notes are stored
+	)
+	updateProperty("author", authorLinks)
 
 	// let bibFieldMap: Record<string, string> = {
 	// 	"date"
@@ -90,21 +111,6 @@ export function generateSourceFrontmatter(
 	// 	"type",
 	// }
 
-	// Authors
-	let authorLinks = generateAuthorLinks(
-		bibFileData, // expecting single entry data
-		undefined, // no citekey: first entry
-		"sources/authors", // abstract away later; path to that author notes are stored
-	)
-	// console.log(authorLinks)
-	if (authorLinks) {
-		updateFrontmatterYaml(
-			app,
-			targetFilePath,
-			authorsYamlLabel,
-			authorLinks,
-		)
-	}
 
 }
 
