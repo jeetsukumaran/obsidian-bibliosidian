@@ -246,7 +246,7 @@ class BibTexModal extends Modal {
         };
 
         // Target filepath section
-        contentEl.createEl("h4", { text: "Target filepath" });
+        contentEl.createEl("h4", { text: "Reference filepath" });
         this.targetFilepathInput = contentEl.createEl("input", {
             type: "text",
             value: this.args.targetFilepath
