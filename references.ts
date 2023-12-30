@@ -166,7 +166,7 @@ function getBibEntry(
 	}
 	let bibtexStrParts = []
 	if (entry !== undefined) {
-		bibtexStrParts.push(`@${entry.type}{${entry._id}`)
+		bibtexStrParts.push(`@${entry.type}{${entry._id},`)
 		let fieldNames = [
 			"author",
 			"date",
@@ -198,6 +198,7 @@ function getBibEntry(
 				bibtexStrParts.push(`  ${fieldName} = {${entryValue}},`)
 			}
 		})
+		bibtexStrParts.push("}")
 	}
 	return {
 		bibEntry: entry,
