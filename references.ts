@@ -307,32 +307,6 @@ class BibTexModal extends Modal {
     }
 }
 
-// async function createOrOpenNote(
-//     app: App,
-//     filePath: string,
-//     mode: PaneType | undefined,
-// ): Promise<string> {
-
-//     const path = require('path');
-//     let notePath = path.join(filePath);
-
-//     // Check if the note exists
-//     const noteExists = await app.vault.adapter.exists(notePath);
-
-//     try {
-//         if (!noteExists) {
-//             // If the note does not exist, create it
-//             await app.vault.create(notePath, "");
-//         }
-//         // Open the note in the specified mode
-//         app.workspace.openLinkText(notePath, '', mode);
-//     } catch (error) {
-//         console.error('Error creating or opening the note:', error);
-//     }
-//     return notePath;
-// }
-
-
 async function createOrOpenNote(
     app: App,
     filePath: string,
@@ -342,9 +316,9 @@ async function createOrOpenNote(
 
     const path = require('path');
     let notePath = path.join(filePath);
-    // if (!notePath.endsWith(".md")) {
-    // 	notePath = notePath + ".md"
-    // }
+    if (!notePath.endsWith(".md")) {
+    	notePath = notePath + ".md"
+    }
 
     // Extract directory path from the file path
     const directoryPath = path.dirname(notePath);
