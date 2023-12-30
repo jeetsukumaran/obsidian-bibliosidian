@@ -59,10 +59,10 @@ ${err}
         }
 
 		parsedFrontmatter[propertyName] = newValues
-        let newFrontmatterStr: string = YAML.stringify(parsedFrontmatter)
+        let newFrontmatterStr: string = `---\n${YAML.stringify(parsedFrontmatter)}\n---`
 
         if (frontMatterMatch) {
-			content = content.replace(frontmatterRegex, `---\n${newFrontmatterStr}\n---`);
+			content = content.replace(frontmatterRegex, newFrontmatterStr);
 		} else {
 			content = newFrontmatterStr + "\n" + content
 		}
