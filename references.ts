@@ -2,6 +2,7 @@ import {
 	App,
 	TFile,
 	CachedMetadata,
+	PaneType,
 	// Editor,
 	// MarkdownView,
 	Modal,
@@ -105,6 +106,9 @@ export function generateSourceFrontmatter(
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
     refProperties[bibToYamlLabelFn("title")] = normalizeFieldValue( bibEntry.getField("title") )
 
+
+
+
     updateFileProperties(
     	this.app,
     	targetFilepath,
@@ -156,7 +160,7 @@ function generateAuthorLinks(
     return results;
 }
 
-export function createReferenceNote(
+export async function createReferenceNote(
 	app: App,
 	defaultBibTex: string,
 	targetFilepath: string,
@@ -174,6 +178,11 @@ export function createReferenceNote(
 		targetFilepath: targetFilepath,
 		sourceBibTex: defaultBibTex,
 		onGenerate: (args: BibTexModalArgs) => {
+			createOrOpenNote(
+				this.app,
+				args.targetFilepath,
+				undefined,
+			)
 			generateSourceFrontmatter(
 				this.app,
 				args.targetFilepath,
@@ -289,5 +298,30 @@ class BibTexModal extends Modal {
         const { contentEl } = this;
         contentEl.empty();
     }
+}
+
+async function createOrOpenNote(
+    app: App,
+    filePath: string,
+    mode: PaneType | undefined,
+): Promise<string> {
+
+    const path = require('path');
+    let notePath = path.join(filePath);
+
+    // Check if the note exists
+    const noteExists = await app.vault.adapter.exists(notePath);
+
+    try {
+        if (!noteExists) {
+            // If the note does not exist, create it
+            await app.vault.create(notePath, "");
+        }
+        // Open the note in the specified mode
+        app.workspace.openLinkText(notePath, '', mode);
+    } catch (error) {
+        console.error('Error creating or opening the note:', error);
+    }
+    return notePath;
 }
 
