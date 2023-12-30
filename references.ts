@@ -5,7 +5,7 @@ import {
 	// Editor,
 	// MarkdownView,
 	// Modal,
-	// Notice,
+	Notice,
 	// Plugin,
 	// PluginSettingTab,
 	// Setting,
@@ -235,7 +235,12 @@ export async function replaceYAMLProperty(
 			try {
 				parsedFrontmatter = YAML.parse(frontmatter)
 			} catch (err) {
+				new Notice(`
+Failed to parse YAML frontmatter from file '${filePath}':
+${err}
+			`)
 				console.log(err)
+				return
 			}
             console.log(parsedFrontmatter)
             let frontmatterLines: string[] = frontmatter.split("\n");
