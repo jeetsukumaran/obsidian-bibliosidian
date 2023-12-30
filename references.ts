@@ -203,11 +203,13 @@ function generateReference(
 	citeKey?: string,
 	fieldNamePrefix: string = "",
 	authorsParentFolderPath: string = "",
+	isOpenNote: boolean = false,
 ) {
 	createOrOpenNote(
 		this.app,
 		targetFilepath,
 		"",
+		isOpenNote,
 		false,
 	)
 	.then( (result) => {
@@ -382,6 +384,7 @@ async function createOrOpenNote(
     app: App,
     filePath: string,
     frontmatter: string = "",
+    isOpenNote: boolean = true,
     mode: PaneType | boolean = false,
 ): Promise<string> {
 
@@ -408,8 +411,9 @@ async function createOrOpenNote(
             await app.vault.create(notePath, frontmatter);
         }
 
-        // Open the note in the specified mode
-        app.workspace.openLinkText(notePath, '', mode);
+		if (isOpenNote) {
+			app.workspace.openLinkText(notePath, '', mode);
+		}
     } catch (error) {
         console.error('Error creating or opening the note:', error);
     }
@@ -440,6 +444,7 @@ export function generateReferenceLibrary(
 			key,
 			fieldNamePrefix,
 			authorsParentFolderPath,
+			false,
 		)
 	});
 }
@@ -469,6 +474,7 @@ export function createReferenceNote(
 				undefined,
 				fieldNamePrefix,
 				authorsParentFolderPath,
+				true,
 			)
 		},
 		onCancel: () => {
