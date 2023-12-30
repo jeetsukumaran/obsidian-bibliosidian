@@ -193,6 +193,59 @@ export function createReferenceNote(
 
 
 
+// class BibTexModal extends Modal {
+//     args: BibTexModalArgs;
+//     sourceBibTexTextarea: HTMLTextAreaElement;
+//     targetFilepathInput: HTMLInputElement;
+
+//     constructor(app: App, args: BibTexModalArgs) {
+//         super(app);
+//         this.args = args;
+//     }
+
+//     onOpen() {
+//         const { contentEl } = this;
+//         contentEl.createEl("h3", { text: "Reference data update" });
+
+//         contentEl.createEl("h4", { text: "Target filepath" });
+//         this.targetFilepathInput = contentEl.createEl("input", {
+//             type: "text",
+//             value: this.args.targetFilepath
+//         });
+// 		this.targetFilepathInput.style.width = "100%" // this needs to be css
+
+//         contentEl.createEl("h4", { text: "Source BibTex" });
+//         this.sourceBibTexTextarea = contentEl.createEl("textarea", {
+//         });
+// 		this.sourceBibTexTextarea.textContent = this.args.sourceBibTex
+// 		this.sourceBibTexTextarea.style.width = "100%" // this needs to be css
+// 		this.sourceBibTexTextarea.style.height = "16rem"
+
+//         let buttonContainer = contentEl.createEl("div");
+//         buttonContainer.style.textAlign = "right"
+//         // Buttons
+//         const generateButton = buttonContainer.createEl("button", { text: "Generate" });
+//         generateButton.onclick = () => {
+//             this.args.onGenerate({
+//                 targetFilepath: this.targetFilepathInput.value,
+//                 sourceBibTex: this.sourceBibTexTextarea.value
+//             });
+//             this.close();
+//         };
+
+//         const cancelButton = buttonContainer.createEl("button", { text: "Cancel" });
+//         cancelButton.onclick = () => {
+//             this.args.onCancel();
+//             this.close();
+//         };
+//     }
+
+//     onClose() {
+//         const { contentEl } = this;
+//         contentEl.empty();
+//     }
+// }
+
 class BibTexModal extends Modal {
     args: BibTexModalArgs;
     sourceBibTexTextarea: HTMLTextAreaElement;
@@ -203,27 +256,59 @@ class BibTexModal extends Modal {
         this.args = args;
     }
 
+    computeTargetFilePath(sourceBibTex: string): string {
+        // Implement logic to compute target file path based on source BibTex
+        // Return the computed string
+        return "hello"; // Placeholder return
+    }
+
     onOpen() {
         const { contentEl } = this;
         contentEl.createEl("h3", { text: "Reference data update" });
 
+        // Target filepath section
         contentEl.createEl("h4", { text: "Target filepath" });
         this.targetFilepathInput = contentEl.createEl("input", {
             type: "text",
             value: this.args.targetFilepath
         });
-		this.targetFilepathInput.style.width = "100%" // this needs to be css
+        this.targetFilepathInput.style.width = "100%"; // this needs to be css
 
+        // Reset button for Target filepath
+        const resetTargetPathButton = contentEl.createEl("button", { text: "Reset" });
+        resetTargetPathButton.onclick = () => {
+            this.targetFilepathInput.value = this.args.targetFilepath;
+        };
+
+        // Auto button for Target filepath
+        const autoTargetPathButton = contentEl.createEl("button", { text: "Auto" });
+        autoTargetPathButton.onclick = () => {
+            this.targetFilepathInput.value = this.computeTargetFilePath(this.sourceBibTexTextarea.value);
+        };
+
+        // Source BibTex section
         contentEl.createEl("h4", { text: "Source BibTex" });
-        this.sourceBibTexTextarea = contentEl.createEl("textarea", {
-        });
-		this.sourceBibTexTextarea.textContent = this.args.sourceBibTex
-		this.sourceBibTexTextarea.style.width = "100%" // this needs to be css
-		this.sourceBibTexTextarea.style.height = "16rem"
+        this.sourceBibTexTextarea = contentEl.createEl("textarea");
+        this.sourceBibTexTextarea.textContent = this.args.sourceBibTex;
+        this.sourceBibTexTextarea.style.width = "100%";
+        this.sourceBibTexTextarea.style.height = "16rem";
 
+        // Reset button for Source BibTex
+        const resetSourceButton = contentEl.createEl("button", { text: "Reset" });
+        resetSourceButton.onclick = () => {
+            this.sourceBibTexTextarea.value = this.args.sourceBibTex;
+        };
+
+        // Auto-update handler for Source BibTex
+        this.sourceBibTexTextarea.oninput = () => {
+            this.targetFilepathInput.value = this.computeTargetFilePath(this.sourceBibTexTextarea.value);
+        };
+
+        // Button container
         let buttonContainer = contentEl.createEl("div");
-        buttonContainer.style.textAlign = "right"
-        // Buttons
+        buttonContainer.style.textAlign = "right";
+
+        // Generate button
         const generateButton = buttonContainer.createEl("button", { text: "Generate" });
         generateButton.onclick = () => {
             this.args.onGenerate({
@@ -233,6 +318,7 @@ class BibTexModal extends Modal {
             this.close();
         };
 
+        // Cancel button
         const cancelButton = buttonContainer.createEl("button", { text: "Cancel" });
         cancelButton.onclick = () => {
             this.args.onCancel();
