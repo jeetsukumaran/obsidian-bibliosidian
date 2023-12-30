@@ -99,7 +99,7 @@ export function generateSourceFrontmatter(
     refProperties[bibToYamlLabelFn("citekey")] = bibEntry._id.toLowerCase()
     refProperties[bibToYamlLabelFn("author")] = generateAuthorLinks(
 		bibEntry,
-		"sources/authors", // abstract away later; path to that author notes are stored
+		authorsParentFolderPath,
 	)
     refProperties[bibToYamlLabelFn("year")] = normalizeFieldValue( bibEntry.getField("year") )
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
@@ -135,8 +135,6 @@ function getBibEntry(
 
 function generateAuthorLinks(
 	entry: BibEntry,
-    bibFileData: string,
-    citeKey?: string,
     parentFolderPath: string = "",
 ): string[] {
     let results: string[] = [];
