@@ -200,8 +200,9 @@ function generateReference(
 	app: App,
 	targetFilepath: string,
 	sourceBibTex: string,
-	fieldNamePrefix: string,
-	authorsParentFolderPath: string,
+	citeKey?: string,
+	fieldNamePrefix: string = "",
+	authorsParentFolderPath: string = "",
 ) {
 	createOrOpenNote(
 		this.app,
@@ -214,7 +215,7 @@ function generateReference(
 			app,
 			targetFilepath,
 			sourceBibTex,
-			undefined,
+			citeKey,
 			fieldNamePrefix,
 			authorsParentFolderPath,
 		)
@@ -236,13 +237,25 @@ function computeTargetFilePath(
 	if (!bibEntry) {
 		return ""
 	} else {
-		let citekey = `@${bibEntry._id}`
-		let parentPath = referenceSubdirectoryRoot
-		if (isSubdirectorizeReferencesLexically) {
-			parentPath = _path.join(parentPath, replaceProblematicChars(citekey[0]))
-		}
-		return _path.join(parentPath, citekey + ".md")
+		return computeBibEntryTargetFilePath(
+			bibEntry,
+			referenceSubdirectoryRoot,
+			isSubdirectorizeReferencesLexically
+		)
 	}
+}
+
+function computeBibEntryTargetFilePath(
+	bibEntry: BibEntry,
+	referenceSubdirectoryRoot: string = "",
+	isSubdirectorizeReferencesLexically: boolean = true,
+): string {
+	let citekey = `@${bibEntry._id}`
+	let parentPath = referenceSubdirectoryRoot
+	if (isSubdirectorizeReferencesLexically) {
+		parentPath = _path.join(parentPath, replaceProblematicChars(citekey[0]))
+	}
+	return _path.join(parentPath, citekey + ".md")
 }
 
 function replaceProblematicChars(input: string): string {
@@ -415,7 +428,19 @@ export function generateReferenceLibrary(
 ) {
 	const bibFile = parseBibFile(bibFileData);
 	Object.entries(bibFile.entries$).forEach(([key, value]: [string, BibEntry]) => {
-		// 'value' is the BibEntry object
+		let targetFilepath = computeBibEntryTargetFilePath(
+			value,
+			referenceSubdirectoryRoot,
+			isSubdirectorizeReferencesLexically
+		)
+		generateReference(
+			app,
+			targetFilepath,
+			bibFileData,
+			key,
+			fieldNamePrefix,
+			authorsParentFolderPath,
+		)
 	});
 }
 
@@ -441,6 +466,7 @@ export function createReferenceNote(
 				app,
 				args.targetFilepath,
 				args.sourceBibTex,
+				undefined,
 				fieldNamePrefix,
 				authorsParentFolderPath,
 			)
