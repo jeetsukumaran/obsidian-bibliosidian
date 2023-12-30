@@ -21,6 +21,7 @@ import {
 } from "bibtex";
 
 import {
+	FilePropertyData,
 	updateFrontmatterYaml
 } from "./fileProperties"
 
@@ -71,11 +72,33 @@ export function generateSourceFrontmatter(
     authorsParentFolderPath: string = "",
     fieldNamePrefix:string = "",
 ) {
+
 	// let targetFile = app.vault.getAbstractFileByPath(targetFilePath)
 	// if (!targetFile) {
 	// 	return
 	// }
+
 	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${fieldNamePrefix}${bibStr}`
+
+    let bibEntry = getBibEntry(bibFileData, citeKey)
+    console.log(bibEntry)
+
+    if (!bibEntry) {
+    	new Notice("Reference data could not be resolved")
+    	return
+    }
+    let refProperties: FilePropertyData  = {}
+    refProperties[bibToYamlLabelFn("citekey")] = bibEntry._id
+    refProperties[bibToYamlLabelFn("author")] = generateAuthorLinks(
+		bibEntry,
+		"sources/authors", // abstract away later; path to that author notes are stored
+	)
+    refProperties[bibToYamlLabelFn("year")] = normalizeFieldValue( bibEntry.getField("year") )
+    refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") )
+    refProperties[bibToYamlLabelFn("title")] = normalizeFieldValue( bibEntry.getField("title") )
+    console.log(refProperties)
+
+
 	let updateProperty = (bibTexField: string, values: string | string[]) => {
 		let propertyName = bibToYamlLabelFn(bibTexField)
 		if (values) {
@@ -92,37 +115,20 @@ export function generateSourceFrontmatter(
 
 	// Authors
 	let authorLinks = generateAuthorLinks(
-		bibFileData, // expecting single entry data
-		undefined, // no citekey: first entry
+		bibEntry,
 		"sources/authors", // abstract away later; path to that author notes are stored
 	)
 	updateProperty("author", authorLinks)
 
-	// let bibFieldMap: Record<string, string> = {
-	// 	"date"
-	// 	"title",
-	// 	"doi"
-	// 	"isbn"
-	// 	"publisher",
-	// 	"volume",
-	// 	"url",
-	// 	"issue"
-	// 	"page",
-	// 	"type",
-	// }
-
-
 }
 
-export function generateAuthorLinks(
+function getBibEntry(
     bibFileData: string,
     citeKey?: string,
-    parentFolderPath: string = "",
-): string[] {
-    let results: string[] = [];
-    const bibFile = parseBibFile(bibFileData);
-    let entry: BibEntry | undefined;
-    if (citeKey) {
+): BibEntry | undefined {
+	const bibFile = parseBibFile(bibFileData);
+	let entry: BibEntry | undefined;
+	if (citeKey) {
 		entry = bibFile.getEntry(citeKey);
 	} else {
 		if (bibFile.entries_raw && bibFile.entries_raw.length > 0) {
@@ -133,10 +139,20 @@ export function generateAuthorLinks(
 		// let [[ck, value]] = Object.entries(bibFile.entries$)
 		entry = value
 	}
+	return entry
+}
+
+
+function generateAuthorLinks(
+	entry: BibEntry,
+    bibFileData: string,
+    citeKey?: string,
+    parentFolderPath: string = "",
+): string[] {
+    let results: string[] = [];
     if (!entry) {
         return results;
     }
-
     const authorField = entry.getField("author");
     if (authorField && typeof authorField === 'object' && 'authors$' in authorField) {
         results = (authorField as any).authors$.map((author: any) => {

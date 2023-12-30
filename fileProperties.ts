@@ -19,7 +19,7 @@ import {
 const YAML = require('yaml')
 
 
-type FrontmatterData = {
+export type FilePropertyData = {
     [key: string]: any;
 };
 
@@ -41,7 +41,7 @@ export async function updateFrontmatterYaml(
 
         let content = await app.vault.read(file);
 
-		let parsedFrontmatter: FrontmatterData = {};
+		let parsedFrontmatter: FilePropertyData = {};
         const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
         const frontMatterMatch = content.match(frontmatterRegex);
         if (frontMatterMatch) {
