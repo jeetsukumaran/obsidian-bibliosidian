@@ -90,7 +90,7 @@ export function generateSourceFrontmatter(
 
 	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${fieldNamePrefix}${bibStr}`
 
-    let bibEntry = getBibEntry(bibFileData, citeKey)
+    let { bibEntry, bibtexStr} = getBibEntry(bibFileData, citeKey)
 
     if (!bibEntry) {
     	new Notice("Reference data could not be resolved")
@@ -134,6 +134,7 @@ export function generateSourceFrontmatter(
 	refProperties[bibToYamlLabelFn("school")] = normalizeFieldValue( bibEntry.getField("school") )
 	refProperties[bibToYamlLabelFn("thesis")] = normalizeFieldValue( bibEntry.getField("thesis") )
 	refProperties[bibToYamlLabelFn("howpublished")] = normalizeFieldValue( bibEntry.getField("howpublished") )
+	refProperties[bibToYamlLabelFn("bibtex")] = bibtexStr
 
     updateFileProperties(
     	this.app,
@@ -146,7 +147,10 @@ export function generateSourceFrontmatter(
 function getBibEntry(
     bibFileData: string,
     citeKey?: string,
-): BibEntry | undefined {
+): {
+		bibEntry: BibEntry | undefined,
+		bibtexStr: string,
+}{
 	const bibFile = parseBibFile(bibFileData);
 	let entry: BibEntry | undefined;
 	if (citeKey) {
@@ -160,7 +164,10 @@ function getBibEntry(
 		// let [[ck, value]] = Object.entries(bibFile.entries$)
 		entry = value
 	}
-	return entry
+	return {
+		bibEntry: entry,
+		bibtexStr: bibFileData,
+	}
 }
 
 function generateAuthorLinks(
@@ -219,11 +226,10 @@ function computeTargetFilePath(
 	referenceSubdirectoryRoot: string = "",
 	isSubdirectorizeReferencesLexically: boolean = true,
 ): string {
-	// Implement logic to compute target file path based on source BibTex
-	// Return the computed string
-	let bibEntry: BibEntry | undefined;
+	let bibEntry;
+	let bibtexStr
 	try {
-		bibEntry = getBibEntry(sourceBibTex)
+		({ bibEntry, bibtexStr } = getBibEntry(sourceBibTex))
 	} catch (error) {
 	}
 	if (!bibEntry) {
