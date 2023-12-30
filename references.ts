@@ -103,11 +103,13 @@ export function generateSourceFrontmatter(
 		"author",
 		authorsParentFolderPath,
 	)
-    refProperties[bibToYamlLabelFn("editor")] = generateAuthorLinks(
-		bibEntry,
-		"editor",
-		authorsParentFolderPath,
-	)
+
+    // refProperties[bibToYamlLabelFn("editor")] = generateAuthorLinks(
+		// bibEntry,
+		// "editor",
+		// authorsParentFolderPath,
+	// )
+
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
     refProperties[bibToYamlLabelFn("title")] = normalizeFieldValue( bibEntry.getField("title") )
 
@@ -119,6 +121,7 @@ export function generateSourceFrontmatter(
 	refProperties[bibToYamlLabelFn("url")] = normalizeFieldValue( bibEntry.getField("url") )
 	refProperties[bibToYamlLabelFn("publisher")] = normalizeFieldValue( bibEntry.getField("publisher") )
 	refProperties[bibToYamlLabelFn("booktitle")] = normalizeFieldValue( bibEntry.getField("booktitle") )
+    refProperties[bibToYamlLabelFn("editor")] = normalizeFieldValue( bibEntry.getField("editor") )
 	refProperties[bibToYamlLabelFn("abstract")] = normalizeFieldValue( bibEntry.getField("abstract") )
 	refProperties[bibToYamlLabelFn("keywords")] = normalizeFieldValue( bibEntry.getField("keywords") )
 	refProperties[bibToYamlLabelFn("series")] = normalizeFieldValue( bibEntry.getField("series") )
