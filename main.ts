@@ -21,12 +21,18 @@ interface BibliosidianSettings {
 	mySetting: string;
 	referenceSourcePropertiesPrefix: string;
 	referenceSourceBibTex: string
+	referenceSubdirectoryRoot: string
+	isSubdirectorizeReferencesLexically: boolean
+	authorsParentFolderPath: string
 }
 
 const DEFAULT_SETTINGS: BibliosidianSettings = {
 	mySetting: 'default',
 	referenceSourcePropertiesPrefix: "source-",
 	referenceSourceBibTex: "entry-bibtex",
+	referenceSubdirectoryRoot: _path.join("sources", "references"),
+	isSubdirectorizeReferencesLexically: false,
+	authorsParentFolderPath: _path.join("sources", "authors"),
 }
 
 
@@ -40,6 +46,21 @@ export default class Bibliosidian extends Plugin {
 			this.updateActiveFilePropertiesFromBibTex()
 		});
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
+	}
+
+	createReferenceNoteFromBibTex() {
+		let defaultBibTex = ""
+		createReferenceNote(
+			this.app,
+			defaultBibTex,
+			"",
+			undefined,
+			this.settings.referenceSourcePropertiesPrefix,
+			_path.join("sources", "references"),
+			false,
+			_path.join("sources", "authors"),
+		)
+
 	}
 
 	updateActiveFilePropertiesFromBibTex() {
@@ -58,13 +79,10 @@ export default class Bibliosidian extends Plugin {
 			activeFile.path,
 			undefined,
 			this.settings.referenceSourcePropertiesPrefix,
-			_path.join("sources", "references"),
-			false,
-			_path.join("sources", "authors"),
+			this.settings.referenceSubdirectoryRoot,
+			this.settings.isSubdirectorizeReferencesLexically,
+			this.settings.authorsParentFolderPath,
 		)
-	}
-
-	updateReferenceNoteFromBibTex() {
 	}
 
 	onunload() {
