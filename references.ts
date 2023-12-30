@@ -243,32 +243,35 @@ ${err}
 				return
 			}
             console.log(parsedFrontmatter)
-            let frontmatterLines: string[] = frontmatter.split("\n");
-            let updatedLines: string[] = []
-            let isUpdatedExisting = false
-            frontmatterLines.forEach( (line: string) => {
+
+            // let frontmatterLines: string[] = frontmatter.split("\n");
+            // let updatedLines: string[] = []
+            // let isUpdatedExisting = false
+            // frontmatterLines.forEach( (line: string) => {
+				// // let propRx = new RegExp(`^(\\s+)${propertyName}`);
 				// let propRx = new RegExp(`^(\\s+)${propertyName}`);
-				let propRx = new RegExp(`^(\\s+)${propertyName}`);
-				// let propRx = new RegExp(`^(\\s+)${propertyName}\\s*:\\s*$`);
-				let propMatch = line.match(/source-authors:/)
-				if (propMatch) {
-					// rewrite field name in case it had inline data/values
-					// TODO: save these?
-					updatedLines.push(`${propertyName}:`)
-					// insert new rows here;
-					// previous entries will be appended after as loop proceeds
-					updatedLines.push(... updatedRows)
-					isUpdatedExisting = true
-				} else {
-					updatedLines.push(line)
-				}
-            })
-            if (!isUpdatedExisting) {
-            	updatedLines.push(`${propertyName}:`)
-            	updatedLines.push(... updatedRows)
-            }
-            newYAML = updatedLines.join("\n");
-            content = content.replace(frontmatterRegex, `---\n${newYAML}\n---`);
+				// // let propRx = new RegExp(`^(\\s+)${propertyName}\\s*:\\s*$`);
+				// let propMatch = line.match(/source-authors:/)
+				// if (propMatch) {
+					// // rewrite field name in case it had inline data/values
+					// // TODO: save these?
+					// updatedLines.push(`${propertyName}:`)
+					// // insert new rows here;
+					// // previous entries will be appended after as loop proceeds
+					// updatedLines.push(... updatedRows)
+					// isUpdatedExisting = true
+				// } else {
+					// updatedLines.push(line)
+				// }
+            // })
+            // if (!isUpdatedExisting) {
+            // 	updatedLines.push(`${propertyName}:`)
+            // 	updatedLines.push(... updatedRows)
+            // }
+
+            let newFrontmatter: string = YAML.stringify(parsedFrontmatter)
+            content = content.replace(frontmatterRegex, `---\n${newFrontmatter}\n---`);
+
         } else {
             newYAML = `---\n${propertyName}:\n${updatedRows.join("\n")}\n---`;
             content = newYAML + "\n" + content;
