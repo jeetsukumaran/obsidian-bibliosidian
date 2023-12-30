@@ -49,17 +49,17 @@ ${err}`
 			}
         }
 
-		propertyValueMap.forEach( (value: any, key: string) => {
-			if ( !(value ?? undefined) ) {
+		Object.entries(propertyValueMap).forEach(([key, value]) => {
+			if (!(value ?? undefined)) {
 				if (isClearEmpty) {
 					if (parsedFrontmatter[key]) {
-						delete parsedFrontmatter[key]
+						delete parsedFrontmatter[key];
 					}
 				}
 			} else {
-				parsedFrontmatter[key] = value
+				parsedFrontmatter[key] = value;
 			}
-		})
+		});
 		// parsedFrontmatter[propertyName] = newValues
         let newFrontmatterStr: string = `---\n${YAML.stringify(parsedFrontmatter)}\n---`
 
