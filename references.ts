@@ -214,6 +214,31 @@ export function generateReference(
 	.catch( (error) => {} )
 }
 
+function computeTargetFilePath(
+	sourceBibTex: string,
+	referenceSubdirectoryRoot: string = "",
+	isSubdirectorizeReferencesLexically: boolean = true,
+): string {
+	// Implement logic to compute target file path based on source BibTex
+	// Return the computed string
+	let bibEntry: BibEntry | undefined;
+	try {
+		bibEntry = getBibEntry(sourceBibTex)
+	} catch (error) {
+	}
+	if (!bibEntry) {
+		return ""
+	} else {
+		let citekey = `@${bibEntry._id}`
+		let parentPath = referenceSubdirectoryRoot
+		if (isSubdirectorizeReferencesLexically) {
+			parentPath = _path.join(parentPath, replaceProblematicChars(citekey[0]))
+		}
+		return _path.join(parentPath, citekey + ".md")
+	}
+}
+
+
 export function createReferenceNote(
 	app: App,
 	defaultBibTex: string,
@@ -271,26 +296,6 @@ class BibTexModal extends Modal {
 		this.isSubdirectorizeReferencesLexically = isSubdirectorizeReferencesLexically;
     }
 
-    computeTargetFilePath(sourceBibTex: string): string {
-        // Implement logic to compute target file path based on source BibTex
-        // Return the computed string
-		let bibEntry: BibEntry | undefined;
-		try {
-			bibEntry = getBibEntry(sourceBibTex)
-		} catch (error) {
-		}
-		if (!bibEntry) {
-			return ""
-		} else {
-			let citekey = `@${bibEntry._id}`
-			let parentPath = this.referenceSubdirectoryRoot
-			if (this.isSubdirectorizeReferencesLexically) {
-				parentPath = _path.join(parentPath, replaceProblematicChars(citekey[0]))
-			}
-			return _path.join(parentPath, citekey + ".md")
-		}
-    }
-
     normalizeDisplayedFilepathEnding() {
 		if (this.targetFilepathInput.value.endsWith(".md")) {
 			this.targetFilepathInput.value = this.targetFilepathInput.value.slice(0, -3);
@@ -316,7 +321,11 @@ class BibTexModal extends Modal {
 
         // Auto-update handler for Source BibTex
         this.sourceBibTexTextarea.oninput = () => {
-            this.targetFilepathInput.value = this.computeTargetFilePath(this.sourceBibTexTextarea.value);
+            this.targetFilepathInput.value = computeTargetFilePath(
+            	this.sourceBibTexTextarea.value,
+				this.referenceSubdirectoryRoot,
+				this.isSubdirectorizeReferencesLexically,
+            );
 			this.normalizeDisplayedFilepathEnding()
         };
 
@@ -344,7 +353,11 @@ class BibTexModal extends Modal {
         // Auto button for Target filepath
         const autoTargetPathButton = contentEl.createEl("button", { text: "Auto" });
         autoTargetPathButton.onclick = () => {
-            this.targetFilepathInput.value = this.computeTargetFilePath(this.sourceBibTexTextarea.value);
+            this.targetFilepathInput.value = computeTargetFilePath(
+            	this.sourceBibTexTextarea.value,
+				this.referenceSubdirectoryRoot,
+				this.isSubdirectorizeReferencesLexically,
+            );
 			this.normalizeDisplayedFilepathEnding()
         };
 
@@ -371,6 +384,7 @@ class BibTexModal extends Modal {
             this.close();
         };
     }
+
 
     onClose() {
         const { contentEl } = this;
