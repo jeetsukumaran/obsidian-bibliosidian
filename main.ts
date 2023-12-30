@@ -13,6 +13,7 @@ import {
 import {
 	generateAuthorLinks,
 	updateYAMLProperty,
+	generateSourceFrontmatter,
 } from "./references"
 
 
@@ -110,20 +111,28 @@ export default class Bibliosidian extends Plugin {
 				sourceBibTex: defaultBibTex,
 				onGenerate: (args) => {
 
-					// Authors
-					let authorLinks = generateAuthorLinks(
+					generateSourceFrontmatter(
+						this.app,
+						args.targetFilepath,
 						args.sourceBibTex,
 						undefined,
 						"sources/authors",
 					)
-					if (authorLinks && activeFile) {
-						updateYAMLProperty(
-							this.app,
-							activeFile.path,
-							`${this.settings.referenceSourcePropertiesPrefix}authors`,
-							authorLinks,
-						)
-					}
+
+					// Authors
+					// let authorLinks = generateAuthorLinks(
+					// 	args.sourceBibTex,
+					// 	undefined,
+					// 	"sources/authors",
+					// )
+					// if (authorLinks && activeFile) {
+					// 	updateYAMLProperty(
+					// 		this.app,
+					// 		activeFile.path,
+					// 		`${this.settings.referenceSourcePropertiesPrefix}authors`,
+					// 		authorLinks,
+					// 	)
+					// }
 
 				},
 				onCancel: () => {

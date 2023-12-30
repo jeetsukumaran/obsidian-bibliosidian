@@ -58,12 +58,17 @@ function composeAuthorData(author: Author): {
 
 export function generateSourceFrontmatter(
 	app: App,
+	targetFilepath: string,
     bibFileData: string,
     citeKey?: string,
-    parentFolderPath: string = "",
+    authorsParentFolderPath: string = "",
 ) {
+	let fieldNamePrefix = "source-"
+	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${fieldNamePrefix}${bibStr}`
+	let bibFieldLabelMap: Record<string, string> = {
+		"title": "hello"
+	}
 }
-
 
 export function generateAuthorLinks(
     bibFileData: string,
