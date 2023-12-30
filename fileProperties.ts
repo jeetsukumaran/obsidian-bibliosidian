@@ -122,7 +122,7 @@ ${err}
         }
 
 		parsedFrontmatter[propertyName] = newValues
-        let newFrontmatterStr: string = `---\n${YAML.stringify(parsedFrontmatter)}\n---`
+        let newFrontmatterStr: string = `---\n${YAML.stringify(parsedFrontmatter).strip()}\n---`
 
         if (frontMatterMatch) {
 			content = content.replace(frontmatterRegex, newFrontmatterStr);

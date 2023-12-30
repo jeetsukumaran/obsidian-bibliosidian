@@ -82,7 +82,6 @@ export function generateSourceFrontmatter(
 	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${fieldNamePrefix}${bibStr}`
 
     let bibEntry = getBibEntry(bibFileData, citeKey)
-    console.log(bibEntry)
 
     if (!bibEntry) {
     	new Notice("Reference data could not be resolved")
