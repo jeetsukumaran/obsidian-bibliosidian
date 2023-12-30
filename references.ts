@@ -202,6 +202,10 @@ export function createReferenceNote(
 	bibtexModal.open();
 }
 
+function replaceProblematicChars(input: string): string {
+    const regex = /[:*?"<>|\/\\]/g;
+    return input.replace(regex, "0");
+}
 
 class BibTexModal extends Modal {
     args: BibTexModalArgs;
@@ -233,11 +237,16 @@ class BibTexModal extends Modal {
 		if (!bibEntry) {
 			return ""
 		} else {
-			return _path.join(this.referenceSubdirectoryRoot, `@${bibEntry._id.toLowerCase()}`)
+			let citekey = `@${bibEntry._id}`
+			let parentPath = this.referenceSubdirectoryRoot
+			if (this.isSubdirectorizeReferencesLexically) {
+				parentPath = _path.join(parentPath, replaceProblematicChars(citekey[0]))
+			}
+			return _path.join(parentPath, citekey + ".md")
 		}
     }
 
-    normalizeFilepathEnding() {
+    normalizeDisplayedFilepathEnding() {
 		if (this.targetFilepathInput.value.endsWith(".md")) {
 			this.targetFilepathInput.value = this.targetFilepathInput.value.slice(0, -3);
 		}
@@ -263,6 +272,7 @@ class BibTexModal extends Modal {
         // Auto-update handler for Source BibTex
         this.sourceBibTexTextarea.oninput = () => {
             this.targetFilepathInput.value = this.computeTargetFilePath(this.sourceBibTexTextarea.value);
+			this.normalizeDisplayedFilepathEnding()
         };
 
         // Target filepath section
@@ -272,23 +282,25 @@ class BibTexModal extends Modal {
             value: this.args.targetFilepath
         });
         this.targetFilepathInput.style.width = "100%"; // this needs to be css
-		this.normalizeFilepathEnding()
+		this.normalizeDisplayedFilepathEnding()
 
 		// Add event listener for input changes
 		this.targetFilepathInput.addEventListener("input", () => {
-			this.normalizeFilepathEnding()
+			this.normalizeDisplayedFilepathEnding()
 		});
 
         // Reset button for Target filepath
         const resetTargetPathButton = contentEl.createEl("button", { text: "Reset" });
         resetTargetPathButton.onclick = () => {
             this.targetFilepathInput.value = this.args.targetFilepath;
+			this.normalizeDisplayedFilepathEnding()
         };
 
         // Auto button for Target filepath
         const autoTargetPathButton = contentEl.createEl("button", { text: "Auto" });
         autoTargetPathButton.onclick = () => {
             this.targetFilepathInput.value = this.computeTargetFilePath(this.sourceBibTexTextarea.value);
+			this.normalizeDisplayedFilepathEnding()
         };
 
         // Button container
