@@ -74,7 +74,7 @@ function composeAuthorData(author: Author): {
     }
 }
 
-export function generateSourceFrontmatter(
+function generateSourceFrontmatter(
 	app: App,
 	targetFilepath: string,
     bibFileData: string,
@@ -195,7 +195,8 @@ function generateAuthorLinks(
 }
 
 
-export function generateReference(
+
+function generateReference(
 	app: App,
 	targetFilepath: string,
 	sourceBibTex: string,
@@ -242,39 +243,6 @@ function computeTargetFilePath(
 		}
 		return _path.join(parentPath, citekey + ".md")
 	}
-}
-
-export function createReferenceNote(
-	app: App,
-	defaultBibTex: string,
-	targetFilepath: string,
-    citeKey?: string,
-    fieldNamePrefix: string = "",
-	referenceSubdirectoryRoot: string = "",
-	isSubdirectorizeReferencesLexically: boolean = true,
-    authorsParentFolderPath: string = "",
-) {
-	const bibtexModal = new BibTexModal(
-		app,
-		referenceSubdirectoryRoot,
-		isSubdirectorizeReferencesLexically,
-		{
-		targetFilepath: targetFilepath,
-		sourceBibTex: defaultBibTex,
-		onGenerate: (args: BibTexModalArgs) => {
-			generateReference(
-				app,
-				args.targetFilepath,
-				args.sourceBibTex,
-				fieldNamePrefix,
-				authorsParentFolderPath,
-			)
-		},
-		onCancel: () => {
-			// console.log('Cancel clicked');
-		}
-	});
-	bibtexModal.open();
 }
 
 function replaceProblematicChars(input: string): string {
@@ -436,3 +404,46 @@ async function createOrOpenNote(
     console.log(notePath)
 }
 
+
+export function generateReferenceLibrary(
+	app: App,
+	sourceBibTex: string,
+	fieldNamePrefix: string,
+	referenceSubdirectoryRoot: string = "",
+	isSubdirectorizeReferencesLexically: boolean = true,
+	authorsParentFolderPath: string,
+) {
+}
+
+export function createReferenceNote(
+	app: App,
+	defaultBibTex: string,
+	targetFilepath: string,
+    citeKey?: string,
+    fieldNamePrefix: string = "",
+	referenceSubdirectoryRoot: string = "",
+	isSubdirectorizeReferencesLexically: boolean = true,
+    authorsParentFolderPath: string = "",
+) {
+	const bibtexModal = new BibTexModal(
+		app,
+		referenceSubdirectoryRoot,
+		isSubdirectorizeReferencesLexically,
+		{
+		targetFilepath: targetFilepath,
+		sourceBibTex: defaultBibTex,
+		onGenerate: (args: BibTexModalArgs) => {
+			generateReference(
+				app,
+				args.targetFilepath,
+				args.sourceBibTex,
+				fieldNamePrefix,
+				authorsParentFolderPath,
+			)
+		},
+		onCancel: () => {
+			// console.log('Cancel clicked');
+		}
+	});
+	bibtexModal.open();
+}
