@@ -42,10 +42,38 @@ export default class Bibliosidian extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.addRibbonIcon("book-plus", "Update properties from reference data", () => {
-			this.updateActiveFilePropertiesFromBibTex()
+		this.addRibbonIcon("book-up-2", "Create or update reference note from BibTeX data", () => {
+			this.updateReferenceNoteFromBibTex()
 		});
+
+
+		this.addRibbonIcon("library-square", "Update multiple references from a BibTeX bibliography database file", () => {
+			this.updateReferenceLibraryFromBibTex()
+		});
+
+		this.addCommand({
+			id: 'bibliosidian-update-reference-from-bibtex',
+			name: 'Update active file properties from BibTeX',
+			callback: this.updateReferenceNoteFromBibTex,
+		});
+		this.addCommand({
+			id: 'bibliosidian-update-reference-library-from-bibtex',
+			name: 'Update multiple references from a BibTeX bibliography database file',
+			callback: this.updateReferenceLibraryFromBibTex,
+		});
+		this.addCommand({
+			id: 'bibliosidian-update-active-file-from-bibtex',
+			name: 'Update active file properties from BibTeX',
+			callback: this.updateActiveFilePropertiesFromBibTex,
+		});
+
+
+
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
+	}
+
+	updateReferenceLibraryFromBibTex() {
+
 	}
 
 	updateReferenceNoteFromBibTex() {
