@@ -269,6 +269,7 @@ ${err}
             // 	updatedLines.push(... updatedRows)
             // }
 
+            parsedFrontmatter["source-author"] = newValues
             let newFrontmatter: string = YAML.stringify(parsedFrontmatter)
             content = content.replace(frontmatterRegex, `---\n${newFrontmatter}\n---`);
 
