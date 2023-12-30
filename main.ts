@@ -11,7 +11,7 @@ import {
 } from 'obsidian';
 
 import {
-	generateSourceFrontmatter,
+	createReferenceNote,
 } from "./references"
 
 
@@ -27,66 +27,6 @@ const DEFAULT_SETTINGS: BibliosidianSettings = {
 	referenceSourceBibTex: "entry-bibtex",
 }
 
-
-interface BibTexModalArgs {
-    targetFilepath: string;
-    sourceBibTex: string;
-    onGenerate: (args: { targetFilepath: string, sourceBibTex: string }) => void;
-    onCancel: () => void;
-}
-
-class BibTexModal extends Modal {
-    args: BibTexModalArgs;
-    targetFilepathInput: HTMLInputElement;
-    sourceBibTexTextarea: HTMLTextAreaElement;
-
-    constructor(app: App, args: BibTexModalArgs) {
-        super(app);
-        this.args = args;
-    }
-
-    onOpen() {
-        const { contentEl } = this;
-        contentEl.createEl("h3", { text: "Reference data update" });
-
-        contentEl.createEl("h4", { text: "Target filepath" });
-        this.targetFilepathInput = contentEl.createEl("input", {
-            type: "text",
-            value: this.args.targetFilepath
-        });
-		this.targetFilepathInput.style.width = "100%" // this needs to be css
-
-        contentEl.createEl("h4", { text: "Source BibTex" });
-        this.sourceBibTexTextarea = contentEl.createEl("textarea", {
-        });
-		this.sourceBibTexTextarea.textContent = this.args.sourceBibTex
-		this.sourceBibTexTextarea.style.width = "100%" // this needs to be css
-		this.sourceBibTexTextarea.style.height = "16rem"
-
-        let buttonContainer = contentEl.createEl("div");
-        buttonContainer.style.textAlign = "right"
-        // Buttons
-        const generateButton = buttonContainer.createEl("button", { text: "Generate" });
-        generateButton.onclick = () => {
-            this.args.onGenerate({
-                targetFilepath: this.targetFilepathInput.value,
-                sourceBibTex: this.sourceBibTexTextarea.value
-            });
-            this.close();
-        };
-
-        const cancelButton = buttonContainer.createEl("button", { text: "Cancel" });
-        cancelButton.onclick = () => {
-            this.args.onCancel();
-            this.close();
-        };
-    }
-
-    onClose() {
-        const { contentEl } = this;
-        contentEl.empty();
-    }
-}
 
 export default class Bibliosidian extends Plugin {
 	settings: BibliosidianSettings;
@@ -110,25 +50,14 @@ export default class Bibliosidian extends Plugin {
 		if (frontmatter) {
 			defaultBibTex = frontmatter?.["entry-bibtex"] || defaultBibTex
 		}
-		const bibtexModal = new BibTexModal(app, {
-			targetFilepath: activeFile.path,
-			sourceBibTex: defaultBibTex,
-			onGenerate: (args) => {
-
-				generateSourceFrontmatter(
-					this.app,
-					args.targetFilepath,
-					args.sourceBibTex,
-					undefined,
-					"sources/authors",
-					"source-",
-				)
-			},
-			onCancel: () => {
-				// console.log('Cancel clicked');
-			}
-		});
-		bibtexModal.open();
+		createReferenceNote(
+			this.app,
+			defaultBibTex,
+			activeFile.path,
+			undefined,
+			this.settings.referenceSourcePropertiesPrefix,
+			"sources/authors",
+		)
 	}
 
 	updateReferenceNoteFromBibTex() {

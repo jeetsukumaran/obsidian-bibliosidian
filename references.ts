@@ -4,7 +4,7 @@ import {
 	CachedMetadata,
 	// Editor,
 	// MarkdownView,
-	// Modal,
+	Modal,
 	Notice,
 	// Plugin,
 	// PluginSettingTab,
@@ -29,6 +29,14 @@ import {
 
 // import { parseBibFile } from "bibtex";
 import * as _path from "path";
+
+
+interface BibTexModalArgs {
+    sourceBibTex: string;
+    targetFilepath: string;
+    onGenerate: (args: { targetFilepath: string, sourceBibTex: string }) => void;
+    onCancel: () => void;
+}
 
 interface Author {
     lastNames: string[],
@@ -67,14 +75,14 @@ function composeAuthorData(author: Author): {
 
 export function generateSourceFrontmatter(
 	app: App,
-	targetFilePath: string,
+	targetFilepath: string,
     bibFileData: string,
     citeKey?: string,
-    authorsParentFolderPath: string = "",
     fieldNamePrefix:string = "",
+    authorsParentFolderPath: string = "",
 ) {
 
-	// let targetFile = app.vault.getAbstractFileByPath(targetFilePath)
+	// let targetFile = app.vault.getAbstractFileByPath(targetFilepath)
 	// if (!targetFile) {
 	// 	return
 	// }
@@ -99,18 +107,10 @@ export function generateSourceFrontmatter(
 
     updateFileProperties(
     	this.app,
-    	targetFilePath,
+    	targetFilepath,
     	refProperties,
     	true,
     )
-
-	// // Authors
-	// let authorLinks = generateAuthorLinks(
-	// 	bibEntry,
-	// 	"sources/authors", // abstract away later; path to that author notes are stored
-	// )
-	// updateProperty("author", authorLinks)
-
 }
 
 function getBibEntry(
@@ -159,4 +159,90 @@ function generateAuthorLinks(
     return results;
 }
 
+
+
+
+export function createReferenceNote(
+	app: App,
+	defaultBibTex: string,
+	targetFilepath: string,
+    citeKey?: string,
+    fieldNamePrefix:string = "",
+    authorsParentFolderPath: string = "",
+) {
+	const bibtexModal = new BibTexModal(app, {
+		targetFilepath: targetFilepath,
+		sourceBibTex: defaultBibTex,
+		onGenerate: (args) => {
+
+			generateSourceFrontmatter(
+				this.app,
+				args.targetFilepath,
+				args.sourceBibTex,
+				undefined,
+				"sources/authors",
+				"source-",
+			)
+		},
+		onCancel: () => {
+			// console.log('Cancel clicked');
+		}
+	});
+	bibtexModal.open();
+}
+
+
+
+class BibTexModal extends Modal {
+    args: BibTexModalArgs;
+    sourceBibTexTextarea: HTMLTextAreaElement;
+    targetFilepathInput: HTMLInputElement;
+
+    constructor(app: App, args: BibTexModalArgs) {
+        super(app);
+        this.args = args;
+    }
+
+    onOpen() {
+        const { contentEl } = this;
+        contentEl.createEl("h3", { text: "Reference data update" });
+
+        contentEl.createEl("h4", { text: "Target filepath" });
+        this.targetFilepathInput = contentEl.createEl("input", {
+            type: "text",
+            value: this.args.targetFilepath
+        });
+		this.targetFilepathInput.style.width = "100%" // this needs to be css
+
+        contentEl.createEl("h4", { text: "Source BibTex" });
+        this.sourceBibTexTextarea = contentEl.createEl("textarea", {
+        });
+		this.sourceBibTexTextarea.textContent = this.args.sourceBibTex
+		this.sourceBibTexTextarea.style.width = "100%" // this needs to be css
+		this.sourceBibTexTextarea.style.height = "16rem"
+
+        let buttonContainer = contentEl.createEl("div");
+        buttonContainer.style.textAlign = "right"
+        // Buttons
+        const generateButton = buttonContainer.createEl("button", { text: "Generate" });
+        generateButton.onclick = () => {
+            this.args.onGenerate({
+                targetFilepath: this.targetFilepathInput.value,
+                sourceBibTex: this.sourceBibTexTextarea.value
+            });
+            this.close();
+        };
+
+        const cancelButton = buttonContainer.createEl("button", { text: "Cancel" });
+        cancelButton.onclick = () => {
+            this.args.onCancel();
+            this.close();
+        };
+    }
+
+    onClose() {
+        const { contentEl } = this;
+        contentEl.empty();
+    }
+}
 
