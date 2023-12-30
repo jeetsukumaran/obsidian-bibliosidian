@@ -342,6 +342,9 @@ async function createOrOpenNote(
 
     const path = require('path');
     let notePath = path.join(filePath);
+    // if (!notePath.endsWith(".md")) {
+    // 	notePath = notePath + ".md"
+    // }
 
     // Extract directory path from the file path
     const directoryPath = path.dirname(notePath);
@@ -366,5 +369,6 @@ async function createOrOpenNote(
         console.error('Error creating or opening the note:', error);
     }
     return notePath;
+    console.log(notePath)
 }
 
