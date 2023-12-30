@@ -95,54 +95,43 @@ export default class Bibliosidian extends Plugin {
 		await this.loadSettings();
 
 		this.addRibbonIcon("book-plus", "Update properties from reference data", () => {
-			let activeFile = this.app.workspace.getActiveFile();
-			if (!activeFile) {
-				return
-			}
-			let defaultBibTex = ""
-			let frontmatter = app.metadataCache?.getFileCache(activeFile)?.frontmatter
-			if (frontmatter) {
-				defaultBibTex = frontmatter?.["entry-bibtex"] || defaultBibTex
-			}
-			const bibtexModal = new BibTexModal(app, {
-				targetFilepath: activeFile.path,
-				sourceBibTex: defaultBibTex,
-				onGenerate: (args) => {
-
-					generateSourceFrontmatter(
-						this.app,
-						args.targetFilepath,
-						args.sourceBibTex,
-						undefined,
-						"sources/authors",
-						"source-",
-					)
-
-					// Authors
-					// let authorLinks = generateAuthorLinks(
-					// 	args.sourceBibTex,
-					// 	undefined,
-					// 	"sources/authors",
-					// )
-					// if (authorLinks && activeFile) {
-					// 	updateYAMLProperty(
-					// 		this.app,
-					// 		activeFile.path,
-					// 		`${this.settings.referenceSourcePropertiesPrefix}authors`,
-					// 		authorLinks,
-					// 	)
-					// }
-
-				},
-				onCancel: () => {
-					// console.log('Cancel clicked');
-				}
-			});
-			bibtexModal.open();
+			this.updateActiveFilePropertiesFromBibTex()
 		});
-
-		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
+	}
+
+	updateActiveFilePropertiesFromBibTex() {
+		let activeFile = this.app.workspace.getActiveFile();
+		if (!activeFile) {
+			return
+		}
+		let defaultBibTex = ""
+		let frontmatter = app.metadataCache?.getFileCache(activeFile)?.frontmatter
+		if (frontmatter) {
+			defaultBibTex = frontmatter?.["entry-bibtex"] || defaultBibTex
+		}
+		const bibtexModal = new BibTexModal(app, {
+			targetFilepath: activeFile.path,
+			sourceBibTex: defaultBibTex,
+			onGenerate: (args) => {
+
+				generateSourceFrontmatter(
+					this.app,
+					args.targetFilepath,
+					args.sourceBibTex,
+					undefined,
+					"sources/authors",
+					"source-",
+				)
+			},
+			onCancel: () => {
+				// console.log('Cancel clicked');
+			}
+		});
+		bibtexModal.open();
+	}
+
+	updateReferenceNoteFromBibTex() {
 	}
 
 	onunload() {
@@ -157,23 +146,6 @@ export default class Bibliosidian extends Plugin {
 		await this.saveData(this.settings);
 	}
 }
-
-// Usage Example
-// const app = new App(); // Placeholder for the actual app instance
-// const modal = new BibTexModal(app, {
-//     targetFilepath: 'default/filepath',
-//     sourceBibTex: 'default bibtex content',
-//     onGenerate: (args) => {
-//         console.log('Generate clicked', args);
-//     },
-//     onCancel: () => {
-//         console.log('Cancel clicked');
-//     }
-// });
-
-// modal.open();
-
-
 
 class BibliosidianSettingTab extends PluginSettingTab {
 	plugin: Bibliosidian;
