@@ -195,7 +195,7 @@ function getBibEntry(
 		fieldNames.forEach( (fieldName) => {
 			let entryValue = entry?.getFieldAsString(fieldName)
 			if (entryValue !== undefined) {
-				bibtexStrParts.push(`  ${fieldName} = {${entryValue}}`)
+				bibtexStrParts.push(`  ${fieldName} = {${entryValue}},`)
 			}
 		})
 	}
