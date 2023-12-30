@@ -181,8 +181,8 @@ export function createReferenceNote(
 				args.targetFilepath,
 				args.sourceBibTex,
 				undefined,
-				authorsParentFolderPath,
 				fieldNamePrefix,
+				authorsParentFolderPath,
 			)
 		},
 		onCancel: () => {
