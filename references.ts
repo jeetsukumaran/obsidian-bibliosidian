@@ -140,7 +140,7 @@ export function generateAuthorLinks(
             } = composeAuthorData(author)
             const authorFilePath = _path.join(parentFolderPath, authorFileName);
 
-            return `"[[${authorFilePath}|${authorDisplayName}]]"`;
+            return `[[${authorFilePath}|${authorDisplayName}]]`;
         });
     }
     return results;
