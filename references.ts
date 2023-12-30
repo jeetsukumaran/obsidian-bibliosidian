@@ -96,7 +96,7 @@ export function generateSourceFrontmatter(
     	return
     }
     let refProperties: FilePropertyData  = {}
-    refProperties[bibToYamlLabelFn("citekey")] = bibEntry._id
+    refProperties[bibToYamlLabelFn("citekey")] = bibEntry._id.toLowerCase()
     refProperties[bibToYamlLabelFn("author")] = generateAuthorLinks(
 		bibEntry,
 		"sources/authors", // abstract away later; path to that author notes are stored
@@ -133,7 +133,6 @@ function getBibEntry(
 	return entry
 }
 
-
 function generateAuthorLinks(
 	entry: BibEntry,
     bibFileData: string,
@@ -159,22 +158,24 @@ function generateAuthorLinks(
     return results;
 }
 
-
-
-
 export function createReferenceNote(
 	app: App,
 	defaultBibTex: string,
 	targetFilepath: string,
     citeKey?: string,
-    fieldNamePrefix:string = "",
+    fieldNamePrefix: string = "",
+	referenceSubdirectoryRoot: string = "references",
+	isSubdirectorizeReferencesLexically: boolean = true,
     authorsParentFolderPath: string = "",
 ) {
-	const bibtexModal = new BibTexModal(app, {
+	const bibtexModal = new BibTexModal(
+		app,
+		referenceSubdirectoryRoot,
+		isSubdirectorizeReferencesLexically,
+		{
 		targetFilepath: targetFilepath,
 		sourceBibTex: defaultBibTex,
-		onGenerate: (args) => {
-
+		onGenerate: (args: BibTexModalArgs) => {
 			generateSourceFrontmatter(
 				this.app,
 				args.targetFilepath,
@@ -192,74 +193,34 @@ export function createReferenceNote(
 }
 
 
-
-// class BibTexModal extends Modal {
-//     args: BibTexModalArgs;
-//     sourceBibTexTextarea: HTMLTextAreaElement;
-//     targetFilepathInput: HTMLInputElement;
-
-//     constructor(app: App, args: BibTexModalArgs) {
-//         super(app);
-//         this.args = args;
-//     }
-
-//     onOpen() {
-//         const { contentEl } = this;
-//         contentEl.createEl("h3", { text: "Reference data update" });
-
-//         contentEl.createEl("h4", { text: "Target filepath" });
-//         this.targetFilepathInput = contentEl.createEl("input", {
-//             type: "text",
-//             value: this.args.targetFilepath
-//         });
-// 		this.targetFilepathInput.style.width = "100%" // this needs to be css
-
-//         contentEl.createEl("h4", { text: "Source BibTex" });
-//         this.sourceBibTexTextarea = contentEl.createEl("textarea", {
-//         });
-// 		this.sourceBibTexTextarea.textContent = this.args.sourceBibTex
-// 		this.sourceBibTexTextarea.style.width = "100%" // this needs to be css
-// 		this.sourceBibTexTextarea.style.height = "16rem"
-
-//         let buttonContainer = contentEl.createEl("div");
-//         buttonContainer.style.textAlign = "right"
-//         // Buttons
-//         const generateButton = buttonContainer.createEl("button", { text: "Generate" });
-//         generateButton.onclick = () => {
-//             this.args.onGenerate({
-//                 targetFilepath: this.targetFilepathInput.value,
-//                 sourceBibTex: this.sourceBibTexTextarea.value
-//             });
-//             this.close();
-//         };
-
-//         const cancelButton = buttonContainer.createEl("button", { text: "Cancel" });
-//         cancelButton.onclick = () => {
-//             this.args.onCancel();
-//             this.close();
-//         };
-//     }
-
-//     onClose() {
-//         const { contentEl } = this;
-//         contentEl.empty();
-//     }
-// }
-
 class BibTexModal extends Modal {
     args: BibTexModalArgs;
     sourceBibTexTextarea: HTMLTextAreaElement;
     targetFilepathInput: HTMLInputElement;
+	referenceSubdirectoryRoot: string;
+	isSubdirectorizeReferencesLexically: boolean;
 
-    constructor(app: App, args: BibTexModalArgs) {
+    constructor(
+		app: App,
+		referenceSubdirectoryRoot: string,
+		isSubdirectorizeReferencesLexically: boolean,
+		args: BibTexModalArgs,
+    ) {
         super(app);
         this.args = args;
+		this.referenceSubdirectoryRoot = referenceSubdirectoryRoot;
+		this.isSubdirectorizeReferencesLexically = isSubdirectorizeReferencesLexically;
     }
 
     computeTargetFilePath(sourceBibTex: string): string {
         // Implement logic to compute target file path based on source BibTex
         // Return the computed string
-        return "hello"; // Placeholder return
+		let bibEntry = getBibEntry(sourceBibTex)
+		if (!bibEntry) {
+			return ""
+		} else {
+			return `@${bibEntry._id.toLowerCase()}`
+		}
     }
 
     onOpen() {
