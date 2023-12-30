@@ -140,19 +140,6 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("Source BibTex property name")
-			.setDesc(`
-Name of text field on note that to track associated BibTeX data.
-			`)
-			.addText(text => text
-				.setPlaceholder("(YAML frontmatter property name, e.g. 'source-bibtex'")
-				.setValue(this.plugin.settings.referenceSourceBibTex)
-				.onChange(async (value) => {
-					this.plugin.settings.referenceSourceBibTex = value;
-					await this.plugin.saveSettings();
-				}));
-
-		new Setting(containerEl)
 			.setName("Source bibliographic data property name prefix")
 			.setDesc(`
 This will be prefixed to the normalized bibliographic (YAML frontmatter properties) data fields for reference bibliographic data.
@@ -164,6 +151,45 @@ Better namespacing will come when Obsidian supports nested frontmatter YAML obje
 				.setValue(this.plugin.settings.referenceSourcePropertiesPrefix)
 				.onChange(async (value) => {
 					this.plugin.settings.referenceSourcePropertiesPrefix = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName("Source BibTex property name")
+			.setDesc(`
+Name of text field on note that to track associated BibTeX data.
+			`)
+			.addText(text => text
+				.setPlaceholder("(YAML frontmatter property name, e.g. 'source-bibtex')")
+				.setValue(this.plugin.settings.referenceSourceBibTex)
+				.onChange(async (value) => {
+					this.plugin.settings.referenceSourceBibTex = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName("References folder")
+			.setDesc(`
+Path to folder of reference notes.
+			`)
+			.addText(text => text
+				.setPlaceholder("(E.g. 'sources/references')")
+				.setValue(this.plugin.settings.referenceSubdirectoryRoot)
+				.onChange(async (value) => {
+					this.plugin.settings.referenceSubdirectoryRoot = value;
+					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName("Authors folder")
+			.setDesc(`
+Path to folder of author notes.
+			`)
+			.addText(text => text
+				.setPlaceholder("(E.g. 'sources/authors')")
+				.setValue(this.plugin.settings.authorsParentFolderPath)
+				.onChange(async (value) => {
+					this.plugin.settings.authorsParentFolderPath = value;
 					await this.plugin.saveSettings();
 				}));
 

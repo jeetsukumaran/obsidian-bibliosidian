@@ -238,7 +238,6 @@ function computeTargetFilePath(
 	}
 }
 
-
 export function createReferenceNote(
 	app: App,
 	defaultBibTex: string,
