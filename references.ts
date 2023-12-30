@@ -237,6 +237,12 @@ class BibTexModal extends Modal {
 		}
     }
 
+    normalizeFilepathEnding() {
+		if (this.targetFilepathInput.value.endsWith(".md")) {
+			this.targetFilepathInput.value = this.targetFilepathInput.value.slice(0, -3);
+		}
+    }
+
     onOpen() {
         const { contentEl } = this;
         contentEl.createEl("h3", { text: "Reference data update" });
@@ -266,12 +272,11 @@ class BibTexModal extends Modal {
             value: this.args.targetFilepath
         });
         this.targetFilepathInput.style.width = "100%"; // this needs to be css
+		this.normalizeFilepathEnding()
 
 		// Add event listener for input changes
 		this.targetFilepathInput.addEventListener("input", () => {
-			if (this.targetFilepathInput.value.endsWith(".md")) {
-				this.targetFilepathInput.value = this.targetFilepathInput.value.slice(0, -3);
-			}
+			this.normalizeFilepathEnding()
 		});
 
         // Reset button for Target filepath
