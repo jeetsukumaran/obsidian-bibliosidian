@@ -407,12 +407,16 @@ async function createOrOpenNote(
 
 export function generateReferenceLibrary(
 	app: App,
-	sourceBibTex: string,
+	bibFileData: string,
 	fieldNamePrefix: string,
 	referenceSubdirectoryRoot: string = "",
 	isSubdirectorizeReferencesLexically: boolean = true,
 	authorsParentFolderPath: string,
 ) {
+	const bibFile = parseBibFile(bibFileData);
+	Object.entries(bibFile.entries$).forEach(([key, value]: [string, BibEntry]) => {
+		// 'value' is the BibEntry object
+	});
 }
 
 export function createReferenceNote(
