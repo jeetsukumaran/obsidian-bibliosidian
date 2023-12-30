@@ -100,6 +100,7 @@ export function generateSourceFrontmatter(
     refProperties[bibToYamlLabelFn("citekey")] = bibEntry._id.toLowerCase()
     refProperties[bibToYamlLabelFn("author")] = generateAuthorLinks(
 		bibEntry,
+		"author",
 		authorsParentFolderPath,
 	)
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
@@ -151,13 +152,14 @@ function getBibEntry(
 
 function generateAuthorLinks(
 	entry: BibEntry,
+	authorFieldName: string = "author",
     parentFolderPath: string = "",
 ): string[] {
     let results: string[] = [];
     if (!entry) {
         return results;
     }
-    const authorField = entry.getField("author");
+    const authorField = entry.getField(authorFieldName);
     if (authorField && typeof authorField === 'object' && 'authors$' in authorField) {
         results = (authorField as any).authors$.map((author: any) => {
             const {
