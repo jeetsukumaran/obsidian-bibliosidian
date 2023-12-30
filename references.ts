@@ -187,6 +187,33 @@ function generateAuthorLinks(
     return results;
 }
 
+
+export function generateReference(
+	app: App,
+	targetFilepath: string,
+	sourceBibTex: string,
+	fieldNamePrefix: string,
+	authorsParentFolderPath: string,
+) {
+	createOrOpenNote(
+		this.app,
+		targetFilepath,
+		"",
+		false,
+	)
+	.then( (result) => {
+		generateSourceFrontmatter(
+			app,
+			targetFilepath,
+			sourceBibTex,
+			undefined,
+			fieldNamePrefix,
+			authorsParentFolderPath,
+		)
+	})
+	.catch( (error) => {} )
+}
+
 export function createReferenceNote(
 	app: App,
 	defaultBibTex: string,
@@ -205,22 +232,13 @@ export function createReferenceNote(
 		targetFilepath: targetFilepath,
 		sourceBibTex: defaultBibTex,
 		onGenerate: (args: BibTexModalArgs) => {
-			createOrOpenNote(
-				this.app,
+			generateReference(
+				app,
 				args.targetFilepath,
-				undefined,
+				args.sourceBibTex,
+				fieldNamePrefix,
+				authorsParentFolderPath,
 			)
-			.then( (result) => {
-				generateSourceFrontmatter(
-					this.app,
-					args.targetFilepath,
-					args.sourceBibTex,
-					undefined,
-					fieldNamePrefix,
-					authorsParentFolderPath,
-				)
-			})
-			.catch( (error) => {} )
 		},
 		onCancel: () => {
 			// console.log('Cancel clicked');
@@ -364,7 +382,7 @@ async function createOrOpenNote(
     app: App,
     filePath: string,
     frontmatter: string = "",
-    mode: PaneType | undefined = undefined,
+    mode: PaneType | boolean = false,
 ): Promise<string> {
 
     const path = require('path');

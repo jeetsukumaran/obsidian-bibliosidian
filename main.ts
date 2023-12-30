@@ -48,7 +48,7 @@ export default class Bibliosidian extends Plugin {
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
 	}
 
-	createReferenceNoteFromBibTex() {
+	updateReferenceNoteFromBibTex() {
 		let defaultBibTex = ""
 		createReferenceNote(
 			this.app,
