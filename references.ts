@@ -103,6 +103,11 @@ export function generateSourceFrontmatter(
 		"author",
 		authorsParentFolderPath,
 	)
+    refProperties[bibToYamlLabelFn("editor")] = generateAuthorLinks(
+		bibEntry,
+		"editor",
+		authorsParentFolderPath,
+	)
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
     refProperties[bibToYamlLabelFn("title")] = normalizeFieldValue( bibEntry.getField("title") )
 
@@ -159,8 +164,8 @@ function generateAuthorLinks(
     if (!entry) {
         return results;
     }
-    const authorField = entry.getField(authorFieldName);
-    if (authorField && typeof authorField === 'object' && 'authors$' in authorField) {
+	if (authorFieldName === "author") {
+		const authorField = entry.getField(authorFieldName);
         results = (authorField as any).authors$.map((author: any) => {
             const {
             	displayName: authorDisplayName,
@@ -170,7 +175,7 @@ function generateAuthorLinks(
 
             return `[[${authorFilePath}|${authorDisplayName}]]`;
         });
-    }
+	}
     return results;
 }
 
