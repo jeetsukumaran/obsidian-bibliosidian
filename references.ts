@@ -240,6 +240,9 @@ function generateReference(
 	authorsParentFolderPath: string = "",
 	isOpenNote: boolean = false,
 ) {
+	if (!targetFilepath || targetFilepath.startsWith(".") || targetFilepath === ".md") {
+		return
+	}
 	createOrOpenNote(
 		this.app,
 		targetFilepath,
