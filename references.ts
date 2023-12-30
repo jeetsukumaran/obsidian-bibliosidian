@@ -164,7 +164,7 @@ export function createReferenceNote(
 	targetFilepath: string,
     citeKey?: string,
     fieldNamePrefix: string = "",
-	referenceSubdirectoryRoot: string = "references",
+	referenceSubdirectoryRoot: string = "",
 	isSubdirectorizeReferencesLexically: boolean = true,
     authorsParentFolderPath: string = "",
 ) {
@@ -181,8 +181,8 @@ export function createReferenceNote(
 				args.targetFilepath,
 				args.sourceBibTex,
 				undefined,
-				"sources/authors",
-				"source-",
+				authorsParentFolderPath,
+				fieldNamePrefix,
 			)
 		},
 		onCancel: () => {
@@ -219,13 +219,31 @@ class BibTexModal extends Modal {
 		if (!bibEntry) {
 			return ""
 		} else {
-			return `@${bibEntry._id.toLowerCase()}`
+			return _path.join(this.referenceSubdirectoryRoot, `@${bibEntry._id.toLowerCase()}`)
 		}
     }
 
     onOpen() {
         const { contentEl } = this;
         contentEl.createEl("h3", { text: "Reference data update" });
+
+        // Source BibTex section
+        contentEl.createEl("h4", { text: "Source BibTex" });
+        this.sourceBibTexTextarea = contentEl.createEl("textarea");
+        this.sourceBibTexTextarea.textContent = this.args.sourceBibTex;
+        this.sourceBibTexTextarea.style.width = "100%";
+        this.sourceBibTexTextarea.style.height = "16rem";
+
+        // Reset button for Source BibTex
+        const resetSourceButton = contentEl.createEl("button", { text: "Reset" });
+        resetSourceButton.onclick = () => {
+            this.sourceBibTexTextarea.value = this.args.sourceBibTex;
+        };
+
+        // Auto-update handler for Source BibTex
+        this.sourceBibTexTextarea.oninput = () => {
+            this.targetFilepathInput.value = this.computeTargetFilePath(this.sourceBibTexTextarea.value);
+        };
 
         // Target filepath section
         contentEl.createEl("h4", { text: "Target filepath" });
@@ -244,24 +262,6 @@ class BibTexModal extends Modal {
         // Auto button for Target filepath
         const autoTargetPathButton = contentEl.createEl("button", { text: "Auto" });
         autoTargetPathButton.onclick = () => {
-            this.targetFilepathInput.value = this.computeTargetFilePath(this.sourceBibTexTextarea.value);
-        };
-
-        // Source BibTex section
-        contentEl.createEl("h4", { text: "Source BibTex" });
-        this.sourceBibTexTextarea = contentEl.createEl("textarea");
-        this.sourceBibTexTextarea.textContent = this.args.sourceBibTex;
-        this.sourceBibTexTextarea.style.width = "100%";
-        this.sourceBibTexTextarea.style.height = "16rem";
-
-        // Reset button for Source BibTex
-        const resetSourceButton = contentEl.createEl("button", { text: "Reset" });
-        resetSourceButton.onclick = () => {
-            this.sourceBibTexTextarea.value = this.args.sourceBibTex;
-        };
-
-        // Auto-update handler for Source BibTex
-        this.sourceBibTexTextarea.oninput = () => {
             this.targetFilepathInput.value = this.computeTargetFilePath(this.sourceBibTexTextarea.value);
         };
 

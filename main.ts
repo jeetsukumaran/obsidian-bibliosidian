@@ -10,6 +10,8 @@ import {
 	Setting
 } from 'obsidian';
 
+import * as _path from "path";
+
 import {
 	createReferenceNote,
 } from "./references"
@@ -56,7 +58,9 @@ export default class Bibliosidian extends Plugin {
 			activeFile.path,
 			undefined,
 			this.settings.referenceSourcePropertiesPrefix,
-			"sources/authors",
+			_path.join("sources", "references"),
+			false,
+			_path.join("sources", "authors"),
 		)
 	}
 
