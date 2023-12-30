@@ -117,6 +117,7 @@ export default class Bibliosidian extends Plugin {
 						args.sourceBibTex,
 						undefined,
 						"sources/authors",
+						"source-",
 					)
 
 					// Authors

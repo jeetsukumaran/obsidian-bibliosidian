@@ -58,16 +58,46 @@ function composeAuthorData(author: Author): {
 
 export function generateSourceFrontmatter(
 	app: App,
-	targetFilepath: string,
+	targetFilePath: string,
     bibFileData: string,
     citeKey?: string,
     authorsParentFolderPath: string = "",
+    fieldNamePrefix:string = "",
 ) {
-	let fieldNamePrefix = "source-"
+	// let targetFile = app.vault.getAbstractFileByPath(targetFilePath)
+	// if (!targetFile) {
+	// 	return
+	// }
 	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${fieldNamePrefix}${bibStr}`
-	let bibFieldLabelMap: Record<string, string> = {
-		"title": "hello"
+
+	// let bibFieldMap: Record<string, string> = {
+	// 	"date"
+	// 	"title",
+	// 	"doi"
+	// 	"isbn"
+	// 	"publisher",
+	// 	"volume",
+	// 	"url",
+	// 	"issue"
+	// 	"page",
+	// 	"type",
+	// }
+
+	// Authors
+	let authorLinks = generateAuthorLinks(
+		bibFileData, // expecting single entry data
+		undefined, // no citekey: first entry
+		"sources/authors", // abstract away later; path to that author notes are stored
+	)
+	if (authorLinks) {
+		updateYAMLProperty(
+			app,
+			targetFilePath,
+			`${this.settings.referenceSourcePropertiesPrefix}authors`,
+			authorLinks,
+		)
 	}
+
 }
 
 export function generateAuthorLinks(
