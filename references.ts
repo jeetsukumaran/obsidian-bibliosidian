@@ -20,10 +20,9 @@ import {
 	FieldValue,
 } from "bibtex";
 
-
-// npm install yaml
-// import YAML from "yaml";
-const YAML = require('yaml')
+import {
+	updateFrontmatterYaml
+} from "./fileProperties"
 
 
 // import { parseBibFile } from "bibtex";
@@ -98,7 +97,7 @@ export function generateSourceFrontmatter(
 		"sources/authors", // abstract away later; path to that author notes are stored
 	)
 	if (authorLinks) {
-		replaceYAMLProperty(
+		updateFrontmatterYaml(
 			app,
 			targetFilePath,
 			authorsYamlLabel,
@@ -146,116 +145,4 @@ export function generateAuthorLinks(
     return results;
 }
 
-export async function updateYAMLProperty(
-	app: App,
-	filePath: string,
-	propertyName: string,
-	newValues: string[],
-) {
-    const file = app.vault.getAbstractFileByPath(filePath);
-    if (file instanceof TFile) {
-
-		// let frontmatter = app.metadataCache?.getFileCache(file)?.frontmatter
-		// console.log(app.metadataCache)
-		// if (frontmatter) {
-		// 	frontmatter["source-authors"] = "hello"
-		// }
-		// let frontMatter = this.metadataCache?.frontmatter
-		// console.log(frontmatter)
-
-        let content = await app.vault.read(file);
-		let updatedRows = newValues.map(value => `  - ${value}`)
-        let newYAML;
-        const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
-        const frontMatterMatch = content.match(frontmatterRegex);
-        if (frontMatterMatch) {
-            let frontmatter = frontMatterMatch[1];
-            let frontmatterLines: string[] = frontmatter.split("\n");
-            let updatedLines: string[] = []
-            let isUpdatedExisting = false
-            frontmatterLines.forEach( (line: string) => {
-				// let propRx = new RegExp(`^(\\s+)${propertyName}`);
-				let propRx = new RegExp(`^(\\s+)${propertyName}`);
-				// let propRx = new RegExp(`^(\\s+)${propertyName}\\s*:\\s*$`);
-				let propMatch = line.match(/source-authors:/)
-				if (propMatch) {
-					// rewrite field name in case it had inline data/values
-					// TODO: save these?
-					updatedLines.push(`${propertyName}:`)
-					// insert new rows here;
-					// previous entries will be appended after as loop proceeds
-					updatedLines.push(... updatedRows)
-					isUpdatedExisting = true
-				} else {
-					updatedLines.push(line)
-				}
-            })
-            if (!isUpdatedExisting) {
-            	updatedLines.push(`${propertyName}:`)
-            	updatedLines.push(... updatedRows)
-            }
-            newYAML = updatedLines.join("\n");
-            content = content.replace(frontmatterRegex, `---\n${newYAML}\n---`);
-        } else {
-            newYAML = `---\n${propertyName}:\n${updatedRows.join("\n")}\n---`;
-            content = newYAML + "\n" + content;
-        }
-
-        await app.vault.modify(file, content);
-    } else {
-        console.error("File not found");
-    }
-}
-
-export async function replaceYAMLProperty(
-	app: App,
-	filePath: string,
-	propertyName: string,
-	newValues: string | string[],
-) {
-    const file = app.vault.getAbstractFileByPath(filePath);
-    if (file instanceof TFile) {
-
-		// let frontmatter = app.metadataCache?.getFileCache(file)?.frontmatter
-		// console.log(app.metadataCache)
-		// if (frontmatter) {
-		// 	frontmatter["source-authors"] = "hello"
-		// }
-		// let frontMatter = this.metadataCache?.frontmatter
-		// console.log(frontmatter)
-
-        let content = await app.vault.read(file);
-        const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
-        const frontMatterMatch = content.match(frontmatterRegex);
-        if (frontMatterMatch) {
-            let frontmatter = frontMatterMatch[1];
-			let parsedFrontmatter;
-			try {
-				parsedFrontmatter = YAML.parse(frontmatter)
-			} catch (err) {
-				new Notice(`
-Failed to parse YAML frontmatter from file '${filePath}':
-${err}
-			`)
-				console.log(err)
-				return
-			}
-            console.log(parsedFrontmatter)
-            parsedFrontmatter[propertyName] = newValues
-            let newFrontmatter: string = YAML.stringify(parsedFrontmatter)
-            content = content.replace(frontmatterRegex, `---\n${newFrontmatter}\n---`);
-
-        } else {
-            let parsedFrontmatter = {
-				propertyName: newValues
-			}
-            let newFrontmatter: string = YAML.stringify(parsedFrontmatter)
-            content = content.replace(frontmatterRegex, `---\n${newFrontmatter}\n---`);
-        }
-
-        await app.vault.modify(file, content);
-    } else {
-        console.error("File not found");
-    }
-}
 

@@ -11,8 +11,6 @@ import {
 } from 'obsidian';
 
 import {
-	generateAuthorLinks,
-	updateYAMLProperty,
 	generateSourceFrontmatter,
 } from "./references"
 
