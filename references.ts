@@ -22,42 +22,6 @@ import {
 // import { parseBibFile } from "bibtex";
 import * as _path from "path";
 
-
-export function test1() {
-    const bibFile = parseBibFile(`
-@Book{gros2011,
-  author           = {Gros, Claudius},
-  date             = {2011},
-  title            = {Complex and Adaptive Dynamical Systems},
-  doi              = {10.1007/978-3-642-04706-0},
-  isbn             = {9783642047060},
-  publisher        = {Springer Berlin Heidelberg},
-  creationdate     = {2023-12-27T04:03:39},
-  modificationdate = {2023-12-27T04:03:39},
-}
-`); // your BibTeX string
-
-    const entry = bibFile.getEntry("gros2011");
-
-    if (entry) {
-        const fieldValue = normalizeFieldValue(entry.getField("title"))
-        console.log(fieldValue)
-
-        const authorField = entry.getField("author");
-        console.log(authorField)
-        if (authorField && typeof authorField === 'object' && 'authors$' in authorField) {
-            let result = (authorField as any).authors$.map((author: any, i: number) => {
-                return "Author: " +
-                    (author.firstNames
-                        .concat(author.vons)
-                        .concat(author.lastNames)
-                        .concat(author.jrs)).join(" ");
-            });
-            console.log(result);
-        }
-    }
-}
-
 interface Author {
     lastNames: string[],
     vons: string[],
@@ -91,6 +55,15 @@ function composeAuthorData(author: Author): {
         normalizedFileName: normalizedFileName,
     }
 }
+
+export function generateSourceFrontmatter(
+	app: App,
+    bibFileData: string,
+    citeKey?: string,
+    parentFolderPath: string = "",
+) {
+}
+
 
 export function generateAuthorLinks(
     bibFileData: string,

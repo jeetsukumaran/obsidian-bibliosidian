@@ -109,23 +109,25 @@ export default class Bibliosidian extends Plugin {
 				targetFilepath: activeFile.path,
 				sourceBibTex: defaultBibTex,
 				onGenerate: (args) => {
-					// console.log('Generate clicked', args);
-					let results = generateAuthorLinks(
+
+					// Authors
+					let authorLinks = generateAuthorLinks(
 						args.sourceBibTex,
 						undefined,
 						"sources/authors",
 					)
-					if (results && activeFile) {
+					if (authorLinks && activeFile) {
 						updateYAMLProperty(
 							this.app,
 							activeFile.path,
 							`${this.settings.referenceSourcePropertiesPrefix}authors`,
-							results,
+							authorLinks,
 						)
 					}
+
 				},
 				onCancel: () => {
-					console.log('Cancel clicked');
+					// console.log('Cancel clicked');
 				}
 			});
 			bibtexModal.open();
