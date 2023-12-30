@@ -96,6 +96,7 @@ export function generateSourceFrontmatter(
 		undefined, // no citekey: first entry
 		"sources/authors", // abstract away later; path to that author notes are stored
 	)
+	// console.log(authorLinks)
 	if (authorLinks) {
 		updateFrontmatterYaml(
 			app,

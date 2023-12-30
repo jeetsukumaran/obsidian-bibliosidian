@@ -19,6 +19,10 @@ import {
 const YAML = require('yaml')
 
 
+type FrontmatterData = {
+    [key: string]: any;
+};
+
 export async function updateFrontmatterYaml(
 	app: App,
 	filePath: string,
@@ -34,14 +38,16 @@ export async function updateFrontmatterYaml(
 		// }
 		// let frontMatter = this.metadataCache?.frontmatter
 
+
         let content = await app.vault.read(file);
+
+		let parsedFrontmatter: FrontmatterData = {};
         const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
         const frontMatterMatch = content.match(frontmatterRegex);
-		let parsedFrontmatter = {};
         if (frontMatterMatch) {
             let frontmatter = frontMatterMatch[1];
 			try {
-				parsedFrontmatter = YAML.parse(frontmatter)
+				parsedFrontmatter = { ... YAML.parse(frontmatter) }
 			} catch (err) {
 				new Notice(`
 Failed to parse YAML frontmatter from file '${filePath}':
@@ -51,8 +57,15 @@ ${err}
 				return
 			}
         }
-        let newFrontmatter: string = YAML.stringify(parsedFrontmatter)
-        content = content.replace(frontmatterRegex, `---\n${newFrontmatter}\n---`);
+
+		parsedFrontmatter[propertyName] = newValues
+        let newFrontmatterStr: string = YAML.stringify(parsedFrontmatter)
+
+        if (frontMatterMatch) {
+			content = content.replace(frontmatterRegex, `---\n${newFrontmatterStr}\n---`);
+		} else {
+			content = newFrontmatterStr + "\n" + content
+		}
         await app.vault.modify(file, content);
     } else {
         console.error("File not found");
