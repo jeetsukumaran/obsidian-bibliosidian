@@ -102,12 +102,24 @@ export function generateSourceFrontmatter(
 		bibEntry,
 		authorsParentFolderPath,
 	)
-    refProperties[bibToYamlLabelFn("year")] = normalizeFieldValue( bibEntry.getField("year") )
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
     refProperties[bibToYamlLabelFn("title")] = normalizeFieldValue( bibEntry.getField("title") )
 
-
-
+    refProperties[bibToYamlLabelFn("journal")] = normalizeFieldValue( bibEntry.getField("journal") )
+	refProperties[bibToYamlLabelFn("volume")] = normalizeFieldValue( bibEntry.getField("volume") )
+	refProperties[bibToYamlLabelFn("number")] = normalizeFieldValue( bibEntry.getField("number") )
+	refProperties[bibToYamlLabelFn("pages")] = normalizeFieldValue( bibEntry.getField("pages") )
+	refProperties[bibToYamlLabelFn("doi")] = normalizeFieldValue( bibEntry.getField("doi") )
+	refProperties[bibToYamlLabelFn("url")] = normalizeFieldValue( bibEntry.getField("url") )
+	refProperties[bibToYamlLabelFn("publisher")] = normalizeFieldValue( bibEntry.getField("publisher") )
+	refProperties[bibToYamlLabelFn("booktitle")] = normalizeFieldValue( bibEntry.getField("booktitle") )
+	refProperties[bibToYamlLabelFn("abstract")] = normalizeFieldValue( bibEntry.getField("abstract") )
+	refProperties[bibToYamlLabelFn("keywords")] = normalizeFieldValue( bibEntry.getField("keywords") )
+	refProperties[bibToYamlLabelFn("series")] = normalizeFieldValue( bibEntry.getField("series") )
+	refProperties[bibToYamlLabelFn("address")] = normalizeFieldValue( bibEntry.getField("address") )
+	refProperties[bibToYamlLabelFn("edition")] = normalizeFieldValue( bibEntry.getField("edition") )
+	refProperties[bibToYamlLabelFn("chapter")] = normalizeFieldValue( bibEntry.getField("chapter") )
+	refProperties[bibToYamlLabelFn("note")] = normalizeFieldValue( bibEntry.getField("note") )
 
     updateFileProperties(
     	this.app,
