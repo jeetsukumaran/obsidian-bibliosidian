@@ -267,6 +267,13 @@ class BibTexModal extends Modal {
         });
         this.targetFilepathInput.style.width = "100%"; // this needs to be css
 
+		// Add event listener for input changes
+		this.targetFilepathInput.addEventListener("input", () => {
+			if (this.targetFilepathInput.value.endsWith(".md")) {
+				this.targetFilepathInput.value = this.targetFilepathInput.value.slice(0, -3);
+			}
+		});
+
         // Reset button for Target filepath
         const resetTargetPathButton = contentEl.createEl("button", { text: "Reset" });
         resetTargetPathButton.onclick = () => {
@@ -287,7 +294,9 @@ class BibTexModal extends Modal {
         const generateButton = buttonContainer.createEl("button", { text: "Generate" });
         generateButton.onclick = () => {
             this.args.onGenerate({
-                targetFilepath: this.targetFilepathInput.value,
+				targetFilepath: this.targetFilepathInput.value.endsWith(".md")
+                    ? this.targetFilepathInput.value
+                    : this.targetFilepathInput.value + ".md",
                 sourceBibTex: this.sourceBibTexTextarea.value
             });
             this.close();
