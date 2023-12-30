@@ -164,9 +164,44 @@ function getBibEntry(
 		// let [[ck, value]] = Object.entries(bibFile.entries$)
 		entry = value
 	}
+	let bibtexStrParts = []
+	if (entry !== undefined) {
+		bibtexStrParts.push(`@${entry.type}{${entry._id}`)
+		let fieldNames = [
+			"author",
+			"date",
+			"title",
+			"journal",
+			"volume",
+			"number",
+			"pages",
+			"doi",
+			"url",
+			"publisher",
+			"booktitle",
+			"abstract",
+			"keywords",
+			"series",
+			"address",
+			"edition",
+			"chapter",
+			"note",
+			"institution",
+			"month",
+			"school",
+			"thesis",
+			"howpublished",
+		]
+		fieldNames.forEach( (fieldName) => {
+			let entryValue = entry?.getFieldAsString(fieldName)
+			if (entryValue !== undefined) {
+				bibtexStrParts.push(`  ${fieldName} = {${entryValue}}`)
+			}
+		})
+	}
 	return {
 		bibEntry: entry,
-		bibtexStr: bibFileData,
+		bibtexStr: bibtexStrParts.join("\n"),
 	}
 }
 
