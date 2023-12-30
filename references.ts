@@ -273,7 +273,13 @@ function computeTargetFilePath(
 	try {
 		({ bibEntry, bibtexStr } = getBibEntry(sourceBibTex))
 	} catch (error) {
+		// new Notice(`Reference data could not be resolved:\n${error}`)
+		console.log(error)
 	}
+	// if (!bibEntry) {
+	// 	new Notice("Reference data could not be resolved")
+	// 	return
+	// }
 	if (!bibEntry) {
 		return ""
 	} else {
