@@ -222,7 +222,11 @@ class BibTexModal extends Modal {
     computeTargetFilePath(sourceBibTex: string): string {
         // Implement logic to compute target file path based on source BibTex
         // Return the computed string
-		let bibEntry = getBibEntry(sourceBibTex)
+		let bibEntry: BibEntry | undefined;
+		try {
+			bibEntry = getBibEntry(sourceBibTex)
+		} catch (error) {
+		}
 		if (!bibEntry) {
 			return ""
 		} else {
