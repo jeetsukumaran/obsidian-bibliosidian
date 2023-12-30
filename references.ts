@@ -129,6 +129,11 @@ export function generateSourceFrontmatter(
 	refProperties[bibToYamlLabelFn("edition")] = normalizeFieldValue( bibEntry.getField("edition") )
 	refProperties[bibToYamlLabelFn("chapter")] = normalizeFieldValue( bibEntry.getField("chapter") )
 	refProperties[bibToYamlLabelFn("note")] = normalizeFieldValue( bibEntry.getField("note") )
+	refProperties[bibToYamlLabelFn("institution")] = normalizeFieldValue( bibEntry.getField("institution") )
+	refProperties[bibToYamlLabelFn("month")] = normalizeFieldValue( bibEntry.getField("month") )
+	refProperties[bibToYamlLabelFn("school")] = normalizeFieldValue( bibEntry.getField("school") )
+	refProperties[bibToYamlLabelFn("thesis")] = normalizeFieldValue( bibEntry.getField("thesis") )
+	refProperties[bibToYamlLabelFn("howpublished")] = normalizeFieldValue( bibEntry.getField("howpublished") )
 
     updateFileProperties(
     	this.app,
