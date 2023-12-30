@@ -69,6 +69,7 @@ export function generateSourceFrontmatter(
 	// 	return
 	// }
 	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${fieldNamePrefix}${bibStr}`
+	let authorsYamlLabel = bibToYamlLabelFn("author")
 
 	// let bibFieldMap: Record<string, string> = {
 	// 	"date"
@@ -93,7 +94,7 @@ export function generateSourceFrontmatter(
 		updateYAMLProperty(
 			app,
 			targetFilePath,
-			`${this.settings.referenceSourcePropertiesPrefix}authors`,
+			authorsYamlLabel,
 			authorLinks,
 		)
 	}
