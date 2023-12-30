@@ -14,6 +14,7 @@ import * as _path from "path";
 
 import {
 	createReferenceNote,
+	generateReferenceLibrary,
 } from "./references"
 
 
@@ -73,6 +74,15 @@ export default class Bibliosidian extends Plugin {
 	}
 
 	updateReferenceLibraryFromBibTex() {
+		let sourceBibTex = ""
+		generateReferenceLibrary(
+			this.app,
+			sourceBibTex,
+			this.settings.referenceSourcePropertiesPrefix,
+			_path.join("sources", "references"),
+			false,
+			_path.join("sources", "authors"),
+		)
 
 	}
 
@@ -88,7 +98,6 @@ export default class Bibliosidian extends Plugin {
 			false,
 			_path.join("sources", "authors"),
 		)
-
 	}
 
 	updateActiveFilePropertiesFromBibTex() {
