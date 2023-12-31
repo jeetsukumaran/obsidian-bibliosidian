@@ -92,8 +92,8 @@ Path to folder of reference notes.
 					await this.plugin.saveSettings();
 		}));
 		new Setting(containerEl)
-			.setName("Organize authors into subdirectories based on filing name")
-			.setDesc("Enable or disable lexical organization of references in subdirectories.")
+			.setName("Organize reference into subdirectories based on citekey")
+			.setDesc("Enable or disable lexical organization of references into subdirectories.")
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.isSubdirectorizeReferencesLexically)
 				.onChange(async (value) => {
@@ -115,8 +115,8 @@ Path to folder of author notes.
 					await this.plugin.saveSettings();
 		}));
 		new Setting(containerEl)
-			.setName("Organize into subdirectories based on citekey")
-			.setDesc("Enable or disable lexical organization of authors in subdirectories.")
+			.setName("Organize authors into subdirectories")
+			.setDesc("Enable or disable lexical organization of authors into subdirectories.")
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.isSubdirectorizeAuthorsLexically)
 				.onChange(async (value) => {
