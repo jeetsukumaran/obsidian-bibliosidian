@@ -571,6 +571,8 @@ export function createReferenceNote(
 	referenceSubdirectoryRoot: string = "",
 	isSubdirectorizeReferencesLexically: boolean = true,
     authorsParentFolderPath: string = "",
+	isCreateAuthorPages: boolean = true,
+	isOpenNote: boolean = true,
 ) {
 	const bibtexModal = new BibTexModal(
 		app,
@@ -587,7 +589,8 @@ export function createReferenceNote(
 				undefined,
 				fieldNamePrefix,
 				authorsParentFolderPath,
-				true,
+				isCreateAuthorPages,
+				isOpenNote,
 			)
 		},
 		onCancel: () => {
