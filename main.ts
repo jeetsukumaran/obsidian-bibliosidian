@@ -32,7 +32,7 @@ const DEFAULT_SETTINGS: BibliosidianSettings = {
 	referenceSourcePropertiesPrefix: "source-",
 	referenceSourceBibTex: "entry-bibtex",
 	referenceSubdirectoryRoot: _path.join("sources", "references"),
-	isSubdirectorizeReferencesLexically: false,
+	isSubdirectorizeReferencesLexically: true,
 	authorsParentFolderPath: _path.join("sources", "authors"),
 }
 
