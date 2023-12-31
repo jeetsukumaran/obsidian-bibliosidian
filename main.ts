@@ -43,14 +43,14 @@ export default class Bibliosidian extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.addRibbonIcon("book-up-2", "Create or update reference note from BibTeX data", () => {
-			this.updateReferenceNoteFromBibTex()
-		});
-
 
 		this.addRibbonIcon("library-square", "Update multiple references from a BibTeX bibliography database file", () => {
 			this.updateReferenceLibraryFromBibTex()
 		});
+		this.addRibbonIcon("book-up-2", "Create or update reference note from BibTeX data", () => {
+			this.updateReferenceNoteFromBibTex()
+		});
+
 
 		this.addCommand({
 			id: 'bibliosidian-update-reference-from-bibtex',
