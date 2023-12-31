@@ -25,6 +25,7 @@ interface BibliosidianSettings {
 	referenceSubdirectoryRoot: string
 	isSubdirectorizeReferencesLexically: boolean
 	authorsParentFolderPath: string
+	isCreateAuthorPages: boolean,
 }
 
 const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
@@ -34,6 +35,7 @@ const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	referenceSubdirectoryRoot: _path.join("sources", "references"),
 	isSubdirectorizeReferencesLexically: true,
 	authorsParentFolderPath: _path.join("sources", "authors"),
+	isCreateAuthorPages: true,
 }
 
 class BibliosidianSettingTab extends PluginSettingTab {
@@ -109,7 +111,16 @@ Path to folder of author notes.
 				.onChange(async (value) => {
 					this.plugin.settings.authorsParentFolderPath = value;
 					await this.plugin.saveSettings();
-				}));
+		}));
+		new Setting(containerEl)
+		.setName("Create author notes automatically")
+		.setDesc("Enable or disable creation or updating of linked author notes when creating or updating reference notes.")
+		.addToggle(toggle => toggle
+				   .setValue(this.plugin.settings.isCreateAuthorPages)
+				   .onChange(async (value) => {
+					   this.plugin.settings.isCreateAuthorPages = value;
+					   await this.plugin.saveSettings();
+				   }));
 
 	}
 }
@@ -160,6 +171,7 @@ export default class Bibliosidian extends Plugin {
 			this.settings.referenceSubdirectoryRoot,
 			this.settings.isSubdirectorizeReferencesLexically,
 			this.settings.authorsParentFolderPath,
+			this.settings.isCreateAuthorPages,
 		)
 
 	}
@@ -175,6 +187,8 @@ export default class Bibliosidian extends Plugin {
 			this.settings.referenceSubdirectoryRoot,
 			this.settings.isSubdirectorizeReferencesLexically,
 			this.settings.authorsParentFolderPath,
+			this.settings.isCreateAuthorPages,
+			true,
 		)
 	}
 
@@ -197,6 +211,8 @@ export default class Bibliosidian extends Plugin {
 			this.settings.referenceSubdirectoryRoot,
 			this.settings.isSubdirectorizeReferencesLexically,
 			this.settings.authorsParentFolderPath,
+			this.settings.isCreateAuthorPages,
+			true,
 		)
 	}
 

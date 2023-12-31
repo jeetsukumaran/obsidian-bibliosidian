@@ -542,6 +542,7 @@ export function generateReferenceLibrary(
 	referenceSubdirectoryRoot: string = "",
 	isSubdirectorizeReferencesLexically: boolean = true,
 	authorsParentFolderPath: string,
+	isCreateAuthorPages: boolean = true,
 ) {
 	const bibFile = parseBibFile(bibFileData);
 	Object.entries(bibFile.entries$).forEach(([key, value]: [string, BibEntry]) => {
