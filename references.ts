@@ -100,8 +100,7 @@ function generateSourceFrontmatter(
     }
     let refProperties: FilePropertyData  = {}
 	let citekey = bibEntry._id.toLowerCase()
-    refProperties[bibToYamlLabelFn("citekey")] = citekey
-    refProperties[bibToYamlLabelFn("author")] = generateAuthorLinks(
+    let authorLinks = generateAuthorLinks(
     	app,
 		bibEntry,
 		"author",
@@ -109,6 +108,12 @@ function generateSourceFrontmatter(
 		isCreateAuthorPages,
 	)
 
+	// This stuff is part of a related project: a multihierarchical indexing system
+	// Should/will be abstracted out as part of custom user field creation
+	refProperties["entry-parents"] = authorLinks.map( (link) => link.bareLink )
+
+    refProperties[bibToYamlLabelFn("citekey")] = citekey
+    refProperties[bibToYamlLabelFn("author")] = authorLinks.map( (link) => link.aliasedLink )
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
 
 	let titleParts = [
@@ -262,39 +267,46 @@ function getBibEntry(
 }
 
 function generateAuthorLinks(
-	app: App,
-	entry: BibEntry,
-	authorFieldName: string = "author",
+    app: App,
+    entry: BibEntry,
+    authorFieldName: string = "author",
     parentFolderPath: string = "",
-	isCreateAuthorPages: boolean = true,
-): string[] {
-    let results: string[] = [];
+    isCreateAuthorPages: boolean = true,
+): { bareLink: string; aliasedLink: string; }[] {
+    let results: { bareLink: string; aliasedLink: string; }[] = [];
     if (!entry) {
         return results;
     }
-	if (authorFieldName === "author") {
-		const authorField = entry.getField(authorFieldName);
+    if (authorFieldName === "author") {
+        const authorField = entry.getField(authorFieldName);
         results = (authorField as any).authors$.map((author: any) => {
             const {
-            	displayName: authorDisplayName,
-            	normalizedFileName: authorFileName,
-            } = composeAuthorData(author)
+                displayName: authorDisplayName,
+                normalizedFileName: authorFileName,
+            } = composeAuthorData(author);
             const authorFilePath = _path.join(parentFolderPath, authorFileName);
-			if (isCreateAuthorPages) {
-				let targetFilepath = authorFilePath
-				createOrOpenNote(
-					app,
-					targetFilepath,
-					"",
-					false,
-					false,
-				)
-			}
-            return `[[${authorFilePath}|${authorDisplayName}]]`;
+            if (isCreateAuthorPages) {
+                let targetFilepath = authorFilePath;
+                createOrOpenNote(
+                    app,
+                    targetFilepath,
+                    "",
+                    false,
+                    false,
+                );
+                let authorProperties: FilePropertyData = {};
+                authorProperties["title"] = authorDisplayName;
+                authorProperties["aliases"] = [authorDisplayName];
+            }
+            return {
+                bareLink: `[[${authorFilePath}]]`,
+                aliasedLink: `[[${authorFilePath}|${authorDisplayName}]]`,
+            };
         });
-	}
+    }
     return results;
 }
+
 
 function generateReference(
 	app: App,
