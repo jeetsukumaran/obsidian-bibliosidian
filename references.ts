@@ -99,7 +99,9 @@ function generateSourceFrontmatter(
     	new Notice("Reference data could not be resolved")
     	return
     }
+
     let refProperties: FilePropertyData  = {}
+
 	let citekey = bibEntry._id.toLowerCase()
     let authorLinks = generateAuthorLinks(
     	app,
@@ -109,9 +111,6 @@ function generateSourceFrontmatter(
 		isCreateAuthorPages,
 		isSubdirectorizeAuthorsLexically,
 	)
-	let sourceYear = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
-
-
 	let authorLastNames: string[] = []
 	const authorField = bibEntry.getField("author");
 	(authorField as any).authors$.forEach((author: any) => {
@@ -120,6 +119,15 @@ function generateSourceFrontmatter(
 			authorLastNames.push(lastName)
 		}
 	})
+
+	let titleParts = [
+		bibEntry.getFieldAsString("title"),
+		bibEntry.getFieldAsString("subtitle"),
+	].filter( (p) => p )
+	let compositeTitle = titleParts.join(": ")
+
+	let sourceYear = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
+
 	let inTextCitationYear = sourceYear
 	let inTextCitationAuthors: string;
 	if (authorLastNames.length == 1) {
@@ -134,16 +142,12 @@ function generateSourceFrontmatter(
 	// This stuff is part of a related project: a multihierarchical indexing system
 	// Should/will be abstracted out as part of custom user field creation
 	refProperties["entry-parents"] = authorLinks.map( (link) => link.bareLink )
+	refProperties["entry-title"] = `**${inTextCitation}** ${compositeTitle}`
 
     refProperties[bibToYamlLabelFn("citekey")] = citekey
     refProperties[bibToYamlLabelFn("author")] = authorLinks.map( (link) => link.aliasedLink )
     refProperties[bibToYamlLabelFn("date")] = sourceYear
 
-	let titleParts = [
-		bibEntry.getFieldAsString("title"),
-		bibEntry.getFieldAsString("subtitle"),
-	].filter( (p) => p )
-	let compositeTitle = titleParts.join(": ")
     refProperties[bibToYamlLabelFn("title")] = compositeTitle
 
 	refProperties[bibToYamlLabelFn("journal")] = bibEntry.getFieldAsString("journal")
@@ -174,8 +178,8 @@ function generateSourceFrontmatter(
 		.replace(/\n/g, " ")
 		.replace(/\s+/g, " ")
 	// let entryTitle = `(@${citekey}) ${compositeTitle}`
-	let entryTitle = `${inTextCitation} ${compositeTitle}`
-	refProperties["title"] = entryTitle
+
+	refProperties["title"] = `${inTextCitation} ${compositeTitle}`
 	if (abstract) {
 		refProperties["abstract"] = abstract
 	}
