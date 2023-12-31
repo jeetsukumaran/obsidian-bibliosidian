@@ -144,7 +144,6 @@ function generateSourceFrontmatter(
 	refProperties[bibToYamlLabelFn("publisher")] = bibEntry.getFieldAsString("publisher")
 	refProperties[bibToYamlLabelFn("booktitle")] = bibEntry.getFieldAsString("booktitle")
 	refProperties[bibToYamlLabelFn("editor")] = bibEntry.getFieldAsString("editor")
-	refProperties[bibToYamlLabelFn("abstract")] = bibEntry.getFieldAsString("abstract")
 	refProperties[bibToYamlLabelFn("keywords")] = bibEntry.getFieldAsString("keywords")
 	refProperties[bibToYamlLabelFn("series")] = bibEntry.getFieldAsString("series")
 	refProperties[bibToYamlLabelFn("address")] = bibEntry.getFieldAsString("address")
@@ -158,17 +157,15 @@ function generateSourceFrontmatter(
 	refProperties[bibToYamlLabelFn("howpublished")] = bibEntry.getFieldAsString("howpublished")
 	refProperties[bibToYamlLabelFn("bibtex")] = bibtexStr
 
-	/* Add un-namespaced fields */
-    if (true) {
-		let entryTitle = `(@${citekey}):${compositeTitle}`
-		refProperties["title"] = entryTitle
-		for (let fieldKey of ["abstract",]) {
-			let fieldValue = bibEntry.getFieldAsString(fieldKey)
-			if (fieldValue) {
-				refProperties[fieldKey] = fieldValue
-			}
-		}
 
+	let abstract = (bibEntry.getFieldAsString("abstract")?.toString() || "")
+		.trim()
+		.replace(/\n/g, " ")
+		.replace(/\s+/g, " ")
+	let entryTitle = `(@${citekey}):${compositeTitle}`
+	refProperties["title"] = entryTitle
+	if (abstract) {
+		refProperties["abstract"] = abstract
 	}
 
     updateFileProperties(
