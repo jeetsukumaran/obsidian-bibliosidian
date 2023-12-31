@@ -327,16 +327,19 @@ function generateAuthorLinks(
                     "",
                     false,
                     false,
-                );
-                let authorProperties: FilePropertyData = {};
-                authorProperties["title"] = authorDisplayName;
-                authorProperties["aliases"] = [authorDisplayName];
-				updateFileProperties(
-					app,
-					targetFilepath,
-					authorProperties,
-					true,
-				)
+                )
+                .then( (result) => {
+					let authorProperties: FilePropertyData = {};
+					authorProperties["title"] = authorDisplayName;
+					authorProperties["aliases"] = [authorDisplayName];
+					updateFileProperties(
+						app,
+						targetFilepath,
+						authorProperties,
+						true,
+					)
+				})
+				.catch( (error) => {} )
             }
             return {
                 bareLink: `[[${authorFilePath}]]`,
