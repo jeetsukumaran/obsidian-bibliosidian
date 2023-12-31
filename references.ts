@@ -321,6 +321,9 @@ function generateAuthorLinks(
             const authorFilePath = _path.join(authorParentFolderPath, authorFileName);
             if (isCreateAuthorPages) {
                 let targetFilepath = authorFilePath;
+                if (!targetFilepath.endsWith(".md")) {
+					targetFilepath = targetFilepath + ".md"
+                }
                 createOrOpenNote(
                     app,
                     targetFilepath,
@@ -338,6 +341,8 @@ function generateAuthorLinks(
 						authorProperties,
 						true,
 					)
+					.then( (result) => { } )
+					.catch( (error) => { } )
 				})
 				.catch( (error) => {} )
             }
@@ -588,7 +593,6 @@ async function createOrOpenNote(
         console.error('Error creating or opening the note:', error);
     }
     return notePath;
-    // console.log(notePath)
 }
 
 
@@ -656,7 +660,6 @@ export function createReferenceNote(
 			)
 		},
 		onCancel: () => {
-			// console.log('Cancel clicked');
 		}
 	});
 	bibtexModal.open();
