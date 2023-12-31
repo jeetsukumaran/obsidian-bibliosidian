@@ -105,12 +105,6 @@ function generateSourceFrontmatter(
 		authorsParentFolderPath,
 	)
 
-    // refProperties[bibToYamlLabelFn("editor")] = generateAuthorLinks(
-		// bibEntry,
-		// "editor",
-		// authorsParentFolderPath,
-	// )
-
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
 
 	let titleParts = [
@@ -183,6 +177,7 @@ function getBibEntry(
 		bibEntry: BibEntry | undefined,
 		bibtexStr: string,
 		fieldValueMap: { [key: string]: string },
+		indexTitle: string,
 }{
 	const bibFile = parseBibFile(bibFileData);
 	let entry: BibEntry | undefined;
@@ -239,10 +234,12 @@ function getBibEntry(
 		})
 		bibtexStrParts.push("}")
 	}
+	let indexTitle = ""
 	return {
 		bibEntry: entry,
 		bibtexStr: bibtexStrParts.join("\n"),
 		fieldValueMap: fieldValueMap,
+		indexTitle: indexTitle,
 	}
 }
 
@@ -269,8 +266,6 @@ function generateAuthorLinks(
 	}
     return results;
 }
-
-
 
 function generateReference(
 	app: App,
