@@ -53,6 +53,10 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
+		containerEl.createEl("h1", { text: "Bibliosidian" })
+
+		containerEl.createEl("h2", { text: "Namespaces" })
+
 		new Setting(containerEl)
 			.setName("Source bibliographic data property name prefix")
 			.setDesc(`
@@ -79,6 +83,9 @@ Name of text field on note that to track associated BibTeX data.
 					this.plugin.settings.referenceSourceBibTex = value;
 					await this.plugin.saveSettings();
 		}));
+
+		containerEl.createEl("h2", { text: "References" })
+
 		new Setting(containerEl)
 			.setName("References folder")
 			.setDesc(`
@@ -101,7 +108,17 @@ Path to folder of reference notes.
 					await this.plugin.saveSettings();
         }));
 
+		containerEl.createEl("h2", { text: "Authors" })
 
+		new Setting(containerEl)
+		.setName("Create author notes automatically")
+		.setDesc("Enable or disable creation or updating of linked author notes when creating or updating reference notes.")
+		.addToggle(toggle => toggle
+				   .setValue(this.plugin.settings.isCreateAuthorPages)
+				   .onChange(async (value) => {
+					   this.plugin.settings.isCreateAuthorPages = value;
+					   await this.plugin.saveSettings();
+		}));
 		new Setting(containerEl)
 			.setName("Authors folder")
 			.setDesc(`
@@ -123,15 +140,6 @@ Path to folder of author notes.
 					this.plugin.settings.isSubdirectorizeAuthorsLexically = value;
 					await this.plugin.saveSettings();
         }));
-		new Setting(containerEl)
-		.setName("Create author notes automatically")
-		.setDesc("Enable or disable creation or updating of linked author notes when creating or updating reference notes.")
-		.addToggle(toggle => toggle
-				   .setValue(this.plugin.settings.isCreateAuthorPages)
-				   .onChange(async (value) => {
-					   this.plugin.settings.isCreateAuthorPages = value;
-					   await this.plugin.saveSettings();
-		}));
 	}
 
 
