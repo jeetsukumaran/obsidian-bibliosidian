@@ -90,14 +90,15 @@ function generateSourceFrontmatter(
 
 	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${fieldNamePrefix}${bibStr}`
 
-    let { bibEntry, bibtexStr} = getBibEntry(bibFileData, citeKey)
+    let { bibEntry, bibtexStr, fieldValueMap } = getBibEntry(bibFileData, citeKey)
 
     if (!bibEntry) {
     	new Notice("Reference data could not be resolved")
     	return
     }
     let refProperties: FilePropertyData  = {}
-    refProperties[bibToYamlLabelFn("citekey")] = bibEntry._id.toLowerCase()
+	let citekey = bibEntry._id.toLowerCase()
+    refProperties[bibToYamlLabelFn("citekey")] = citekey
     refProperties[bibToYamlLabelFn("author")] = generateAuthorLinks(
 		bibEntry,
 		"author",
@@ -164,6 +165,8 @@ function generateSourceFrontmatter(
 	refProperties[bibToYamlLabelFn("bibtex")] = bibtexStr
 
 	/* Special fields */
+    if (true) {
+	}
 
     updateFileProperties(
     	this.app,
@@ -179,6 +182,7 @@ function getBibEntry(
 ): {
 		bibEntry: BibEntry | undefined,
 		bibtexStr: string,
+		fieldValueMap: { [key: string]: string },
 }{
 	const bibFile = parseBibFile(bibFileData);
 	let entry: BibEntry | undefined;
@@ -193,6 +197,7 @@ function getBibEntry(
 		// let [[ck, value]] = Object.entries(bibFile.entries$)
 		entry = value
 	}
+	let fieldValueMap:{ [key: string]: string } = {}
 	let bibtexStrParts = []
 	if (entry !== undefined) {
 		bibtexStrParts.push(`@${entry.type}{${entry._id},`)
@@ -225,8 +230,9 @@ function getBibEntry(
 			"thesis",
 			"howpublished",
 		]
-		fieldNames.forEach( (fieldName) => {
+		fieldNames.forEach( (fieldName: string) => {
 			let entryValue = entry?.getFieldAsString(fieldName)
+			fieldValueMap[fieldName] = (entryValue && entryValue.toString()) || ""
 			if (entryValue !== undefined) {
 				bibtexStrParts.push(`  ${fieldName} = {${entryValue}},`)
 			}
@@ -236,6 +242,7 @@ function getBibEntry(
 	return {
 		bibEntry: entry,
 		bibtexStr: bibtexStrParts.join("\n"),
+		fieldValueMap: fieldValueMap,
 	}
 }
 
@@ -304,8 +311,9 @@ function computeTargetFilePath(
 ): string {
 	let bibEntry;
 	let bibtexStr
+	let fieldValueMap
 	try {
-		({ bibEntry, bibtexStr } = getBibEntry(sourceBibTex))
+		({ bibEntry, bibtexStr, fieldValueMap  } = getBibEntry(sourceBibTex))
 	} catch (error) {
 		// new Notice(`Reference data could not be resolved:\n${error}`)
 		console.log(error)
