@@ -111,7 +111,15 @@ function generateSourceFrontmatter(
 	// )
 
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
-    refProperties[bibToYamlLabelFn("title")] = normalizeFieldValue( bibEntry.getField("title") )
+
+	let titleParts = [
+		normalizeFieldValue( bibEntry.getField("title") ),
+		normalizeFieldValue( bibEntry.getField("subtitle") ),
+	].filter( (p) => p )
+	let compositeTitle = titleParts.join(": ")
+
+	normalizeFieldValue( bibEntry.getField("title") )
+    refProperties[bibToYamlLabelFn("title")] = compositeTitle
 
     refProperties[bibToYamlLabelFn("journal")] = normalizeFieldValue( bibEntry.getField("journal") )
 	refProperties[bibToYamlLabelFn("volume")] = normalizeFieldValue( bibEntry.getField("volume") )
