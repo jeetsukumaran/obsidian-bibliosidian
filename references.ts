@@ -67,7 +67,7 @@ function composeAuthorData(author: Author): {
                               .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
                               .replace(/[^a-zA-Z0-9-]/g, "")
                               .replace(/\s+/g, "-")
-                             ) || "author-file";
+                             ) || "author";
 
     return {
         displayName: displayNameParts.join(", "),
@@ -82,6 +82,7 @@ function generateSourceFrontmatter(
     citeKey?: string,
     fieldNamePrefix:string = "",
     authorsParentFolderPath: string = "",
+	isSubdirectorizeAuthorsLexically: boolean = true,
     isCreateAuthorPages: boolean = true,
 ) {
 
@@ -106,6 +107,7 @@ function generateSourceFrontmatter(
 		"author",
 		authorsParentFolderPath,
 		isCreateAuthorPages,
+		isSubdirectorizeAuthorsLexically,
 	)
 	let sourceYear = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
 
@@ -294,6 +296,7 @@ function generateAuthorLinks(
     authorFieldName: string = "author",
     parentFolderPath: string = "",
     isCreateAuthorPages: boolean = true,
+	isSubdirectorizeAuthorsLexically: boolean = true,
 ): { bareLink: string; aliasedLink: string; }[] {
     let results: { bareLink: string; aliasedLink: string; }[] = [];
     if (!entry) {
@@ -311,6 +314,9 @@ function generateAuthorLinks(
                 displayName: authorDisplayName,
                 normalizedFileName: authorFileName,
             } = composeAuthorData(author);
+			if (isSubdirectorizeAuthorsLexically) {
+				parentFolderPath = _path.join(parentFolderPath, authorFileName[0])
+			}
             const authorFilePath = _path.join(parentFolderPath, authorFileName);
             if (isCreateAuthorPages) {
                 let targetFilepath = authorFilePath;
@@ -342,6 +348,7 @@ function generateReference(
 	citeKey?: string,
 	fieldNamePrefix: string = "",
 	authorsParentFolderPath: string = "",
+	isSubdirectorizeAuthorsLexically = true,
 	isCreateAuthorPages: boolean = true,
 	isOpenNote: boolean = false,
 ) {
@@ -363,6 +370,7 @@ function generateReference(
 			citeKey,
 			fieldNamePrefix,
 			authorsParentFolderPath,
+			isSubdirectorizeAuthorsLexically,
 			isCreateAuthorPages,
 		)
 	})
@@ -581,6 +589,7 @@ export function generateReferenceLibrary(
 	referenceSubdirectoryRoot: string = "",
 	isSubdirectorizeReferencesLexically: boolean = true,
 	authorsParentFolderPath: string,
+	isSubdirectorizeAuthorsLexically: boolean = true,
 	isCreateAuthorPages: boolean = true,
 ) {
 	const bibFile = parseBibFile(bibFileData);
@@ -597,6 +606,7 @@ export function generateReferenceLibrary(
 			key,
 			fieldNamePrefix,
 			authorsParentFolderPath,
+			isSubdirectorizeReferencesLexically,
 			false,
 		)
 	});
@@ -611,6 +621,7 @@ export function createReferenceNote(
 	referenceSubdirectoryRoot: string = "",
 	isSubdirectorizeReferencesLexically: boolean = true,
     authorsParentFolderPath: string = "",
+	isSubdirectorizeAuthorsLexically: boolean = true,
 	isCreateAuthorPages: boolean = true,
 	isOpenNote: boolean = true,
 ) {
@@ -629,6 +640,7 @@ export function createReferenceNote(
 				undefined,
 				fieldNamePrefix,
 				authorsParentFolderPath,
+				isSubdirectorizeAuthorsLexically,
 				isCreateAuthorPages,
 				isOpenNote,
 			)
