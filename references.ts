@@ -294,7 +294,7 @@ function generateAuthorLinks(
     app: App,
     entry: BibEntry,
     authorFieldName: string = "author",
-    parentFolderPath: string = "",
+    parentFolderPath: string = "" as const,
     isCreateAuthorPages: boolean = true,
 	isSubdirectorizeAuthorsLexically: boolean = true,
 ): { bareLink: string; aliasedLink: string; }[] {
@@ -314,10 +314,11 @@ function generateAuthorLinks(
                 displayName: authorDisplayName,
                 normalizedFileName: authorFileName,
             } = composeAuthorData(author);
+			let authorParentFolderPath = parentFolderPath
 			if (isSubdirectorizeAuthorsLexically) {
-				parentFolderPath = _path.join(parentFolderPath, authorFileName[0])
+				authorParentFolderPath = _path.join(parentFolderPath, authorFileName[0])
 			}
-            const authorFilePath = _path.join(parentFolderPath, authorFileName);
+            const authorFilePath = _path.join(authorParentFolderPath, authorFileName);
             if (isCreateAuthorPages) {
                 let targetFilepath = authorFilePath;
                 createOrOpenNote(
