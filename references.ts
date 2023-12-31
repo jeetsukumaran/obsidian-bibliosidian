@@ -162,7 +162,7 @@ function generateSourceFrontmatter(
 		.trim()
 		.replace(/\n/g, " ")
 		.replace(/\s+/g, " ")
-	let entryTitle = `(@${citekey}):${compositeTitle}`
+	let entryTitle = `(@${citekey}): ${compositeTitle}`
 	refProperties["title"] = entryTitle
 	if (abstract) {
 		refProperties["abstract"] = abstract
