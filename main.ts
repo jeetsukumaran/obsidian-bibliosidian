@@ -36,6 +36,84 @@ const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	authorsParentFolderPath: _path.join("sources", "authors"),
 }
 
+class BibliosidianSettingTab extends PluginSettingTab {
+	plugin: Bibliosidian;
+
+	constructor(app: App, plugin: Bibliosidian) {
+		super(app, plugin);
+		this.plugin = plugin;
+	}
+
+	display(): void {
+		const {containerEl} = this;
+
+		containerEl.empty();
+
+		new Setting(containerEl)
+			.setName("Source bibliographic data property name prefix")
+			.setDesc(`
+This will be prefixed to the normalized bibliographic (YAML frontmatter properties) data fields for reference bibliographic data.
+For example, if set to 'source-', the frontmatter YAML field will be 'source-authors' instead of just 'authors'.
+Better namespacing will come when Obsidian supports nested frontmatter YAML objects.
+			`)
+			.addText(text => text
+				.setPlaceholder("(e.g., 'source-')")
+				.setValue(this.plugin.settings.referenceSourcePropertiesPrefix)
+				.onChange(async (value) => {
+					this.plugin.settings.referenceSourcePropertiesPrefix = value;
+					await this.plugin.saveSettings();
+			}));
+		new Setting(containerEl)
+			.setName("Source BibTex property name")
+			.setDesc(`
+Name of text field on note that to track associated BibTeX data.
+			`)
+			.addText(text => text
+				.setPlaceholder("(YAML frontmatter property name, e.g. 'source-bibtex')")
+				.setValue(this.plugin.settings.referenceSourceBibTex)
+				.onChange(async (value) => {
+					this.plugin.settings.referenceSourceBibTex = value;
+					await this.plugin.saveSettings();
+			}));
+		new Setting(containerEl)
+			.setName("References folder")
+			.setDesc(`
+Path to folder of reference notes.
+			`)
+			.addText(text => text
+				.setPlaceholder("(E.g. 'sources/references')")
+				.setValue(this.plugin.settings.referenceSubdirectoryRoot)
+				.onChange(async (value) => {
+					this.plugin.settings.referenceSubdirectoryRoot = value;
+					await this.plugin.saveSettings();
+			}));
+		new Setting(containerEl)
+			.setName("Organize into subdirectories based on citekey")
+			.setDesc("Enable or disable lexical organization of references in subdirectories.")
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.isSubdirectorizeReferencesLexically)
+				.onChange(async (value) => {
+					this.plugin.settings.isSubdirectorizeReferencesLexically = value;
+					await this.plugin.saveSettings();
+            }));
+
+
+		new Setting(containerEl)
+			.setName("Authors folder")
+			.setDesc(`
+Path to folder of author notes.
+			`)
+			.addText(text => text
+				.setPlaceholder("(E.g. 'sources/authors')")
+				.setValue(this.plugin.settings.authorsParentFolderPath)
+				.onChange(async (value) => {
+					this.plugin.settings.authorsParentFolderPath = value;
+					await this.plugin.saveSettings();
+				}));
+
+	}
+}
+
 
 export default class Bibliosidian extends Plugin {
 	settings: BibliosidianSettings;
@@ -135,72 +213,3 @@ export default class Bibliosidian extends Plugin {
 	}
 }
 
-class BibliosidianSettingTab extends PluginSettingTab {
-	plugin: Bibliosidian;
-
-	constructor(app: App, plugin: Bibliosidian) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const {containerEl} = this;
-
-		containerEl.empty();
-
-		new Setting(containerEl)
-			.setName("Source bibliographic data property name prefix")
-			.setDesc(`
-This will be prefixed to the normalized bibliographic (YAML frontmatter properties) data fields for reference bibliographic data.
-For example, if set to 'source-', the frontmatter YAML field will be 'source-authors' instead of just 'authors'.
-Better namespacing will come when Obsidian supports nested frontmatter YAML objects.
-			`)
-			.addText(text => text
-				.setPlaceholder("(e.g., 'source-')")
-				.setValue(this.plugin.settings.referenceSourcePropertiesPrefix)
-				.onChange(async (value) => {
-					this.plugin.settings.referenceSourcePropertiesPrefix = value;
-					await this.plugin.saveSettings();
-				}));
-
-		new Setting(containerEl)
-			.setName("Source BibTex property name")
-			.setDesc(`
-Name of text field on note that to track associated BibTeX data.
-			`)
-			.addText(text => text
-				.setPlaceholder("(YAML frontmatter property name, e.g. 'source-bibtex')")
-				.setValue(this.plugin.settings.referenceSourceBibTex)
-				.onChange(async (value) => {
-					this.plugin.settings.referenceSourceBibTex = value;
-					await this.plugin.saveSettings();
-				}));
-
-		new Setting(containerEl)
-			.setName("References folder")
-			.setDesc(`
-Path to folder of reference notes.
-			`)
-			.addText(text => text
-				.setPlaceholder("(E.g. 'sources/references')")
-				.setValue(this.plugin.settings.referenceSubdirectoryRoot)
-				.onChange(async (value) => {
-					this.plugin.settings.referenceSubdirectoryRoot = value;
-					await this.plugin.saveSettings();
-				}));
-
-		new Setting(containerEl)
-			.setName("Authors folder")
-			.setDesc(`
-Path to folder of author notes.
-			`)
-			.addText(text => text
-				.setPlaceholder("(E.g. 'sources/authors')")
-				.setValue(this.plugin.settings.authorsParentFolderPath)
-				.onChange(async (value) => {
-					this.plugin.settings.authorsParentFolderPath = value;
-					await this.plugin.saveSettings();
-				}));
-
-	}
-}
