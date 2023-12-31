@@ -158,8 +158,17 @@ function generateSourceFrontmatter(
 	refProperties[bibToYamlLabelFn("howpublished")] = bibEntry.getFieldAsString("howpublished")
 	refProperties[bibToYamlLabelFn("bibtex")] = bibtexStr
 
-	/* Special fields */
+	/* Add un-namespaced fields */
     if (true) {
+		let entryTitle = `(@${citekey}):${compositeTitle}`
+		refProperties["title"] = entryTitle
+		for (let fieldKey of ["abstract",]) {
+			let fieldValue = bibEntry.getFieldAsString(fieldKey)
+			if (fieldValue) {
+				refProperties[fieldKey] = fieldValue
+			}
+		}
+
 	}
 
     updateFileProperties(
