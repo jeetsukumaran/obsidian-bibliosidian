@@ -79,9 +79,9 @@ export default class Bibliosidian extends Plugin {
 			this.app,
 			sourceBibTex,
 			this.settings.referenceSourcePropertiesPrefix,
-			_path.join("sources", "references"),
-			false,
-			_path.join("sources", "authors"),
+			this.settings.referenceSubdirectoryRoot,
+			this.settings.isSubdirectorizeReferencesLexically,
+			this.settings.authorsParentFolderPath,
 		)
 
 	}
@@ -94,9 +94,9 @@ export default class Bibliosidian extends Plugin {
 			"",
 			undefined,
 			this.settings.referenceSourcePropertiesPrefix,
-			_path.join("sources", "references"),
-			false,
-			_path.join("sources", "authors"),
+			this.settings.referenceSubdirectoryRoot,
+			this.settings.isSubdirectorizeReferencesLexically,
+			this.settings.authorsParentFolderPath,
 		)
 	}
 
