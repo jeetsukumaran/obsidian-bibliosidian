@@ -92,7 +92,7 @@ Path to folder of reference notes.
 					await this.plugin.saveSettings();
 		}));
 		new Setting(containerEl)
-			.setName("Organize into subdirectories based on citekey")
+			.setName("Organize authors into subdirectories based on filing name")
 			.setDesc("Enable or disable lexical organization of references in subdirectories.")
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.isSubdirectorizeReferencesLexically)
