@@ -221,13 +221,30 @@ function getBibEntry(
 		// })
 
 		// let entryFields: EntryFields = bibEntry.fields$?.forEach( [key: string]: value: FieldValue
-		let entryFields: EntryFields = entry.fields$
-		if (entry.fields$) {
+		let entryFields: EntryFields = entry.fields
+		if (entryFields) {
 			bibtexStrParts.push(`@${entry.type}{${entry._id},`)
-			Object.entries(entryFields).forEach(([fieldName, fieldValue]: [string, FieldValue]) => {
-				fieldValueMap[fieldName] = (fieldValue && fieldValue.toString()) || ""
-				bibtexStrParts.push(`  ${fieldName} = {${fieldValue}},`)
-			});
+
+			for (const key in entryFields) {
+				if (entryFields.hasOwnProperty(key)) {
+					const value: FieldValue = entryFields[key];
+					if (value) {
+						const valueStr = normalizeFieldValue(value)
+						let fieldName = key
+						let fieldValue = valueStr
+						fieldValueMap[fieldName] = (fieldValue && fieldValue.toString()) || ""
+						bibtexStrParts.push(`  ${fieldName} = {${fieldValue}},`)
+					}
+				}
+			}
+
+			// Object.entries(entryFields).forEach(([fieldName, fieldValue]: [string, FieldValue]) => {
+			// 	let fieldValueStr = fieldValue ? normalizeFieldValue(fieldValue)?.toString() : ""
+			// 	// fieldValueMap[fieldName] = (fieldValue && fieldValue.toString()) || ""
+			// 	fieldValueMap[fieldName] = (fieldValue && fieldValue.toString()) || ""
+			// 	bibtexStrParts.push(`  ${fieldName} = {${fieldValue}},`)
+			// });
+
 			bibtexStrParts.push("}")
 		}
 
@@ -310,9 +327,6 @@ function computeTargetFilePath(
 	} catch (error) {
 		// new Notice(`Reference data could not be resolved:\n${error}`)
 		console.log(error)
-		// console.log(bibEntry)
-		// console.log(bibtexStr)
-		// console.log(fieldValueMap)
 	}
 	// if (!bibEntry) {
 	// 	new Notice("Reference data could not be resolved")
