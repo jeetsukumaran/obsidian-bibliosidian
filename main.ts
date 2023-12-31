@@ -27,7 +27,7 @@ interface BibliosidianSettings {
 	authorsParentFolderPath: string
 }
 
-const DEFAULT_SETTINGS: BibliosidianSettings = {
+const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	mySetting: 'default',
 	referenceSourcePropertiesPrefix: "source-",
 	referenceSourceBibTex: "entry-bibtex",
