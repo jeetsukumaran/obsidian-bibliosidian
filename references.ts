@@ -107,6 +107,27 @@ function generateSourceFrontmatter(
 		authorsParentFolderPath,
 		isCreateAuthorPages,
 	)
+	let sourceYear = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
+
+
+	let authorLastNames: string[] = []
+	const authorField = bibEntry.getField("author");
+	(authorField as any).authors$.forEach((author: any) => {
+		let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
+		if (lastName) {
+			authorLastNames.push(lastName)
+		}
+	})
+	let inTextCitationYear = sourceYear
+	let inTextCitationAuthors: string;
+	if (authorLastNames.length == 1) {
+		inTextCitationAuthors = authorLastNames[0]
+	} else if (authorLastNames.length == 2) {
+		inTextCitationAuthors = `${authorLastNames[0]} and ${authorLastNames[1]}`
+	} else {
+		inTextCitationAuthors = `${authorLastNames[0]} et al.`
+	}
+	let inTextCitation: string = `(${inTextCitationAuthors} ${inTextCitationYear})`
 
 	// This stuff is part of a related project: a multihierarchical indexing system
 	// Should/will be abstracted out as part of custom user field creation
@@ -114,7 +135,7 @@ function generateSourceFrontmatter(
 
     refProperties[bibToYamlLabelFn("citekey")] = citekey
     refProperties[bibToYamlLabelFn("author")] = authorLinks.map( (link) => link.aliasedLink )
-    refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
+    refProperties[bibToYamlLabelFn("date")] = sourceYear
 
 	let titleParts = [
 		bibEntry.getFieldAsString("title"),
@@ -150,7 +171,8 @@ function generateSourceFrontmatter(
 		.trim()
 		.replace(/\n/g, " ")
 		.replace(/\s+/g, " ")
-	let entryTitle = `(@${citekey}) ${compositeTitle}`
+	// let entryTitle = `(@${citekey}) ${compositeTitle}`
+	let entryTitle = `${inTextCitation} ${compositeTitle}`
 	refProperties["title"] = entryTitle
 	if (abstract) {
 		refProperties["abstract"] = abstract
@@ -278,8 +300,13 @@ function generateAuthorLinks(
         return results;
     }
     if (authorFieldName === "author") {
+        let authorLastNames: string[] = []
         const authorField = entry.getField(authorFieldName);
         results = (authorField as any).authors$.map((author: any) => {
+			let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
+			if (lastName) {
+				authorLastNames.push(lastName)
+			}
             const {
                 displayName: authorDisplayName,
                 normalizedFileName: authorFileName,
