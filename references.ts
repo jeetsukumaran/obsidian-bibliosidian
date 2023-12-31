@@ -18,6 +18,7 @@ import {
 	parseBibFile,
 	normalizeFieldValue,
 	BibEntry,
+	EntryFields,
 	FieldValue,
 } from "bibtex";
 
@@ -114,27 +115,6 @@ function generateSourceFrontmatter(
 	let compositeTitle = titleParts.join(": ")
     refProperties[bibToYamlLabelFn("title")] = compositeTitle
 
-    // refProperties[bibToYamlLabelFn("journal")] = normalizeFieldValue( bibEntry.getField("journal") )
-	// refProperties[bibToYamlLabelFn("volume")] = normalizeFieldValue( bibEntry.getField("volume") )
-	// refProperties[bibToYamlLabelFn("number")] = normalizeFieldValue( bibEntry.getField("number") )
-	// refProperties[bibToYamlLabelFn("pages")] = normalizeFieldValue( bibEntry.getField("pages") )
-	// refProperties[bibToYamlLabelFn("doi")] = normalizeFieldValue( bibEntry.getField("doi") )
-	// refProperties[bibToYamlLabelFn("url")] = normalizeFieldValue( bibEntry.getField("url") )
-	// refProperties[bibToYamlLabelFn("publisher")] = normalizeFieldValue( bibEntry.getField("publisher") )
-	// refProperties[bibToYamlLabelFn("booktitle")] = normalizeFieldValue( bibEntry.getField("booktitle") )
-    // refProperties[bibToYamlLabelFn("editor")] = normalizeFieldValue( bibEntry.getField("editor") )
-	// refProperties[bibToYamlLabelFn("abstract")] = normalizeFieldValue( bibEntry.getField("abstract") )
-	// refProperties[bibToYamlLabelFn("keywords")] = normalizeFieldValue( bibEntry.getField("keywords") )
-	// refProperties[bibToYamlLabelFn("series")] = normalizeFieldValue( bibEntry.getField("series") )
-	// refProperties[bibToYamlLabelFn("address")] = normalizeFieldValue( bibEntry.getField("address") )
-	// refProperties[bibToYamlLabelFn("edition")] = normalizeFieldValue( bibEntry.getField("edition") )
-	// refProperties[bibToYamlLabelFn("chapter")] = normalizeFieldValue( bibEntry.getField("chapter") )
-	// refProperties[bibToYamlLabelFn("note")] = normalizeFieldValue( bibEntry.getField("note") )
-	// refProperties[bibToYamlLabelFn("institution")] = normalizeFieldValue( bibEntry.getField("institution") )
-	// refProperties[bibToYamlLabelFn("month")] = normalizeFieldValue( bibEntry.getField("month") )
-	// refProperties[bibToYamlLabelFn("school")] = normalizeFieldValue( bibEntry.getField("school") )
-	// refProperties[bibToYamlLabelFn("thesis")] = normalizeFieldValue( bibEntry.getField("thesis") )
-	// refProperties[bibToYamlLabelFn("howpublished")] = normalizeFieldValue( bibEntry.getField("howpublished") )
 	refProperties[bibToYamlLabelFn("journal")] = bibEntry.getFieldAsString("journal")
 	refProperties[bibToYamlLabelFn("volume")] = bibEntry.getFieldAsString("volume")
 	refProperties[bibToYamlLabelFn("number")] = bibEntry.getFieldAsString("number")
@@ -201,44 +181,56 @@ function getBibEntry(
 	let fieldValueMap:{ [key: string]: string } = {}
 	let bibtexStrParts = []
 	if (entry !== undefined) {
-		bibtexStrParts.push(`@${entry.type}{${entry._id},`)
-		let fieldNames = [
-			"author",
-			"date",
-			"title",
-			"subtitle",
-			"journal",
-			"volume",
-			"number",
-			"pages",
-			"pagetotal",
-			"doi",
-			"isbn",
-			"url",
-			"publisher",
-			"booktitle",
-			"abstract",
-			"keywords",
-			"series",
-			"address",
-			"location",
-			"edition",
-			"chapter",
-			"note",
-			"institution",
-			"month",
-			"school",
-			"thesis",
-			"howpublished",
-		]
-		fieldNames.forEach( (fieldName: string) => {
-			let entryValue = entry?.getFieldAsString(fieldName)
-			fieldValueMap[fieldName] = (entryValue && entryValue.toString()) || ""
-			if (entryValue !== undefined) {
-				bibtexStrParts.push(`  ${fieldName} = {${entryValue}},`)
-			}
-		})
-		bibtexStrParts.push("}")
+
+		// let fieldNames = [
+		// 	"author",
+		// 	"date",
+		// 	"year",
+		// 	"title",
+		// 	"subtitle",
+		// 	"journal",
+		// 	"volume",
+		// 	"number",
+		// 	"pages",
+		// 	"pagetotal",
+		// 	"doi",
+		// 	"isbn",
+		// 	"url",
+		// 	"publisher",
+		// 	"booktitle",
+		// 	"abstract",
+		// 	"keywords",
+		// 	"series",
+		// 	"address",
+		// 	"location",
+		// 	"edition",
+		// 	"chapter",
+		// 	"note",
+		// 	"institution",
+		// 	"month",
+		// 	"school",
+		// 	"thesis",
+		// 	"howpublished",
+		// ]
+		// fieldNames.forEach( (fieldName: string) => {
+		// 	let entryValue = entry?.getFieldAsString(fieldName)
+		// 	fieldValueMap[fieldName] = (entryValue && entryValue.toString()) || ""
+		// 	if (entryValue !== undefined) {
+		// 		bibtexStrParts.push(`  ${fieldName} = {${entryValue}},`)
+		// 	}
+		// })
+
+		// let entryFields: EntryFields = bibEntry.fields$?.forEach( [key: string]: value: FieldValue
+		let entryFields: EntryFields = entry.fields$
+		if (entry.fields$) {
+			bibtexStrParts.push(`@${entry.type}{${entry._id},`)
+			Object.entries(entryFields).forEach(([fieldName, fieldValue]: [string, FieldValue]) => {
+				fieldValueMap[fieldName] = (fieldValue && fieldValue.toString()) || ""
+				bibtexStrParts.push(`  ${fieldName} = {${fieldValue}},`)
+			});
+			bibtexStrParts.push("}")
+		}
+
 	}
 	let indexTitle = ""
 	return {
@@ -318,6 +310,9 @@ function computeTargetFilePath(
 	} catch (error) {
 		// new Notice(`Reference data could not be resolved:\n${error}`)
 		console.log(error)
+		// console.log(bibEntry)
+		// console.log(bibtexStr)
+		// console.log(fieldValueMap)
 	}
 	// if (!bibEntry) {
 	// 	new Notice("Reference data could not be resolved")
