@@ -82,6 +82,7 @@ function generateSourceFrontmatter(
     citeKey?: string,
     fieldNamePrefix:string = "",
     authorsParentFolderPath: string = "",
+    isCreateAuthorPages: boolean = true,
 ) {
 
 	// let targetFile = app.vault.getAbstractFileByPath(targetFilepath)
@@ -101,9 +102,11 @@ function generateSourceFrontmatter(
 	let citekey = bibEntry._id.toLowerCase()
     refProperties[bibToYamlLabelFn("citekey")] = citekey
     refProperties[bibToYamlLabelFn("author")] = generateAuthorLinks(
+    	app,
 		bibEntry,
 		"author",
 		authorsParentFolderPath,
+		isCreateAuthorPages,
 	)
 
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
@@ -259,9 +262,11 @@ function getBibEntry(
 }
 
 function generateAuthorLinks(
+	app: App,
 	entry: BibEntry,
 	authorFieldName: string = "author",
     parentFolderPath: string = "",
+	isCreateAuthorPages: boolean = true,
 ): string[] {
     let results: string[] = [];
     if (!entry) {
@@ -275,7 +280,16 @@ function generateAuthorLinks(
             	normalizedFileName: authorFileName,
             } = composeAuthorData(author)
             const authorFilePath = _path.join(parentFolderPath, authorFileName);
-
+			if (isCreateAuthorPages) {
+				let targetFilepath = authorFilePath
+				createOrOpenNote(
+					app,
+					targetFilepath,
+					"",
+					false,
+					false,
+				)
+			}
             return `[[${authorFilePath}|${authorDisplayName}]]`;
         });
 	}
@@ -289,6 +303,7 @@ function generateReference(
 	citeKey?: string,
 	fieldNamePrefix: string = "",
 	authorsParentFolderPath: string = "",
+	isCreateAuthorPages: boolean = true,
 	isOpenNote: boolean = false,
 ) {
 	if (!targetFilepath || targetFilepath.startsWith(".") || targetFilepath === ".md") {
@@ -309,6 +324,7 @@ function generateReference(
 			citeKey,
 			fieldNamePrefix,
 			authorsParentFolderPath,
+			isCreateAuthorPages,
 		)
 	})
 	.catch( (error) => {} )
@@ -515,7 +531,7 @@ async function createOrOpenNote(
         console.error('Error creating or opening the note:', error);
     }
     return notePath;
-    console.log(notePath)
+    // console.log(notePath)
 }
 
 
