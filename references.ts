@@ -141,8 +141,11 @@ function generateSourceFrontmatter(
 
 	// This stuff is part of a related project: a multihierarchical indexing system
 	// Should/will be abstracted out as part of custom user field creation
+	const updateDate = new Date();
+	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
 	refProperties["entry-parents"] = authorLinks.map( (link) => link.bareLink )
 	refProperties["entry-title"] = `**${inTextCitation}** ${compositeTitle}`
+	refProperties["entry-date-modified"] = updateDateStamp
 
     refProperties[bibToYamlLabelFn("citekey")] = citekey
     refProperties[bibToYamlLabelFn("author")] = authorLinks.map( (link) => link.aliasedLink )
