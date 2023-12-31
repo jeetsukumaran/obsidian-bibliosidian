@@ -297,12 +297,13 @@ function computeBibEntryTargetFilePath(
 	referenceSubdirectoryRoot: string = "",
 	isSubdirectorizeReferencesLexically: boolean = true,
 ): string {
-	let citekey = `@${bibEntry._id}`
+	let citekey = bibEntry._id
+	let citekeyMarkedUp = `@${citekey}`
 	let parentPath = referenceSubdirectoryRoot
 	if (isSubdirectorizeReferencesLexically) {
 		parentPath = _path.join(parentPath, replaceProblematicChars(citekey[0]))
 	}
-	return _path.join(parentPath, citekey + ".md")
+	return _path.join(parentPath, citekeyMarkedUp + ".md")
 }
 
 function replaceProblematicChars(input: string): string {
