@@ -113,36 +113,57 @@ function generateSourceFrontmatter(
     refProperties[bibToYamlLabelFn("date")] = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
 
 	let titleParts = [
-		normalizeFieldValue( bibEntry.getField("title") ),
-		normalizeFieldValue( bibEntry.getField("subtitle") ),
+		bibEntry.getFieldAsString("title"),
+		bibEntry.getFieldAsString("subtitle"),
 	].filter( (p) => p )
 	let compositeTitle = titleParts.join(": ")
-
-	normalizeFieldValue( bibEntry.getField("title") )
     refProperties[bibToYamlLabelFn("title")] = compositeTitle
 
-    refProperties[bibToYamlLabelFn("journal")] = normalizeFieldValue( bibEntry.getField("journal") )
-	refProperties[bibToYamlLabelFn("volume")] = normalizeFieldValue( bibEntry.getField("volume") )
-	refProperties[bibToYamlLabelFn("number")] = normalizeFieldValue( bibEntry.getField("number") )
-	refProperties[bibToYamlLabelFn("pages")] = normalizeFieldValue( bibEntry.getField("pages") )
-	refProperties[bibToYamlLabelFn("doi")] = normalizeFieldValue( bibEntry.getField("doi") )
-	refProperties[bibToYamlLabelFn("url")] = normalizeFieldValue( bibEntry.getField("url") )
-	refProperties[bibToYamlLabelFn("publisher")] = normalizeFieldValue( bibEntry.getField("publisher") )
-	refProperties[bibToYamlLabelFn("booktitle")] = normalizeFieldValue( bibEntry.getField("booktitle") )
-    refProperties[bibToYamlLabelFn("editor")] = normalizeFieldValue( bibEntry.getField("editor") )
-	refProperties[bibToYamlLabelFn("abstract")] = normalizeFieldValue( bibEntry.getField("abstract") )
-	refProperties[bibToYamlLabelFn("keywords")] = normalizeFieldValue( bibEntry.getField("keywords") )
-	refProperties[bibToYamlLabelFn("series")] = normalizeFieldValue( bibEntry.getField("series") )
-	refProperties[bibToYamlLabelFn("address")] = normalizeFieldValue( bibEntry.getField("address") )
-	refProperties[bibToYamlLabelFn("edition")] = normalizeFieldValue( bibEntry.getField("edition") )
-	refProperties[bibToYamlLabelFn("chapter")] = normalizeFieldValue( bibEntry.getField("chapter") )
-	refProperties[bibToYamlLabelFn("note")] = normalizeFieldValue( bibEntry.getField("note") )
-	refProperties[bibToYamlLabelFn("institution")] = normalizeFieldValue( bibEntry.getField("institution") )
-	refProperties[bibToYamlLabelFn("month")] = normalizeFieldValue( bibEntry.getField("month") )
-	refProperties[bibToYamlLabelFn("school")] = normalizeFieldValue( bibEntry.getField("school") )
-	refProperties[bibToYamlLabelFn("thesis")] = normalizeFieldValue( bibEntry.getField("thesis") )
-	refProperties[bibToYamlLabelFn("howpublished")] = normalizeFieldValue( bibEntry.getField("howpublished") )
+    // refProperties[bibToYamlLabelFn("journal")] = normalizeFieldValue( bibEntry.getField("journal") )
+	// refProperties[bibToYamlLabelFn("volume")] = normalizeFieldValue( bibEntry.getField("volume") )
+	// refProperties[bibToYamlLabelFn("number")] = normalizeFieldValue( bibEntry.getField("number") )
+	// refProperties[bibToYamlLabelFn("pages")] = normalizeFieldValue( bibEntry.getField("pages") )
+	// refProperties[bibToYamlLabelFn("doi")] = normalizeFieldValue( bibEntry.getField("doi") )
+	// refProperties[bibToYamlLabelFn("url")] = normalizeFieldValue( bibEntry.getField("url") )
+	// refProperties[bibToYamlLabelFn("publisher")] = normalizeFieldValue( bibEntry.getField("publisher") )
+	// refProperties[bibToYamlLabelFn("booktitle")] = normalizeFieldValue( bibEntry.getField("booktitle") )
+    // refProperties[bibToYamlLabelFn("editor")] = normalizeFieldValue( bibEntry.getField("editor") )
+	// refProperties[bibToYamlLabelFn("abstract")] = normalizeFieldValue( bibEntry.getField("abstract") )
+	// refProperties[bibToYamlLabelFn("keywords")] = normalizeFieldValue( bibEntry.getField("keywords") )
+	// refProperties[bibToYamlLabelFn("series")] = normalizeFieldValue( bibEntry.getField("series") )
+	// refProperties[bibToYamlLabelFn("address")] = normalizeFieldValue( bibEntry.getField("address") )
+	// refProperties[bibToYamlLabelFn("edition")] = normalizeFieldValue( bibEntry.getField("edition") )
+	// refProperties[bibToYamlLabelFn("chapter")] = normalizeFieldValue( bibEntry.getField("chapter") )
+	// refProperties[bibToYamlLabelFn("note")] = normalizeFieldValue( bibEntry.getField("note") )
+	// refProperties[bibToYamlLabelFn("institution")] = normalizeFieldValue( bibEntry.getField("institution") )
+	// refProperties[bibToYamlLabelFn("month")] = normalizeFieldValue( bibEntry.getField("month") )
+	// refProperties[bibToYamlLabelFn("school")] = normalizeFieldValue( bibEntry.getField("school") )
+	// refProperties[bibToYamlLabelFn("thesis")] = normalizeFieldValue( bibEntry.getField("thesis") )
+	// refProperties[bibToYamlLabelFn("howpublished")] = normalizeFieldValue( bibEntry.getField("howpublished") )
+	refProperties[bibToYamlLabelFn("journal")] = bibEntry.getFieldAsString("journal")
+	refProperties[bibToYamlLabelFn("volume")] = bibEntry.getFieldAsString("volume")
+	refProperties[bibToYamlLabelFn("number")] = bibEntry.getFieldAsString("number")
+	refProperties[bibToYamlLabelFn("pages")] = bibEntry.getFieldAsString("pages")
+	refProperties[bibToYamlLabelFn("doi")] = bibEntry.getFieldAsString("doi")
+	refProperties[bibToYamlLabelFn("url")] = bibEntry.getFieldAsString("url")
+	refProperties[bibToYamlLabelFn("publisher")] = bibEntry.getFieldAsString("publisher")
+	refProperties[bibToYamlLabelFn("booktitle")] = bibEntry.getFieldAsString("booktitle")
+	refProperties[bibToYamlLabelFn("editor")] = bibEntry.getFieldAsString("editor")
+	refProperties[bibToYamlLabelFn("abstract")] = bibEntry.getFieldAsString("abstract")
+	refProperties[bibToYamlLabelFn("keywords")] = bibEntry.getFieldAsString("keywords")
+	refProperties[bibToYamlLabelFn("series")] = bibEntry.getFieldAsString("series")
+	refProperties[bibToYamlLabelFn("address")] = bibEntry.getFieldAsString("address")
+	refProperties[bibToYamlLabelFn("edition")] = bibEntry.getFieldAsString("edition")
+	refProperties[bibToYamlLabelFn("chapter")] = bibEntry.getFieldAsString("chapter")
+	refProperties[bibToYamlLabelFn("note")] = bibEntry.getFieldAsString("note")
+	refProperties[bibToYamlLabelFn("institution")] = bibEntry.getFieldAsString("institution")
+	refProperties[bibToYamlLabelFn("month")] = bibEntry.getFieldAsString("month")
+	refProperties[bibToYamlLabelFn("school")] = bibEntry.getFieldAsString("school")
+	refProperties[bibToYamlLabelFn("thesis")] = bibEntry.getFieldAsString("thesis")
+	refProperties[bibToYamlLabelFn("howpublished")] = bibEntry.getFieldAsString("howpublished")
 	refProperties[bibToYamlLabelFn("bibtex")] = bibtexStr
+
+	/* Special fields */
 
     updateFileProperties(
     	this.app,
