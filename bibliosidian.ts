@@ -56,6 +56,7 @@ interface BibTexModalArgs {
     targetFilepath: string;
     onGenerate: (args: { targetFilepath: string, sourceBibTex: string }) => void;
     onCancel: () => void;
+    // isOpenNote: boolean;
 }
 
 interface Author {
@@ -96,14 +97,13 @@ function composeAuthorData(author: Author): {
 function generateSourceFrontmatter(
 	app: App,
 	settings: BibliosidianSettings,
-	targetFilepath: string,
-    bibFileData: string,
+	args: BibTexModalArgs,
     citeKey?: string,
 ) {
 
 	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${settings.referenceSourcePropertiesPrefix}${bibStr}`
 
-    let { bibEntry, bibtexStr, fieldValueMap } = getBibEntry(bibFileData, citeKey)
+    let { bibEntry, bibtexStr, fieldValueMap } = getBibEntry(args.sourceBibTex, citeKey)
 
     if (!bibEntry) {
     	new Notice("Reference data could not be resolved")
@@ -149,7 +149,7 @@ function generateSourceFrontmatter(
 
 	// This stuff is part of a related project: a multihierarchical indexing system
 	// Should/will be abstracted out as part of custom user field creation
-	let fileProperties = new FileProperties(this.app, targetFilepath)
+	let fileProperties = new FileProperties(this.app, args.targetFilepath)
 	const updateDate = new Date();
 	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
 
@@ -217,7 +217,7 @@ function generateSourceFrontmatter(
 
     updateFileProperties(
     	this.app,
-    	targetFilepath,
+    	args.targetFilepath,
     	refProperties,
     	true,
     )
@@ -365,7 +365,6 @@ function generateAuthorLinks(
                 createOrOpenNote(
                     app,
                     targetFilepath,
-                    "",
                     false,
                     false,
                 )
@@ -409,18 +408,16 @@ function generateAuthorLinks(
 function generateReference(
 	app: App,
 	settings: BibliosidianSettings,
-	targetFilepath: string,
-	sourceBibTex: string,
+	args: BibTexModalArgs,
 	citeKey?: string,
 	isOpenNote: boolean = false,
 ) {
-	if (!targetFilepath || targetFilepath.startsWith(".") || targetFilepath === ".md") {
+	if (!args.targetFilepath || args.targetFilepath.startsWith(".") || args.targetFilepath === ".md") {
 		return
 	}
 	createOrOpenNote(
 		this.app,
-		targetFilepath,
-		"",
+		args.targetFilepath,
 		isOpenNote,
 		false,
 	)
@@ -428,8 +425,7 @@ function generateReference(
 		generateSourceFrontmatter(
 			app,
 			settings,
-			targetFilepath,
-			sourceBibTex,
+			args,
 			citeKey,
 		)
 	})
@@ -480,7 +476,7 @@ class BibTexModal extends Modal {
 		valuePlaceholder: string = "",
 	) {
 		let parsedInputSetting = new Setting(containerEl)
-			.setName("Source definition (BibTeX)")
+			.setName("Source definition (BibTex)")
 			// .setDesc(initialDescription)
 		parsedInputSetting.addTextArea(text => {
 			this.parsedSourceTextAreaComponent = text
@@ -599,10 +595,11 @@ class BibTexModal extends Modal {
 			this.args.targetFilepath,
 		)
 
+		// contentEl.createEl("h2", { text: "Update" })
 		let inputSetting = new Setting(contentEl)
 		inputSetting.addButton( (button: ButtonComponent) => {
 			button
-			.setButtonText("Generate")
+			.setButtonText("Update")
 			.onClick( () => {
 				console.log("go")
 				this.args.onGenerate({
@@ -713,7 +710,6 @@ class BibTexModal extends Modal {
 async function createOrOpenNote(
     app: App,
     filePath: string,
-    frontmatter: string = "",
     isOpenNote: boolean = true,
     mode: PaneType | boolean = false,
 ): Promise<string> {
@@ -738,7 +734,7 @@ async function createOrOpenNote(
 
         if (!noteExists) {
             // If the note does not exist, create it
-            await app.vault.create(notePath, frontmatter);
+            await app.vault.create(notePath, "");
         }
 
 		if (isOpenNote) {
@@ -799,10 +795,8 @@ export function createReferenceNote(
 			generateReference(
 				app,
 				settings,
-				args.targetFilepath,
-				args.sourceBibTex,
+				args,
 				undefined,
-				isOpenNote,
 			)
 		},
 		onCancel: () => {
