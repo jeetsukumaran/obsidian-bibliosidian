@@ -517,7 +517,7 @@ class BibTexModal extends Modal {
 		valuePlaceholder: string = "",
 	) {
 		let parsedInputSetting = new Setting(containerEl)
-			// .setName(displayName)
+			.setName("Source definition (BibTeX)")
 			// .setDesc(initialDescription)
 		let textAreaComponent: TextAreaComponent
 		parsedInputSetting.addTextArea(text => {
@@ -575,6 +575,7 @@ class BibTexModal extends Modal {
 		initialValue: string = "",
 	) {
 		let inputSetting = new Setting(containerEl)
+			.setName("Path to reference note")
 		let mainInputComponent: TextComponent
 		inputSetting.addText(text => {
 			mainInputComponent = text
@@ -612,7 +613,7 @@ class BibTexModal extends Modal {
 		contentEl.createEl("h2", { text: "Reference" })
 		this.renderReferenceLocationInputTextArea(
 			contentEl,
-			this.args.sourceBibTex,
+			this.args.targetFilepath,
 		)
 
     }
