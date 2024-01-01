@@ -524,14 +524,15 @@ class BibTexModal extends Modal {
 		let textAreaComponent: TextAreaComponent
 		parsedInputSetting.addTextArea(text => {
 			textAreaComponent = text
-			text.setPlaceholder(valuePlaceholder)
+			textAreaComponent
+				.setPlaceholder(valuePlaceholder)
 				.setValue(initialValue);
 			if (inputHeight) {
-				text.inputEl.style.height = inputHeight
+				textAreaComponent.inputEl.style.height = inputHeight
 			}
-			text.inputEl.addEventListener("blur", async () => {
+			let parseUpdatedValue = () => {
 				try {
-					let inputValue: string = text.getValue();
+					let inputValue: string = textAreaComponent.getValue();
 					if (inputValue) {
 						let result = getBibEntry(inputValue)
 						this._parsedBibEntry = result.bibEntry
@@ -548,10 +549,21 @@ class BibTexModal extends Modal {
 				} catch (error) {
 					parsedInputSetting.setDesc("Parse error: " + error.message);
 				}
+			}
+			parseUpdatedValue()
+			textAreaComponent.inputEl.addEventListener("blur", async () => {
+				parseUpdatedValue()
 			});
 		});
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
 		let panelSetting = new Setting(toolPanel)
+		panelSetting.addButton( (button: ButtonComponent) => {
+			button
+			.setButtonText("Reset")
+			.onClick( () => {
+				textAreaComponent.setValue(initialValue)
+			});
+		});
 		panelSetting.addButton( (button: ButtonComponent) => {
 			button
 			.setButtonText("Reset")
