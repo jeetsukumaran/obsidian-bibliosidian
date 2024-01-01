@@ -79,3 +79,39 @@ ${err}`
         console.error("File not found");
     }
 }
+
+export function createFilePropertyDataTable(containerEl: HTMLElement, filePropertyData: FilePropertyData): HTMLTableElement {
+    // Create the table element
+    const table = document.createElement('table');
+    table.style.width = '100%'; // Set table width or other styles as needed
+    table.setAttribute('border', '1');
+
+    // Create the header row
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    const headerCell1 = headerRow.insertCell();
+    headerCell1.textContent = 'Property';
+    const headerCell2 = headerRow.insertCell();
+    headerCell2.textContent = 'Value';
+
+    // Create the body of the table
+    const tbody = table.createTBody();
+
+    // Iterate over filePropertyData and create rows
+    for (const key in filePropertyData) {
+        if (filePropertyData.hasOwnProperty(key)) {
+            const row = tbody.insertRow();
+            const cell1 = row.insertCell();
+            cell1.textContent = key;
+            const cell2 = row.insertCell();
+            cell2.textContent = filePropertyData[key];
+        }
+    }
+
+    // Append the table to the container element
+    containerEl.appendChild(table);
+
+    // Return the table element
+    return table;
+}
+

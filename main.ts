@@ -21,6 +21,7 @@ import {
 	FilePropertyData,
 	parseYaml,
 	stringifyYaml,
+	createFilePropertyDataTable,
 } from "./fileProperties"
 
 
@@ -147,7 +148,12 @@ class BibliosidianSettingTab extends PluginSettingTab {
 			text.inputEl.addEventListener("blur", async () => {
 				try {
 					let refProperties: FilePropertyData = parseYaml(text.getValue());
-					refPropertiesSetting.setDesc("YAML parsed successfully. Recognized fields: " + Object.keys(refProperties).join(", "));
+
+					// refPropertiesSetting.setDesc("YAML parsed successfully. Recognized fields: " + Object.keys(refProperties).join(", "));
+					// refPropertiesSetting.setDesc(`YAML parsed successfully: ${refProperties}`)
+
+					createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
+
 					this.plugin.settings.referenceAdditionalMetadata = refProperties;
 					await this.plugin.saveSettings();
 				} catch (error) {
