@@ -112,7 +112,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Additional Properties")
 			.setDesc("Other metadata properties to be update (YAML).")
-			.addText(text => text
+			.addTextArea(text => text
 				.setPlaceholder("(E.g. 'type: literature/reference")
 				.setValue(currentRefPropertiesString)
 				.onChange(async (value) => {
