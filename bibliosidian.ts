@@ -116,6 +116,7 @@ function generateSourceFrontmatter(
     let authorLinks = generateAuthorLinks(
     	app,
 		settings,
+		args,
 		bibEntry,
 		"author",
 	)
@@ -329,6 +330,7 @@ function getBibEntry(
 function generateAuthorLinks(
     app: App,
 	settings: BibliosidianSettings,
+	args: BibTexModalArgs,
     entry: BibEntry,
     authorFieldName: string = "author",
 ): { bareLink: string; aliasedLink: string; }[] {
