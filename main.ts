@@ -113,7 +113,8 @@ class BibliosidianSettingTab extends PluginSettingTab {
 				.setPlaceholder("(E.g. 'type: literature/reference")
 				.setValue(this.plugin.settings.referenceSubdirectoryRoot)
 				.onChange(async (value) => {
-					this.plugin.settings.referenceSubdirectoryRoot = value;
+					let refProperties: FilePropertyData  = {}
+					this.plugin.settings.additionalMetadata = refProperties;
 					await this.plugin.saveSettings();
 		}));
 
