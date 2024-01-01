@@ -111,54 +111,14 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
         }));
 
-		let currentRefPropertiesSetting = this.plugin.settings.referenceAdditionalMetadata
-		let currentRefPropertiesData: FilePropertyData = {};
-		if (currentRefPropertiesSetting) {
-			currentRefPropertiesData = {  ... currentRefPropertiesData, ... currentRefPropertiesSetting }
-		}
-		let currentRefPropertiesString: string  = stringifyYaml(currentRefPropertiesData)
-
-		// new Setting(containerEl)
-		// 	.setName("Additional Properties")
-		// 	.setDesc("Other metadata properties to be update (YAML).")
-		// 	.addTextArea(text => text
-		// 		.setPlaceholder("(E.g. 'type: literature/reference")
-		// 		.setValue(currentRefPropertiesString)
-		// 		.onChange(async (value) => {
-		// 			let yamlStr = value
-		// 			try {
-		// 				let refProperties: FilePropertyData = parseYaml(value)
-		// 			} catch(error) {
-		// 			}
-		// 			console.log(yamlStr)
-		// 			console.log(refProperties)
-		// 			this.plugin.settings.referenceAdditionalMetadata = refProperties;
-		// 			await this.plugin.saveSettings();
-		// }));
 
 
-		let refPropertiesSetting = new Setting(containerEl)
-		.setName("Additional Properties (YAML)")
-		.setDesc("Other metadata properties to be updated specified in YAML.")
-		.addTextArea(text => {
-			text.setPlaceholder("(E.g., 'type: literature/reference')")
-			.setValue(currentRefPropertiesString);
-			text.inputEl.style.height = "8rem"
-			text.inputEl.addEventListener("blur", async () => {
-				try {
-					let refProperties: FilePropertyData = parseYaml(text.getValue());
-					// refPropertiesSetting.setDesc("YAML parsed successfully. Recognized fields: " + Object.keys(refProperties).join(", "));
-					// refPropertiesSetting.setDesc(`YAML parsed successfully: ${refProperties}`)
-					refPropertiesSetting.descEl.empty()
-					createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
-					// this.plugin.settings.referenceAdditionalMetadata = stringifyYaml(refProperties);
-					this.plugin.settings.referenceAdditionalMetadata = refProperties;
-					await this.plugin.saveSettings();
-				} catch (error) {
-					refPropertiesSetting.setDesc("YAML Parse Error: " + error.message);
-				}
-			});
-		});
+		this.manageAdditionalPropertiesSettings(
+			containerEl,
+			"referenceAdditionalMetadata",
+		)
+
+
 
 		containerEl.createEl("h2", { text: "Authors" })
 
@@ -194,8 +154,42 @@ class BibliosidianSettingTab extends PluginSettingTab {
 	}
 
 
-}
+	manageAdditionalPropertiesSettings(
+		containerEl: HTMLElement,
+		settingsPropertyName: "referenceAdditionalMetadata" | "authorsAdditionalMetadata",
+		settingsPropertyDisplayName: string = "Additional properties (YAML)",
+		settingsPropertyParameterInitialDescription: string = "Other metadata properties to be updated specified in YAML.",
+		settingsPropertyParameterPlaceholder: string = "(E.g., 'type: source/reference)",
+	) {
+			let cachedValue: FilePropertyData = this.plugin.settings[settingsPropertyName] as FilePropertyData
+			let currentAdditionalPropertiesString: string = cachedValue ? stringifyYaml(cachedValue) : ""
+			let refPropertiesSetting = new Setting(containerEl)
+			.setName(settingsPropertyDisplayName)
+			.setDesc(settingsPropertyParameterInitialDescription)
+			.addTextArea(text => {
+				text.setPlaceholder(settingsPropertyParameterPlaceholder)
+				.setValue(currentAdditionalPropertiesString);
+				text.inputEl.style.height = "8rem"
+				text.inputEl.addEventListener("blur", async () => {
+					try {
+						let refProperties: FilePropertyData = parseYaml(text.getValue());
+						// refPropertiesSetting.setDesc("YAML parsed successfully. Recognized fields: " + Object.keys(refProperties).join(", "));
+						// refPropertiesSetting.setDesc(`YAML parsed successfully: ${refProperties}`)
+						refPropertiesSetting.descEl.empty()
+						createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
+						// this.plugin.settings.referenceAdditionalMetadata = stringifyYaml(refProperties);
+						// this.plugin.settings[settingsPropertyName] = refProperties;
+						this.plugin.settings[settingsPropertyName] = refProperties
+						await this.plugin.saveSettings();
+					} catch (error) {
+						refPropertiesSetting.setDesc("YAML Parse Error: " + error.message);
+					}
+				});
+			});
+	}
 
+
+}
 
 export default class Bibliosidian extends Plugin {
 	settings: BibliosidianSettings;
