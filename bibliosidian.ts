@@ -10,6 +10,8 @@ import {
 	// Plugin,
 	// PluginSettingTab,
 	Setting,
+	ButtonComponent,
+	TextAreaComponent,
 	// WorkspaceLeaf,
 	// setIcon,
 } from 'obsidian';
@@ -517,9 +519,11 @@ class BibTexModal extends Modal {
 		inputHeight: string | undefined,
 	) {
 		let parsedInputSetting = new Setting(containerEl)
-		.setName(displayName)
-		.setDesc(initialDescription)
-		.addTextArea(text => {
+			.setName(displayName)
+			.setDesc(initialDescription)
+		let textAreaComponent: TextAreaComponent
+		parsedInputSetting.addTextArea(text => {
+			textAreaComponent = text
 			text.setPlaceholder(valuePlaceholder)
 				.setValue(initialValue);
 			if (inputHeight) {
@@ -544,6 +548,13 @@ class BibTexModal extends Modal {
 				} catch (error) {
 					parsedInputSetting.setDesc("Parse error: " + error.message);
 				}
+			});
+		});
+		parsedInputSetting.addButton( (button: ButtonComponent) => {
+			button
+			.setButtonText("Reset")
+			.onClick( () => {
+				textAreaComponent.setValue(initialValue)
 			});
 		});
 	}
