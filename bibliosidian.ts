@@ -578,16 +578,16 @@ class BibTexModal extends Modal {
 
 		panelSetting.addButton( (button: ButtonComponent) => {
 			button
-			.setButtonText("Reset")
+			.setButtonText("Auto")
 			.onClick( () => {
-				mainInputComponent.setValue(initialValue)
+				setLocationFromBibTeX()
 			});
 		});
 		panelSetting.addButton( (button: ButtonComponent) => {
 			button
-			.setButtonText("Auto")
+			.setButtonText("Reset")
 			.onClick( () => {
-				setLocationFromBibTeX()
+				mainInputComponent.setValue(initialValue)
 			});
 		});
 
