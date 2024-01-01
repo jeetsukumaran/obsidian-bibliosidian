@@ -13,9 +13,10 @@ import {
 import * as _path from "path";
 
 import {
+	BibliosidianSettings,
 	createReferenceNote,
 	generateReferenceLibrary,
-} from "./references"
+} from "./bibliosidian"
 
 import {
 	FilePropertyData,
@@ -24,19 +25,6 @@ import {
 	createFilePropertyDataTable,
 } from "./fileProperties"
 
-
-interface BibliosidianSettings {
-	mySetting: string;
-	referenceSourcePropertiesPrefix: string;
-	referenceSourceBibTex: string
-	referenceSubdirectoryRoot: string
-	isSubdirectorizeReferencesLexically: boolean
-	referenceAdditionalMetadata: FilePropertyData,
-	authorsParentFolderPath: string
-	isSubdirectorizeAuthorsLexically: boolean
-	authorsAdditionalMetadata: FilePropertyData,
-	isCreateAuthorPages: boolean,
-}
 
 const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	mySetting: 'default',
@@ -222,13 +210,6 @@ export default class Bibliosidian extends Plugin {
 			name: 'Update multiple references from a BibTeX bibliography database file',
 			callback: this.updateReferenceLibraryFromBibTex,
 		});
-		this.addCommand({
-			id: 'bibliosidian-update-active-file-from-bibtex',
-			name: 'Update active file properties from BibTeX',
-			callback: this.updateActiveFilePropertiesFromBibTex,
-		});
-
-
 
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
 	}
@@ -252,41 +233,17 @@ export default class Bibliosidian extends Plugin {
 		let defaultBibTex = ""
 		createReferenceNote(
 			this.app,
+			this.settings,
 			defaultBibTex,
 			"",
 			undefined,
-			this.settings.referenceSourcePropertiesPrefix,
-			this.settings.referenceSubdirectoryRoot,
-			this.settings.isSubdirectorizeReferencesLexically,
-			this.settings.authorsParentFolderPath,
-			this.settings.isSubdirectorizeAuthorsLexically,
-			this.settings.isCreateAuthorPages,
 			isOpenNote,
-		)
-	}
-
-	updateActiveFilePropertiesFromBibTex(isOpenNote: boolean = false) {
-		let activeFile = this.app.workspace.getActiveFile();
-		if (!activeFile) {
-			return
-		}
-		let defaultBibTex = ""
-		let frontmatter = app.metadataCache?.getFileCache(activeFile)?.frontmatter
-		if (frontmatter) {
-			defaultBibTex = frontmatter?.["entry-bibtex"] || defaultBibTex
-		}
-		createReferenceNote(
-			this.app,
-			defaultBibTex,
-			activeFile.path,
-			undefined,
-			this.settings.referenceSourcePropertiesPrefix,
-			this.settings.referenceSubdirectoryRoot,
-			this.settings.isSubdirectorizeReferencesLexically,
-			this.settings.authorsParentFolderPath,
-			this.settings.isSubdirectorizeAuthorsLexically,
-			this.settings.isCreateAuthorPages,
-			isOpenNote,
+			// this.settings.referenceSourcePropertiesPrefix,
+			// this.settings.referenceSubdirectoryRoot,
+			// this.settings.isSubdirectorizeReferencesLexically,
+			// this.settings.authorsParentFolderPath,
+			// this.settings.isSubdirectorizeAuthorsLexically,
+			// this.settings.isCreateAuthorPages,
 		)
 	}
 

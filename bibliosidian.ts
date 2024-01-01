@@ -32,6 +32,19 @@ import {
 // import { parseBibFile } from "bibtex";
 import * as _path from "path";
 
+export interface BibliosidianSettings {
+	mySetting: string;
+	referenceSourcePropertiesPrefix: string;
+	referenceSourceBibTex: string
+	referenceSubdirectoryRoot: string
+	isSubdirectorizeReferencesLexically: boolean
+	referenceAdditionalMetadata: FilePropertyData,
+	authorsParentFolderPath: string
+	isSubdirectorizeAuthorsLexically: boolean
+	authorsAdditionalMetadata: FilePropertyData,
+	isCreateAuthorPages: boolean,
+}
+
 
 interface BibTexModalArgs {
     sourceBibTex: string;
@@ -77,21 +90,13 @@ function composeAuthorData(author: Author): {
 
 function generateSourceFrontmatter(
 	app: App,
+	settings: BibliosidianSettings,
 	targetFilepath: string,
     bibFileData: string,
     citeKey?: string,
-    fieldNamePrefix:string = "",
-    authorsParentFolderPath: string = "",
-	isSubdirectorizeAuthorsLexically: boolean = true,
-    isCreateAuthorPages: boolean = true,
 ) {
 
-	// let targetFile = app.vault.getAbstractFileByPath(targetFilepath)
-	// if (!targetFile) {
-	// 	return
-	// }
-
-	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${fieldNamePrefix}${bibStr}`
+	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${settings.referenceSourcePropertiesPrefix}${bibStr}`
 
     let { bibEntry, bibtexStr, fieldValueMap } = getBibEntry(bibFileData, citeKey)
 
@@ -105,11 +110,9 @@ function generateSourceFrontmatter(
 	let citekey = bibEntry._id.toLowerCase()
     let authorLinks = generateAuthorLinks(
     	app,
+		settings,
 		bibEntry,
 		"author",
-		authorsParentFolderPath,
-		isCreateAuthorPages,
-		isSubdirectorizeAuthorsLexically,
 	)
 	let authorLastNames: string[] = []
 	const authorField = bibEntry.getField("author");
@@ -299,11 +302,9 @@ function getBibEntry(
 
 function generateAuthorLinks(
     app: App,
+	settings: BibliosidianSettings,
     entry: BibEntry,
     authorFieldName: string = "author",
-    parentFolderPath: string = "" as const,
-    isCreateAuthorPages: boolean = true,
-	isSubdirectorizeAuthorsLexically: boolean = true,
 ): { bareLink: string; aliasedLink: string; }[] {
     let results: { bareLink: string; aliasedLink: string; }[] = [];
     if (!entry) {
@@ -321,12 +322,14 @@ function generateAuthorLinks(
                 displayName: authorDisplayName,
                 normalizedFileName: authorFileName,
             } = composeAuthorData(author);
-			let authorParentFolderPath = parentFolderPath
-			if (isSubdirectorizeAuthorsLexically) {
-				authorParentFolderPath = _path.join(parentFolderPath, authorFileName[0])
+			let authorParentFolderPath: string;
+			if (settings.isSubdirectorizeAuthorsLexically) {
+				authorParentFolderPath = _path.join(settings.authorsParentFolderPath, authorFileName[0])
+			} else {
+				authorParentFolderPath = settings.authorsParentFolderPath
 			}
             const authorFilePath = _path.join(authorParentFolderPath, authorFileName);
-            if (isCreateAuthorPages) {
+            if (settings.isCreateAuthorPages) {
                 let targetFilepath = authorFilePath;
                 if (!targetFilepath.endsWith(".md")) {
 					targetFilepath = targetFilepath + ".md"
@@ -365,13 +368,10 @@ function generateAuthorLinks(
 
 function generateReference(
 	app: App,
+	settings: BibliosidianSettings,
 	targetFilepath: string,
 	sourceBibTex: string,
 	citeKey?: string,
-	fieldNamePrefix: string = "",
-	authorsParentFolderPath: string = "",
-	isSubdirectorizeAuthorsLexically = true,
-	isCreateAuthorPages: boolean = true,
 	isOpenNote: boolean = false,
 ) {
 	if (!targetFilepath || targetFilepath.startsWith(".") || targetFilepath === ".md") {
@@ -387,13 +387,10 @@ function generateReference(
 	.then( (result) => {
 		generateSourceFrontmatter(
 			app,
+			settings,
 			targetFilepath,
 			sourceBibTex,
 			citeKey,
-			fieldNamePrefix,
-			authorsParentFolderPath,
-			isSubdirectorizeAuthorsLexically,
-			isCreateAuthorPages,
 		)
 	})
 	.catch( (error) => {} )
@@ -606,63 +603,55 @@ async function createOrOpenNote(
 export function generateReferenceLibrary(
 	app: App,
 	bibFileData: string,
-	fieldNamePrefix: string,
+	referenceSourcePropertiesPrefix: string,
 	referenceSubdirectoryRoot: string = "",
 	isSubdirectorizeReferencesLexically: boolean = true,
 	authorsParentFolderPath: string,
 	isSubdirectorizeAuthorsLexically: boolean = true,
 	isCreateAuthorPages: boolean = true,
 ) {
-	const bibFile = parseBibFile(bibFileData);
-	Object.entries(bibFile.entries$).forEach(([key, value]: [string, BibEntry]) => {
-		let targetFilepath = computeBibEntryTargetFilePath(
-			value,
-			referenceSubdirectoryRoot,
-			isSubdirectorizeReferencesLexically
-		)
-		generateReference(
-			app,
-			targetFilepath,
-			bibFileData,
-			key,
-			fieldNamePrefix,
-			authorsParentFolderPath,
-			isSubdirectorizeReferencesLexically,
-			false,
-		)
-	});
+	// const bibFile = parseBibFile(bibFileData);
+	// Object.entries(bibFile.entries$).forEach(([key, value]: [string, BibEntry]) => {
+	// 	let targetFilepath = computeBibEntryTargetFilePath(
+	// 		value,
+	// 		referenceSubdirectoryRoot,
+	// 		isSubdirectorizeReferencesLexically
+	// 	)
+	// 	generateReference(
+	// 		app,
+	// 		targetFilepath,
+	// 		bibFileData,
+	// 		key,
+	// 		referenceSourcePropertiesPrefix,
+	// 		authorsParentFolderPath,
+	// 		isSubdirectorizeReferencesLexically,
+	// 		false,
+	// 	)
+	// });
 }
 
 export function createReferenceNote(
 	app: App,
+	settings: BibliosidianSettings,
 	defaultBibTex: string,
 	targetFilepath: string,
     citeKey?: string,
-    fieldNamePrefix: string = "",
-	referenceSubdirectoryRoot: string = "",
-	isSubdirectorizeReferencesLexically: boolean = true,
-    authorsParentFolderPath: string = "",
-	isSubdirectorizeAuthorsLexically: boolean = true,
-	isCreateAuthorPages: boolean = true,
 	isOpenNote: boolean = true,
 ) {
 	const bibtexModal = new BibTexModal(
 		app,
-		referenceSubdirectoryRoot,
-		isSubdirectorizeReferencesLexically,
+		settings.referenceSubdirectoryRoot,
+		settings.isSubdirectorizeReferencesLexically,
 		{
 		targetFilepath: targetFilepath,
 		sourceBibTex: defaultBibTex,
 		onGenerate: (args: BibTexModalArgs) => {
 			generateReference(
 				app,
+				settings,
 				args.targetFilepath,
 				args.sourceBibTex,
 				undefined,
-				fieldNamePrefix,
-				authorsParentFolderPath,
-				isSubdirectorizeAuthorsLexically,
-				isCreateAuthorPages,
 				isOpenNote,
 			)
 		},
