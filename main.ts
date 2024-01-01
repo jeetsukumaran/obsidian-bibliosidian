@@ -106,12 +106,15 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
         }));
 
+		let currentRefPropertiesSetting = this.plugin.settings.additionalMetadata
+		let currentRefPropertiesData: FilePropertyData  = {}
+		let currentRefPropertiesString: string  = ""
 		new Setting(containerEl)
 			.setName("Additional Properties")
 			.setDesc("Other metadata properties to be update (YAML).")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'type: literature/reference")
-				.setValue(this.plugin.settings.referenceSubdirectoryRoot)
+				.setValue(currentRefPropertiesString)
 				.onChange(async (value) => {
 					let refProperties: FilePropertyData  = {}
 					this.plugin.settings.additionalMetadata = refProperties;
