@@ -155,24 +155,13 @@ function generateSourceFrontmatter(
 		refProperties = { ... refProperties, ... settings.referenceAdditionalMetadata }
 	}
 
-	let appendPropertyListItems = (propertyName: string, newItems: string[]) => {
-		return [ ... fileProperties.readPropertyList(propertyName), ... newItems]
-	}
-	let addUniquePropertyListItems = (propertyName: string, newItems: string[], isSort: boolean = true) => {
-		let result = Array.from(new Set([ ... fileProperties.readPropertyList(propertyName), ... newItems]))
-		if (isSort) {
-			result = result.sort()
-		}
-		return result
-	}
-
-
 	refProperties["entry-title"] = `**${inTextCitation}** ${compositeTitle}`
 	// refProperties["entry-updated"] = updateDateStamp
 	// refProperties["entry-updated"] = [ ... fileProperties.readPropertyList("entry-updated"), updateDateStamp]
-	refProperties["entry-updated"] = appendPropertyListItems("entry-updated", [updateDateStamp])
+	// refProperties["entry-updated"] = appendPropertyListItems("entry-updated", [updateDateStamp])
+	refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 	let authorBareLinks = authorLinks.map( (link) => link.bareLink )
-	refProperties["entry-parents"] = addUniquePropertyListItems("entry-parents", authorBareLinks, true)
+	refProperties["entry-parents"] = fileProperties.concatItems("entry-parents", authorBareLinks)
 
     refProperties[bibToYamlLabelFn("citekey")] = citekey
     refProperties[bibToYamlLabelFn("author")] = authorLinks.map( (link) => link.aliasedLink )
@@ -213,7 +202,7 @@ function generateSourceFrontmatter(
 	if (abstract) {
 		refProperties["abstract"] = abstract
 	}
-	refProperties["aliases"] = addUniquePropertyListItems(
+	refProperties["aliases"] = fileProperties.concatItems(
 		"aliases",
 		[
 			`@${citekey}`,
@@ -229,6 +218,7 @@ function generateSourceFrontmatter(
     	true,
     )
 }
+
 
 function getBibEntry(
     bibFileData: string,
@@ -345,6 +335,8 @@ function generateAuthorLinks(
     if (authorFieldName === "author") {
         let authorLastNames: string[] = []
         const authorField = entry.getField(authorFieldName);
+		const updateDate = new Date();
+		const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
         results = (authorField as any).authors$.map((author: any) => {
 			let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
 			if (lastName) {
@@ -374,9 +366,16 @@ function generateAuthorLinks(
                     false,
                 )
                 .then( (result) => {
+					let fileProperties = new FileProperties(this.app, targetFilepath)
 					let authorProperties: FilePropertyData = {};
+					authorProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 					authorProperties["title"] = authorDisplayName;
-					authorProperties["aliases"] = [authorDisplayName];
+					authorProperties["aliases"] = fileProperties.concatItems(
+						"aliases",
+						[
+							authorDisplayName,
+						],
+					)
 					updateFileProperties(
 						app,
 						targetFilepath,

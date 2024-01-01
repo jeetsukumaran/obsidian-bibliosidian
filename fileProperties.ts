@@ -83,6 +83,26 @@ export class FileProperties {
 		}
 	}
 
+	concatItems(
+		propertyName: string,
+		newItems: string[],
+		isUnique: boolean = true,
+		isSort: boolean = true,
+	): string[] {
+		let result: string[];
+		if (isUnique) {
+			result = Array.from(new Set([
+				... this.readPropertyList(propertyName),
+				... newItems
+			]))
+		} else {
+			result = [ ... this.readPropertyList(propertyName), ... newItems]
+		}
+		if (isSort) {
+			result = result.sort()
+		}
+		return result
+	}
 }
 
 export async function updateFileProperties(
