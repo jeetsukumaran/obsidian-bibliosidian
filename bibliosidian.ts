@@ -414,6 +414,7 @@ function generateReference(
 	args: BibTexModalArgs,
 	citeKey?: string,
 ) {
+	console.log(args)
 	if (!args.targetFilepath || args.targetFilepath.startsWith(".") || args.targetFilepath === ".md") {
 		return
 	}
@@ -614,12 +615,9 @@ class BibTexModal extends Modal {
 
 		// contentEl.createEl("h2", { text: "Update" })
 		let execute = () => {
-			this.args.onGenerate({
-			targetFilepath: this.referencePathTextComponent.getValue().endsWith(".md")
-				? this.referencePathTextComponent.getValue()
-				: this.referencePathTextComponent.getValue() + ".md",
-				sourceBibTex: this.parsedSourceTextAreaComponent.getValue()
-			});
+			this.args.targetFilepath = this.referencePathTextComponent.getValue().endsWith(".md") ? this.referencePathTextComponent.getValue() : this.referencePathTextComponent.getValue() + ".md"
+			this.args.sourceBibTex = this.parsedSourceTextAreaComponent.getValue()
+			this.args.onGenerate(this.args);
 			this.close();
 		}
 		let runUpdate = new Setting(contentEl)
@@ -786,24 +784,6 @@ export function generateReferenceLibrary(
 	isSubdirectorizeAuthorsLexically: boolean = true,
 	isCreateAuthorPages: boolean = true,
 ) {
-	// const bibFile = parseBibFile(bibFileData);
-	// Object.entries(bibFile.entries$).forEach(([key, value]: [string, BibEntry]) => {
-	// 	let targetFilepath = computeBibEntryTargetFilePath(
-	// 		value,
-	// 		referenceSubdirectoryRoot,
-	// 		isSubdirectorizeReferencesLexically
-	// 	)
-	// 	generateReference(
-	// 		app,
-	// 		targetFilepath,
-	// 		bibFileData,
-	// 		key,
-	// 		referenceSourcePropertiesPrefix,
-	// 		authorsParentFolderPath,
-	// 		isSubdirectorizeReferencesLexically,
-	// 		false,
-	// 	)
-	// });
 }
 
 export function createReferenceNote(
@@ -821,11 +801,11 @@ export function createReferenceNote(
 		sourceBibTex: defaultBibTex,
 		targetFilepath: targetFilepath,
 		isCreateAuthorPages: settings.isCreateAuthorPages, // settings gives default, args overrides
-		onGenerate: (args: BibTexModalArgs) => {
+		onGenerate: (updatedArgs: BibTexModalArgs) => {
 			generateReference(
 				app,
 				settings,
-				args,
+				updatedArgs,
 				undefined,
 			)
 		},
