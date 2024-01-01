@@ -56,7 +56,7 @@ interface BibTexModalArgs {
     targetFilepath: string;
     onGenerate: (args: { targetFilepath: string, sourceBibTex: string }) => void;
     onCancel: () => void;
-    // isOpenNote: boolean;
+    isOpenNote: boolean;
 }
 
 interface Author {
@@ -410,7 +410,6 @@ function generateReference(
 	settings: BibliosidianSettings,
 	args: BibTexModalArgs,
 	citeKey?: string,
-	isOpenNote: boolean = false,
 ) {
 	if (!args.targetFilepath || args.targetFilepath.startsWith(".") || args.targetFilepath === ".md") {
 		return
@@ -418,7 +417,7 @@ function generateReference(
 	createOrOpenNote(
 		this.app,
 		args.targetFilepath,
-		isOpenNote,
+		args.isOpenNote,
 		false,
 	)
 	.then( (result) => {
@@ -789,8 +788,8 @@ export function createReferenceNote(
 		app,
 		settings,
 		{
-		targetFilepath: targetFilepath,
 		sourceBibTex: defaultBibTex,
+		targetFilepath: targetFilepath,
 		onGenerate: (args: BibTexModalArgs) => {
 			generateReference(
 				app,
@@ -800,7 +799,8 @@ export function createReferenceNote(
 			)
 		},
 		onCancel: () => {
-		}
+		},
+		isOpenNote: isOpenNote,
 	});
 	bibtexModal.open();
 }
