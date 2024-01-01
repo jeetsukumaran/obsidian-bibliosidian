@@ -204,7 +204,7 @@ function generateSourceFrontmatter(
 		.replace(/\s+/g, " ")
 	// let entryTitle = `(@${citekey}) ${compositeTitle}`
 
-	refProperties["title"] = `${compositeTitle} (${inTextCitation})`
+	refProperties["title"] = `${compositeTitle} ${inTextCitation}`
 	if (abstract) {
 		refProperties["abstract"] = abstract
 	}
