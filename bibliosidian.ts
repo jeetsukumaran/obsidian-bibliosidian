@@ -55,8 +55,6 @@ interface BibTexModalArgs {
     sourceBibTex: string;
     targetFilepath: string;
 	isCreateAuthorPages: boolean;
-    onGenerate: (args: { targetFilepath: string, sourceBibTex: string }) => void;
-    onCancel: () => void;
     isOpenNote: boolean;
 }
 
@@ -459,6 +457,7 @@ class BibTexModal extends Modal {
 	parsedSourceTextAreaComponent: TextAreaComponent;
 	referencePathTextComponent: TextAreaComponent
 	isEnableReferencePathAutoUpdate: boolean = true
+	onGenerate: (args:BibTexModalArgs) => void;
 	private _parsedBibEntry: BibEntry | undefined = undefined
 	private _parsedBibTexStr: string = ""
 	private _parsedFieldValueMap: { [key: string]: string } = {}
@@ -466,11 +465,13 @@ class BibTexModal extends Modal {
     constructor(
 		app: App,
 		settings: BibliosidianSettings,
+		onGenerate: (arg0:BibTexModalArgs) => void,
 		args: BibTexModalArgs,
     ) {
         super(app);
         this.settings = settings
         this.args = args;
+        this.onGenerate = onGenerate
     }
 
 	buildParsedTextAreaComponent(
@@ -617,7 +618,7 @@ class BibTexModal extends Modal {
 		let execute = () => {
 			this.args.targetFilepath = this.referencePathTextComponent.getValue().endsWith(".md") ? this.referencePathTextComponent.getValue() : this.referencePathTextComponent.getValue() + ".md"
 			this.args.sourceBibTex = this.parsedSourceTextAreaComponent.getValue()
-			this.args.onGenerate(this.args);
+			this.onGenerate(this.args);
 			this.close();
 		}
 		let runUpdate = new Setting(contentEl)
@@ -797,11 +798,7 @@ export function createReferenceNote(
 	const bibtexModal = new BibTexModal(
 		app,
 		settings,
-		{
-		sourceBibTex: defaultBibTex,
-		targetFilepath: targetFilepath,
-		isCreateAuthorPages: settings.isCreateAuthorPages, // settings gives default, args overrides
-		onGenerate: (updatedArgs: BibTexModalArgs) => {
+		(updatedArgs: BibTexModalArgs) => {
 			generateReference(
 				app,
 				settings,
@@ -809,10 +806,13 @@ export function createReferenceNote(
 				undefined,
 			)
 		},
-		onCancel: () => {
+		{
+			sourceBibTex: defaultBibTex,
+			targetFilepath: targetFilepath,
+			isCreateAuthorPages: settings.isCreateAuthorPages, // settings gives default, args overrides
+			isOpenNote: isOpenNote,
 		},
-		isOpenNote: isOpenNote,
-	});
+	);
 	bibtexModal.open();
 }
 
