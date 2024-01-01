@@ -150,7 +150,7 @@ function generateSourceFrontmatter(
 	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
 
 	// Add additional stuff
-	console.log(settings.referenceAdditionalMetadata)
+	// could try and merge with existing but right now, the additional m
 	if (settings.referenceAdditionalMetadata) {
 		refProperties = { ... refProperties, ... settings.referenceAdditionalMetadata }
 	}
