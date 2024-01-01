@@ -209,11 +209,18 @@ function generateSourceFrontmatter(
 		.replace(/\s+/g, " ")
 	// let entryTitle = `(@${citekey}) ${compositeTitle}`
 
-	refProperties["title"] = `${inTextCitation} ${compositeTitle}`
+	refProperties["title"] = `${compositeTitle} (${inTextCitation})`
 	if (abstract) {
 		refProperties["abstract"] = abstract
 	}
-	refProperties["aliases"] = addUniquePropertyListItems("aliases", [citekey, inTextCitation, compositeTitle, ])
+	refProperties["aliases"] = addUniquePropertyListItems(
+		"aliases",
+		[
+			`@${citekey}`,
+			inTextCitation,
+			compositeTitle,
+		],
+	)
 
     updateFileProperties(
     	this.app,

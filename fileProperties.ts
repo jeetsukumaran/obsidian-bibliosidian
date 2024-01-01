@@ -120,7 +120,12 @@ export async function updateFileProperties(
 			}
 		});
 		// parsedFrontmatter[propertyName] = newValues
-        let newFrontmatterStr: string = `---\n${stringifyYaml(parsedFrontmatter).trim()}\n---`
+        let newFrontmatterStr: string = `---\n${stringifyYaml(
+			parsedFrontmatter,
+			{
+				// collectionStyle: "block",
+			}
+        ).trim()}\n---`
 
         if (frontMatterMatch) {
 			content = content.replace(frontmatterRegex, newFrontmatterStr);
