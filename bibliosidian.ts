@@ -613,20 +613,33 @@ class BibTexModal extends Modal {
 		})
 
 		// contentEl.createEl("h2", { text: "Update" })
-		let inputSetting = new Setting(contentEl)
-		inputSetting.addButton( (button: ButtonComponent) => {
-			button
-			.setButtonText("Update")
-			.onClick( () => {
-				this.args.onGenerate({
-					targetFilepath: this.referencePathTextComponent.getValue().endsWith(".md")
-						? this.referencePathTextComponent.getValue()
-						: this.referencePathTextComponent.getValue() + ".md",
-						sourceBibTex: this.parsedSourceTextAreaComponent.getValue()
-				});
-				this.close();
+		let execute = () => {
+			this.args.onGenerate({
+			targetFilepath: this.referencePathTextComponent.getValue().endsWith(".md")
+				? this.referencePathTextComponent.getValue()
+				: this.referencePathTextComponent.getValue() + ".md",
+				sourceBibTex: this.parsedSourceTextAreaComponent.getValue()
 			});
-		});
+			this.close();
+		}
+		let runUpdate = new Setting(contentEl)
+		runUpdate
+			.addButton( (button: ButtonComponent) => {
+				button
+				.setButtonText("Update")
+				.onClick( () => {
+					this.args.isOpenNote = false
+					execute()
+				});
+			})
+			.addButton( (button: ButtonComponent) => {
+				button
+				.setButtonText("Update and Open")
+				.onClick( () => {
+					this.args.isOpenNote = true
+					execute()
+				});
+			});
 
 
     }
