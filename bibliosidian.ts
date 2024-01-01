@@ -459,6 +459,7 @@ class BibTexModal extends Modal {
 	settings: BibliosidianSettings;
 	parsedSourceTextAreaComponent: TextAreaComponent;
 	referencePathTextComponent: TextAreaComponent
+	isEnableReferencePathAutoUpdate: boolean = true
 	private _parsedBibEntry: BibEntry | undefined = undefined
 	private _parsedBibTexStr: string = ""
 	private _parsedFieldValueMap: { [key: string]: string } = {}
@@ -542,12 +543,11 @@ class BibTexModal extends Modal {
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
 		let panelSetting = new Setting(toolPanel)
 
-		let isEnableAutoupdate = true
 		panelSetting.addToggle( toggle => {
 			toggle
-				.setValue(isEnableAutoupdate)
+				.setValue(this.isEnableReferencePathAutoUpdate)
 				.onChange(async (value) => {
-					isEnableAutoupdate = value;
+					this.isEnableReferencePathAutoUpdate = value;
 				})
 		})
 
@@ -595,8 +595,22 @@ class BibTexModal extends Modal {
 			this.args.targetFilepath,
 		)
 
-		// (1) another panel of buttons here, include "Generate", which requires values of "referenceSourceBibTexComponent"
-		// and referenceLocationComponent
+		let inputSetting = new Setting(contentEl)
+		inputSetting.addButton( (button: ButtonComponent) => {
+			button
+			.setButtonText("Generate")
+			.onClick( () => {
+				console.log("go")
+				this.args.onGenerate({
+					targetFilepath: this.referencePathTextComponent.value.endsWith(".md")
+						? this.referencePathTextComponent.value
+						: this.referencePathTextComponent.value + ".md",
+						sourceBibTex: this.parsedSourceTextAreaComponent.value
+				});
+				this.close();
+			});
+		});
+
 
     }
 
