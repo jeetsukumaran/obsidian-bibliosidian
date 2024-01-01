@@ -111,14 +111,10 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
         }));
 
-
-
 		this.manageAdditionalPropertiesSettings(
 			containerEl,
 			"referenceAdditionalMetadata",
 		)
-
-
 
 		containerEl.createEl("h2", { text: "Authors" })
 
@@ -150,6 +146,11 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					this.plugin.settings.isSubdirectorizeAuthorsLexically = value;
 					await this.plugin.saveSettings();
         }));
+
+		this.manageAdditionalPropertiesSettings(
+			containerEl,
+			"authorsAdditionalMetadata",
+		)
 
 	}
 
