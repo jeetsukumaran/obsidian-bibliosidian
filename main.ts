@@ -52,7 +52,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl("h1", { text: "Bibliosidian" })
+		containerEl.createEl("h1", { text: "Bibliosidian settings" })
 
 		containerEl.createEl("h2", { text: "Namespaces" })
 

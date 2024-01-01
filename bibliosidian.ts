@@ -9,7 +9,7 @@ import {
 	Notice,
 	// Plugin,
 	// PluginSettingTab,
-	// Setting,
+	Setting,
 	// WorkspaceLeaf,
 	// setIcon,
 } from 'obsidian';
@@ -507,10 +507,16 @@ class BibTexModal extends Modal {
 
     onOpen() {
         const { contentEl } = this;
-        contentEl.createEl("h3", { text: "Reference data update" });
+        // contentEl.createEl("h3", { text: "Reference data update" });
+
+        // contentEl.createEl("h3", { text: "Reference data update" });
+
+		contentEl.createEl("h1", { text: "Reference update" })
+
+		contentEl.createEl("h2", { text: "Source" })
 
         // Source BibTex section
-        contentEl.createEl("h4", { text: "Source BibTex" });
+        contentEl.createEl("h3", { text: "BibTex" });
         this.sourceBibTexTextarea = contentEl.createEl("textarea");
         this.sourceBibTexTextarea.textContent = this.args.sourceBibTex;
         this.sourceBibTexTextarea.style.width = "100%";
