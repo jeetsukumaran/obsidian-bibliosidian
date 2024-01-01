@@ -499,6 +499,9 @@ class BibTexModal extends Modal {
 						this._parsedBibTexStr = result.bibtexStr
 						this._parsedFieldValueMap = result.fieldValueMap
 						createKeyValueTable(parsedInputSetting.descEl, this._parsedFieldValueMap)
+						if (this.isEnableReferencePathAutoUpdate) {
+							this.setReferencePathTextComponentFromSource()
+						}
 					} else {
 						this._parsedBibEntry = undefined
 						this._parsedBibTexStr = ""
@@ -523,6 +526,17 @@ class BibTexModal extends Modal {
 				this.parsedSourceTextAreaComponent.setValue(initialValue)
 			});
 		});
+	}
+
+	setReferencePathTextComponentFromSource() {
+		if (this._parsedBibEntry) {
+			let filePath = computeBibEntryTargetFilePath(
+				this._parsedBibEntry,
+				this.settings,
+			)
+			this.referencePathTextComponent.setValue(filePath)
+		} else {
+		}
 	}
 
 	renderReferenceLocationInputTextArea(
@@ -551,22 +565,11 @@ class BibTexModal extends Modal {
 				})
 		})
 
-		let setLocationFromBibTeX = () => {
-			if (this._parsedBibEntry) {
-				let filePath = computeBibEntryTargetFilePath(
-					this._parsedBibEntry,
-					this.settings,
-				)
-				this.referencePathTextComponent.setValue(filePath)
-			} else {
-			}
-		}
-
 		panelSetting.addButton( (button: ButtonComponent) => {
 			button
 			.setButtonText("Auto")
 			.onClick( () => {
-				setLocationFromBibTeX()
+				this.setReferencePathTextComponentFromSource()
 			});
 		});
 		panelSetting.addButton( (button: ButtonComponent) => {
