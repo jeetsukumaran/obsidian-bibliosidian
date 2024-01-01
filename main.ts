@@ -19,6 +19,8 @@ import {
 
 import {
 	FilePropertyData,
+	parseYaml,
+	stringifyYaml,
 } from "./fileProperties"
 
 

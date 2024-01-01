@@ -15,8 +15,14 @@ import {
 
 
 // npm install yaml
-// import YAML from "yaml";
-const YAML = require('yaml')
+const {
+	parse: parseYaml,
+	stringify: stringifyYaml
+} = require('yaml')
+export {
+	parseYaml,
+	stringifyYaml
+};
 
 
 export type FilePropertyData = {
@@ -38,7 +44,7 @@ export async function updateFileProperties(
         if (frontMatterMatch) {
             let frontmatter = frontMatterMatch[1];
 			try {
-				parsedFrontmatter = { ... YAML.parse(frontmatter) }
+				parsedFrontmatter = { ... parseYaml(frontmatter) }
 			} catch (err) {
 				new Notice(
 `Malformed existing YAML frontmatter in file '${filePath}':
@@ -61,7 +67,7 @@ ${err}`
 			}
 		});
 		// parsedFrontmatter[propertyName] = newValues
-        let newFrontmatterStr: string = `---\n${YAML.stringify(parsedFrontmatter).trim()}\n---`
+        let newFrontmatterStr: string = `---\n${stringifyYaml(parsedFrontmatter).trim()}\n---`
 
         if (frontMatterMatch) {
 			content = content.replace(frontmatterRegex, newFrontmatterStr);
@@ -73,53 +79,3 @@ ${err}`
         console.error("File not found");
     }
 }
-
-// export async function updateFrontmatterYaml(
-// 	app: App,
-// 	filePath: string,
-// 	propertyName: string,
-// 	newValues: string | string[],
-// ) {
-//     const file = app.vault.getAbstractFileByPath(filePath);
-//     if (file instanceof TFile) {
-
-// 		// let frontmatter = app.metadataCache?.getFileCache(file)?.frontmatter
-// 		// if (frontmatter) {
-// 		// 	frontmatter["source-authors"] = "hello"
-// 		// }
-// 		// let frontMatter = this.metadataCache?.frontmatter
-
-
-//         let content = await app.vault.read(file);
-
-// 		let parsedFrontmatter: FilePropertyData = {};
-//         const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
-//         const frontMatterMatch = content.match(frontmatterRegex);
-//         if (frontMatterMatch) {
-//             let frontmatter = frontMatterMatch[1];
-// 			try {
-// 				parsedFrontmatter = { ... YAML.parse(frontmatter) }
-// 			} catch (err) {
-// 				new Notice(`
-// Failed to parse YAML frontmatter from file '${filePath}':
-// ${err}
-// 			`)
-// 				console.log(err)
-// 				return
-// 			}
-//         }
-
-// 		parsedFrontmatter[propertyName] = newValues
-//         let newFrontmatterStr: string = `---\n${YAML.stringify(parsedFrontmatter).strip()}\n---`
-
-//         if (frontMatterMatch) {
-// 			content = content.replace(frontmatterRegex, newFrontmatterStr);
-// 		} else {
-// 			content = newFrontmatterStr + "\n" + content
-// 		}
-//         await app.vault.modify(file, content);
-//     } else {
-//         console.error("File not found");
-//     }
-// }
-
