@@ -614,10 +614,13 @@ class BibTexModal extends Modal {
 		})
 
 		// contentEl.createEl("h2", { text: "Update" })
-		let execute = () => {
+		let execute = (isQuiet: boolean = true) => {
 			this.args.targetFilepath = this.referencePathTextComponent.getValue().endsWith(".md") ? this.referencePathTextComponent.getValue() : this.referencePathTextComponent.getValue() + ".md"
 			this.args.sourceBibTex = this.parsedSourceTextAreaComponent.getValue()
 			this.onGenerate(this.args);
+			if (!isQuiet) {
+				new Notice(`Reference updated: '${this.args.targetFilepath}' `)
+			}
 			this.close();
 		}
 		let runUpdate = new Setting(contentEl)
@@ -627,7 +630,7 @@ class BibTexModal extends Modal {
 				.setButtonText("Update")
 				.onClick( () => {
 					this.args.isOpenNote = false
-					execute()
+					execute(false)
 				});
 			})
 			.addButton( (button: ButtonComponent) => {
@@ -635,7 +638,7 @@ class BibTexModal extends Modal {
 				.setButtonText("Update and Open")
 				.onClick( () => {
 					this.args.isOpenNote = true
-					execute()
+					execute(true)
 				});
 			});
 
@@ -763,7 +766,6 @@ async function createOrOpenNote(
             // If the note does not exist, create it
             await app.vault.create(notePath, "");
         }
-		console.log(isOpenNote)
 		if (isOpenNote) {
 			app.workspace.openLinkText(notePath, '', mode);
 		}
