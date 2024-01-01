@@ -412,7 +412,6 @@ function generateReference(
 	args: BibTexModalArgs,
 	citeKey?: string,
 ) {
-	console.log(args)
 	if (!args.targetFilepath || args.targetFilepath.startsWith(".") || args.targetFilepath === ".md") {
 		return
 	}
@@ -764,7 +763,7 @@ async function createOrOpenNote(
             // If the note does not exist, create it
             await app.vault.create(notePath, "");
         }
-
+		console.log(isOpenNote)
 		if (isOpenNote) {
 			app.workspace.openLinkText(notePath, '', mode);
 		}
