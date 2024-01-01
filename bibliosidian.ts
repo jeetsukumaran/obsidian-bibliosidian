@@ -602,10 +602,10 @@ class BibTexModal extends Modal {
 			.onClick( () => {
 				console.log("go")
 				this.args.onGenerate({
-					targetFilepath: this.referencePathTextComponent.value.endsWith(".md")
-						? this.referencePathTextComponent.value
-						: this.referencePathTextComponent.value + ".md",
-						sourceBibTex: this.parsedSourceTextAreaComponent.value
+					targetFilepath: this.referencePathTextComponent.getValue().endsWith(".md")
+						? this.referencePathTextComponent.getValue()
+						: this.referencePathTextComponent.getValue() + ".md",
+						sourceBibTex: this.parsedSourceTextAreaComponent.getValue()
 				});
 				this.close();
 			});
