@@ -11,6 +11,7 @@ import {
 	// PluginSettingTab,
 	Setting,
 	ButtonComponent,
+	TextComponent,
 	TextAreaComponent,
 	// WorkspaceLeaf,
 	// setIcon,
@@ -512,24 +513,20 @@ class BibTexModal extends Modal {
 
 	renderParsedInputTextArea(
 		containerEl: HTMLElement,
-		displayName: string,
-		initialDescription: string = "",
 		initialValue: string = "",
 		valuePlaceholder: string = "",
-		inputHeight: string | undefined,
 	) {
 		let parsedInputSetting = new Setting(containerEl)
-			.setName(displayName)
-			.setDesc(initialDescription)
+			// .setName(displayName)
+			// .setDesc(initialDescription)
 		let textAreaComponent: TextAreaComponent
 		parsedInputSetting.addTextArea(text => {
 			textAreaComponent = text
 			textAreaComponent
 				.setPlaceholder(valuePlaceholder)
 				.setValue(initialValue);
-			if (inputHeight) {
-				textAreaComponent.inputEl.style.height = inputHeight
-			}
+			textAreaComponent.inputEl.style.height = "12rem"
+			// textAreaComponent.inputEl.style.width = "100%"
 			let parseUpdatedValue = () => {
 				try {
 					let inputValue: string = textAreaComponent.getValue();
@@ -564,11 +561,42 @@ class BibTexModal extends Modal {
 				textAreaComponent.setValue(initialValue)
 			});
 		});
+		// panelSetting.addButton( (button: ButtonComponent) => {
+		// 	button
+		// 	.setButtonText("Reset")
+		// 	.onClick( () => {
+		// 		textAreaComponent.setValue(initialValue)
+		// 	});
+		// });
+	}
+
+	renderReferenceLocationInputTextArea(
+		containerEl: HTMLElement,
+		initialValue: string = "",
+	) {
+		let inputSetting = new Setting(containerEl)
+		let mainInputComponent: TextComponent
+		inputSetting.addText(text => {
+			mainInputComponent = text
+			mainInputComponent.setValue(initialValue);
+			mainInputComponent.inputEl.addEventListener("blur", async () => {
+				// parseUpdatedValue()
+			});
+		});
+		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
+		let panelSetting = new Setting(toolPanel)
 		panelSetting.addButton( (button: ButtonComponent) => {
 			button
 			.setButtonText("Reset")
 			.onClick( () => {
-				textAreaComponent.setValue(initialValue)
+				mainInputComponent.setValue(initialValue)
+			});
+		});
+		panelSetting.addButton( (button: ButtonComponent) => {
+			button
+			.setButtonText("Auto")
+			.onClick( () => {
+				mainInputComponent.setValue(initialValue)
 			});
 		});
 	}
@@ -579,11 +607,12 @@ class BibTexModal extends Modal {
 		contentEl.createEl("h2", { text: "Source" })
 		this.renderParsedInputTextArea(
 			contentEl,
-			"BibTex",
-			"Source description in BibTex format",
 			this.args.sourceBibTex,
-			"",
-			"16rem",
+		)
+		contentEl.createEl("h2", { text: "Reference" })
+		this.renderReferenceLocationInputTextArea(
+			contentEl,
+			this.args.sourceBibTex,
 		)
 
     }
