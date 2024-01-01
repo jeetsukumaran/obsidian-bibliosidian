@@ -479,8 +479,8 @@ class BibTexModal extends Modal {
 		valuePlaceholder: string = "",
 	) {
 		let parsedInputSetting = new Setting(containerEl)
-			.setName("Source")
-			.setDesc("Source definition (BibTex)")
+			.setName("Source bibliographic data (BibTeX)")
+			// .setDesc("Source definition (BibTex)")
 			// .setDesc(initialDescription)
 		parsedInputSetting.addTextArea(text => {
 			this.parsedSourceTextAreaComponent = text
@@ -545,8 +545,8 @@ class BibTexModal extends Modal {
 		initialValue: string = "",
 	) {
 		let inputSetting = new Setting(containerEl)
-			.setName("Reference")
-			.setDesc("Path to reference note")
+			.setName("Reference note path")
+			.setDesc("Path to file in folder where this reference will be stored.")
 		inputSetting.addTextArea(text => {
 			this.referencePathTextComponent = text
 			this.referencePathTextComponent.setValue(initialValue);
@@ -558,7 +558,6 @@ class BibTexModal extends Modal {
 
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
 		let panelSetting = new Setting(toolPanel)
-
 		panelSetting.addToggle( toggle => {
 			toggle
 				.setValue(this.isEnableReferencePathAutoUpdate)
@@ -587,24 +586,24 @@ class BibTexModal extends Modal {
         const { contentEl } = this;
 		contentEl.createEl("h1", { text: "Reference update" })
 
-		// this sets up referenceSourceBibTexComponent
-		// contentEl.createEl("h2", { text: "Source" })
+		contentEl.createEl("h2", { text: "Source" })
 		let referenceSourceBibTexComponent = this.buildParsedTextAreaComponent(
 			contentEl,
 			this.args.sourceBibTex,
 		)
 
-		// contentEl.createEl("h2", { text: "Reference" })
+		contentEl.createEl("h2", { text: "Reference" })
 		this.renderReferenceLocationInputTextArea(
 			contentEl,
 			this.args.targetFilepath,
 		)
 
-		// contentEl.createEl("h2", { text: "Authors" })
+		contentEl.createEl("h2", { text: "Authors" })
 		let updateAuthorsSettings = new Setting(contentEl)
 		updateAuthorsSettings
-			.setName("Authors")
-			.setDesc("Update associated source author notes")
+			.setName("Update source author notes")
+			.setDesc("Create or update associated source author notes.")
+			// .setDesc("Create or update reference and associated author notes.")
 		updateAuthorsSettings.addToggle( toggle => {
 			toggle
 				.setValue(this.args.isCreateAuthorPages)
@@ -613,7 +612,8 @@ class BibTexModal extends Modal {
 				})
 		})
 
-		// contentEl.createEl("h2", { text: "Update" })
+		contentEl.createEl("h2", { text: "Update" })
+
 		let execute = (isQuiet: boolean = true) => {
 			this.args.targetFilepath = this.referencePathTextComponent.getValue().endsWith(".md") ? this.referencePathTextComponent.getValue() : this.referencePathTextComponent.getValue() + ".md"
 			this.args.sourceBibTex = this.parsedSourceTextAreaComponent.getValue()
@@ -623,7 +623,9 @@ class BibTexModal extends Modal {
 			}
 			this.close();
 		}
+
 		let runUpdate = new Setting(contentEl)
+			// .setName("Update")
 		runUpdate
 			.addButton( (button: ButtonComponent) => {
 				button
