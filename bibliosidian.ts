@@ -368,6 +368,11 @@ function generateAuthorLinks(
                 .then( (result) => {
 					let fileProperties = new FileProperties(this.app, targetFilepath)
 					let authorProperties: FilePropertyData = {};
+					// Add additional stuff
+					// could try and merge with existing but right now, the additional m
+					if (settings.authorsAdditionalMetadata) {
+						authorProperties = { ... authorProperties, ... settings.authorsAdditionalMetadata }
+					}
 					authorProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 					authorProperties["title"] = authorDisplayName;
 					authorProperties["aliases"] = fileProperties.concatItems(
