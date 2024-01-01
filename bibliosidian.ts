@@ -23,6 +23,7 @@ import {
 } from "bibtex";
 
 import {
+	FileProperties,
 	FilePropertyData,
 	updateFileProperties,
 	// updateFrontmatterYaml,
@@ -144,7 +145,7 @@ function generateSourceFrontmatter(
 
 	// This stuff is part of a related project: a multihierarchical indexing system
 	// Should/will be abstracted out as part of custom user field creation
-
+	let fileProperties = new FileProperties(this.app, targetFilepath)
 	const updateDate = new Date();
 	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
 
@@ -154,9 +155,24 @@ function generateSourceFrontmatter(
 		refProperties = { ... refProperties, ... settings.referenceAdditionalMetadata }
 	}
 
-	refProperties["entry-parents"] = authorLinks.map( (link) => link.bareLink )
+	let appendPropertyListItems = (propertyName: string, newItems: string[]) => {
+		return [ ... fileProperties.readPropertyList(propertyName), ... newItems]
+	}
+	let addUniquePropertyListItems = (propertyName: string, newItems: string[], isSort: boolean = true) => {
+		let result = Array.from(new Set([ ... fileProperties.readPropertyList(propertyName), ... newItems]))
+		if (isSort) {
+			result = result.sort()
+		}
+		return result
+	}
+
+
 	refProperties["entry-title"] = `**${inTextCitation}** ${compositeTitle}`
-	refProperties["entry-updated"] = updateDateStamp
+	// refProperties["entry-updated"] = updateDateStamp
+	// refProperties["entry-updated"] = [ ... fileProperties.readPropertyList("entry-updated"), updateDateStamp]
+	refProperties["entry-updated"] = appendPropertyListItems("entry-updated", [updateDateStamp])
+	let authorBareLinks = authorLinks.map( (link) => link.bareLink )
+	refProperties["entry-parents"] = addUniquePropertyListItems("entry-parents", authorBareLinks, true)
 
     refProperties[bibToYamlLabelFn("citekey")] = citekey
     refProperties[bibToYamlLabelFn("author")] = authorLinks.map( (link) => link.aliasedLink )
