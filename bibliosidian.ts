@@ -486,6 +486,9 @@ class BibTexModal extends Modal {
     targetFilepathInput: HTMLInputElement;
 	referenceSubdirectoryRoot: string;
 	isSubdirectorizeReferencesLexically: boolean;
+	private _parsedBibEntry: BibEntry | undefined = undefined
+	private _parsedBibTexStr: string = ""
+	private _parsedFieldValueMap: { [key: string]: string } = {}
 
     constructor(
 		app: App,
@@ -505,14 +508,43 @@ class BibTexModal extends Modal {
 		}
     }
 
+	renderParsedInputTextArea(
+		containerEl: HTMLElement,
+		displayName: string,
+		initialDescription: string = "",
+		initialValue: string = "",
+		valuePlaceholder: string = "",
+		inputHeight: string | undefined,
+	) {
+		let parsedInputSetting = new Setting(containerEl)
+		.setName(displayName)
+		.setDesc(initialDescription)
+		.addTextArea(text => {
+			text.setPlaceholder(valuePlaceholder)
+				.setValue(initialValue);
+			if (inputHeight) {
+				text.inputEl.style.height = inputHeight
+			}
+			text.inputEl.addEventListener("blur", async () => {
+				try {
+					let inputValue: string = text.getValue();
+					let result = getBibEntry(inputValue)
+					this._parsedBibEntry = result.bibEntry
+					this._parsedBibTexStr = result.bibtexStr
+					this._parsedFieldValueMap = result.fieldValueMap
+					parsedInputSetting.descEl.empty()
+					createKeyValueTable(parsedInputSetting.descEl, this._parsedFieldValueMap)
+					// createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
+				} catch (error) {
+					parsedInputSetting.setDesc("Parse error: " + error.message);
+				}
+			});
+		});
+	}
+
     onOpen() {
         const { contentEl } = this;
-        // contentEl.createEl("h3", { text: "Reference data update" });
-
-        // contentEl.createEl("h3", { text: "Reference data update" });
-
 		contentEl.createEl("h1", { text: "Reference update" })
-
 		contentEl.createEl("h2", { text: "Source" })
 
         // Source BibTex section
@@ -701,4 +733,50 @@ export function createReferenceNote(
 		}
 	});
 	bibtexModal.open();
+}
+
+
+export function createKeyValueTable<T extends Record<string, any>>(
+    containerEl: HTMLElement,
+    keyValueData: T
+): HTMLTableElement {
+    if (!keyValueData || typeof keyValueData !== 'object') {
+        throw new Error('Invalid keyValueData provided.');
+    }
+
+    // Create the table element
+    const table = document.createElement('table');
+    table.style.width = '100%';
+    table.setAttribute('border', '1');
+
+    // Create the header row
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    const headerCell1 = headerRow.insertCell();
+    headerCell1.textContent = 'Property';
+    const headerCell2 = headerRow.insertCell();
+    headerCell2.textContent = 'Value';
+
+    // Create the body of the table
+    const tbody = table.createTBody();
+
+    // Iterate over keyValueData and create rows
+    for (const key in keyValueData) {
+        if (keyValueData.hasOwnProperty(key)) {
+            const row = tbody.insertRow();
+            const cell1 = row.insertCell();
+            cell1.textContent = key;
+            const cell2 = row.insertCell();
+            const value = keyValueData[key];
+
+            // Handle different types of values
+            cell2.textContent = (typeof value === 'object') ? JSON.stringify(value) : value;
+        }
+    }
+
+    // Append the table to the container element
+    containerEl.appendChild(table);
+
+    // Return the table element
+    return table;
 }
