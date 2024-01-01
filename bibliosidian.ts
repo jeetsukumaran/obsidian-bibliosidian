@@ -528,12 +528,18 @@ class BibTexModal extends Modal {
 			text.inputEl.addEventListener("blur", async () => {
 				try {
 					let inputValue: string = text.getValue();
-					let result = getBibEntry(inputValue)
-					this._parsedBibEntry = result.bibEntry
-					this._parsedBibTexStr = result.bibtexStr
-					this._parsedFieldValueMap = result.fieldValueMap
-					parsedInputSetting.descEl.empty()
-					createKeyValueTable(parsedInputSetting.descEl, this._parsedFieldValueMap)
+					if (inputValue) {
+						let result = getBibEntry(inputValue)
+						this._parsedBibEntry = result.bibEntry
+						this._parsedBibTexStr = result.bibtexStr
+						this._parsedFieldValueMap = result.fieldValueMap
+						createKeyValueTable(parsedInputSetting.descEl, this._parsedFieldValueMap)
+					} else {
+						parsedInputSetting.descEl.empty()
+						this._parsedBibEntry = undefined
+						this._parsedBibTexStr = ""
+						this._parsedFieldValueMap = {}
+					}
 					// createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
 				} catch (error) {
 					parsedInputSetting.setDesc("Parse error: " + error.message);
@@ -552,7 +558,7 @@ class BibTexModal extends Modal {
 			"Source description in BibTex format",
 			this.args.sourceBibTex,
 			"",
-			undefined,
+			"16rem",
 		)
 
     }
