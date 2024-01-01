@@ -29,6 +29,62 @@ export type FilePropertyData = {
     [key: string]: any;
 };
 
+
+export class FileProperties {
+	app: App
+	filePath: string;
+	sourceFile: TFile
+	private metadataCache: CachedMetadata
+
+	constructor(
+		app: App,
+		filePath: string,
+	) {
+		this.app = app
+		this.filePath = filePath;
+		this.sourceFile = app.vault.getAbstractFileByPath(filePath) as TFile
+		if (this.sourceFile && this.sourceFile.path) {
+			this.metadataCache = app.metadataCache.getFileCache(this.sourceFile) || {}
+		} else {
+			this.metadataCache = {}
+		}
+	}
+
+	readPropertyString(
+		key: string,
+		defaultValue?: string
+	): string {
+		if (!this.metadataCache?.frontmatter?.[key]) {
+			return defaultValue || defaultValue || ""
+		}
+		let propertyValue = this.metadataCache?.frontmatter?.[key] || ""
+		if (Array.isArray(propertyValue)) {
+			return propertyValue.join("")
+		} else {
+			return propertyValue.toString()
+		}
+	}
+
+	readPropertyList(
+		key: string,
+		defaultValue?: string[],
+	): string[] {
+		if (!this.metadataCache?.frontmatter?.[key]) {
+			return defaultValue || []
+		}
+		let propertyValue = this.metadataCache?.frontmatter?.[key] || ""
+		if (!propertyValue) {
+			return []
+		}
+		if (Array.isArray(propertyValue)) {
+			return propertyValue
+		} else {
+			return [propertyValue.toString()]
+		}
+	}
+
+}
+
 export async function updateFileProperties(
 	app: App,
 	filePath: string,
@@ -46,10 +102,7 @@ export async function updateFileProperties(
 			try {
 				parsedFrontmatter = { ... parseYaml(frontmatter) }
 			} catch (err) {
-				new Notice(
-`Malformed existing YAML frontmatter in file '${filePath}':
-${err}`
-			)
+				new Notice( `Malformed existing YAML frontmatter in file '${filePath}': ${err}`)
 				console.log(err)
 				return
 			}
