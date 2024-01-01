@@ -30,10 +30,11 @@ interface BibliosidianSettings {
 	referenceSourceBibTex: string
 	referenceSubdirectoryRoot: string
 	isSubdirectorizeReferencesLexically: boolean
+	referenceAdditionalMetadata: FilePropertyData,
 	authorsParentFolderPath: string
 	isSubdirectorizeAuthorsLexically: boolean
+	authorsAdditionalMetadata: FilePropertyData,
 	isCreateAuthorPages: boolean,
-	additionalMetadata: FilePropertyData,
 }
 
 const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
@@ -42,10 +43,11 @@ const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	referenceSourceBibTex: "entry-bibtex",
 	referenceSubdirectoryRoot: _path.join("sources", "references"),
 	isSubdirectorizeReferencesLexically: true,
+	referenceAdditionalMetadata: {},
 	authorsParentFolderPath: _path.join("sources", "authors"),
 	isSubdirectorizeAuthorsLexically: true,
 	isCreateAuthorPages: true,
-	additionalMetadata: {},
+	authorsAdditionalMetadata: {},
 }
 
 class BibliosidianSettingTab extends PluginSettingTab {
@@ -108,21 +110,51 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
         }));
 
-		let currentRefPropertiesSetting = this.plugin.settings.additionalMetadata
-		let currentRefPropertiesData: FilePropertyData  = {}
-		let currentRefPropertiesString: string  = ""
-		new Setting(containerEl)
-			.setName("Additional Properties")
-			.setDesc("Other metadata properties to be update (YAML).")
-			.addTextArea(text => text
-				.setPlaceholder("(E.g. 'type: literature/reference")
-				.setValue(currentRefPropertiesString)
-				.onChange(async (value) => {
-					let refProperties: FilePropertyData  = {}
-					this.plugin.settings.additionalMetadata = refProperties;
-					await this.plugin.saveSettings();
-		}));
+		let currentRefPropertiesSetting = this.plugin.settings.referenceAdditionalMetadata
+		// let currentRefPropertiesData: FilePropertyData  = {}
 
+		let currentRefPropertiesData: FilePropertyData = {};
+		if (currentRefPropertiesSetting) {
+			currentRefPropertiesData = {  ... currentRefPropertiesData, ... parseYaml(currentRefPropertiesSetting) }
+		}
+		let currentRefPropertiesString: string  = ""
+
+		// new Setting(containerEl)
+		// 	.setName("Additional Properties")
+		// 	.setDesc("Other metadata properties to be update (YAML).")
+		// 	.addTextArea(text => text
+		// 		.setPlaceholder("(E.g. 'type: literature/reference")
+		// 		.setValue(currentRefPropertiesString)
+		// 		.onChange(async (value) => {
+		// 			let yamlStr = value
+		// 			try {
+		// 				let refProperties: FilePropertyData = parseYaml(value)
+		// 			} catch(error) {
+		// 			}
+		// 			console.log(yamlStr)
+		// 			console.log(refProperties)
+		// 			this.plugin.settings.referenceAdditionalMetadata = refProperties;
+		// 			await this.plugin.saveSettings();
+		// }));
+
+
+		let refPropertiesSetting = new Setting(containerEl)
+		.setName("Additional Properties")
+		.setDesc("Other metadata properties to be updated (YAML).")
+		.addTextArea(text => {
+			text.setPlaceholder("(E.g., 'type: literature/reference')")
+			.setValue(currentRefPropertiesString);
+			text.inputEl.addEventListener("blur", async () => {
+				try {
+					let refProperties: FilePropertyData = parseYaml(text.getValue());
+					refPropertiesSetting.setDesc("YAML parsed successfully. Recognized fields: " + Object.keys(refProperties).join(", "));
+					this.plugin.settings.referenceAdditionalMetadata = refProperties;
+					await this.plugin.saveSettings();
+				} catch (error) {
+					refPropertiesSetting.setDesc("YAML Parse Error: " + error.message);
+				}
+			});
+		});
 
 		containerEl.createEl("h2", { text: "Authors" })
 
