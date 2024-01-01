@@ -162,8 +162,13 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		settingsPropertyParameterInitialDescription: string = "Other metadata properties to be updated specified in YAML.",
 		settingsPropertyParameterPlaceholder: string = "(E.g., 'type: source/reference)",
 	) {
-			let cachedValue: FilePropertyData = this.plugin.settings[settingsPropertyName] as FilePropertyData
-			let currentAdditionalPropertiesString: string = cachedValue ? stringifyYaml(cachedValue) : ""
+			let currentAdditionalPropertiesString: string = "";
+			if (this.plugin.settings[settingsPropertyName]) {
+				let cachedValue: FilePropertyData = this.plugin.settings[settingsPropertyName] as FilePropertyData
+				if (cachedValue) {
+					currentAdditionalPropertiesString = stringifyYaml(cachedValue)
+				}
+			}
 			let refPropertiesSetting = new Setting(containerEl)
 			.setName(settingsPropertyDisplayName)
 			.setDesc(settingsPropertyParameterInitialDescription)
