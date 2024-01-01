@@ -112,13 +112,11 @@ class BibliosidianSettingTab extends PluginSettingTab {
         }));
 
 		let currentRefPropertiesSetting = this.plugin.settings.referenceAdditionalMetadata
-		// let currentRefPropertiesData: FilePropertyData  = {}
-
 		let currentRefPropertiesData: FilePropertyData = {};
 		if (currentRefPropertiesSetting) {
-			currentRefPropertiesData = {  ... currentRefPropertiesData, ... parseYaml(currentRefPropertiesSetting) }
+			currentRefPropertiesData = {  ... currentRefPropertiesData, ... currentRefPropertiesSetting }
 		}
-		let currentRefPropertiesString: string  = ""
+		let currentRefPropertiesString: string  = stringifyYaml(currentRefPropertiesData)
 
 		// new Setting(containerEl)
 		// 	.setName("Additional Properties")
@@ -140,20 +138,20 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 
 		let refPropertiesSetting = new Setting(containerEl)
-		.setName("Additional Properties")
-		.setDesc("Other metadata properties to be updated (YAML).")
+		.setName("Additional Properties (YAML)")
+		.setDesc("Other metadata properties to be updated specified in YAML.")
 		.addTextArea(text => {
 			text.setPlaceholder("(E.g., 'type: literature/reference')")
 			.setValue(currentRefPropertiesString);
+			text.inputEl.style.height = "8rem"
 			text.inputEl.addEventListener("blur", async () => {
 				try {
 					let refProperties: FilePropertyData = parseYaml(text.getValue());
-
 					// refPropertiesSetting.setDesc("YAML parsed successfully. Recognized fields: " + Object.keys(refProperties).join(", "));
 					// refPropertiesSetting.setDesc(`YAML parsed successfully: ${refProperties}`)
-
+					refPropertiesSetting.descEl.empty()
 					createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
-
+					// this.plugin.settings.referenceAdditionalMetadata = stringifyYaml(refProperties);
 					this.plugin.settings.referenceAdditionalMetadata = refProperties;
 					await this.plugin.saveSettings();
 				} catch (error) {
