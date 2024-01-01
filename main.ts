@@ -99,6 +99,16 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
         }));
 
+		new Setting(containerEl)
+			.setName("Create author notes automatically")
+			.setDesc("Enable or disable creation or updating of linked author notes when creating or updating reference notes.")
+			.addToggle(toggle => toggle
+					.setValue(this.plugin.settings.isCreateAuthorPages)
+					.onChange(async (value) => {
+						this.plugin.settings.isCreateAuthorPages = value;
+						await this.plugin.saveSettings();
+		}));
+
 		this.manageAdditionalPropertiesSettings(
 			containerEl,
 			"referenceAdditionalMetadata",
@@ -106,15 +116,6 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 		containerEl.createEl("h2", { text: "Authors" })
 
-		new Setting(containerEl)
-		.setName("Create author notes automatically")
-		.setDesc("Enable or disable creation or updating of linked author notes when creating or updating reference notes.")
-		.addToggle(toggle => toggle
-				   .setValue(this.plugin.settings.isCreateAuthorPages)
-				   .onChange(async (value) => {
-					   this.plugin.settings.isCreateAuthorPages = value;
-					   await this.plugin.saveSettings();
-		}));
 		new Setting(containerEl)
 			.setName("Authors folder")
 			.setDesc("Path to folder of author notes.")

@@ -435,44 +435,14 @@ function generateReference(
 	.catch( (error) => {} )
 }
 
-function computeTargetFilePath(
-	sourceBibTex: string,
-	referenceSubdirectoryRoot: string = "",
-	isSubdirectorizeReferencesLexically: boolean = true,
-): string {
-	let bibEntry;
-	let bibtexStr
-	let fieldValueMap
-	try {
-		({ bibEntry, bibtexStr, fieldValueMap  } = getBibEntry(sourceBibTex))
-	} catch (error) {
-		// new Notice(`Reference data could not be resolved:\n${error}`)
-		console.log(error)
-	}
-	// if (!bibEntry) {
-	// 	new Notice("Reference data could not be resolved")
-	// 	return
-	// }
-	if (!bibEntry) {
-		return ""
-	} else {
-		return computeBibEntryTargetFilePath(
-			bibEntry,
-			referenceSubdirectoryRoot,
-			isSubdirectorizeReferencesLexically
-		)
-	}
-}
-
 function computeBibEntryTargetFilePath(
 	bibEntry: BibEntry,
-	referenceSubdirectoryRoot: string = "",
-	isSubdirectorizeReferencesLexically: boolean = true,
+	settings: BibliosidianSettings,
 ): string {
 	let citekey = bibEntry._id
 	let citekeyMarkedUp = `@${citekey}`
-	let parentPath = referenceSubdirectoryRoot
-	if (isSubdirectorizeReferencesLexically) {
+	let parentPath = settings.referenceSubdirectoryRoot
+	if (settings.isSubdirectorizeReferencesLexically) {
 		parentPath = _path.join(parentPath, replaceProblematicChars(citekey[0]))
 	}
 	return _path.join(parentPath, citekeyMarkedUp + ".md")
@@ -485,24 +455,21 @@ function replaceProblematicChars(input: string): string {
 
 class BibTexModal extends Modal {
     args: BibTexModalArgs;
+	settings: BibliosidianSettings;
     sourceBibTexTextarea: HTMLTextAreaElement;
     targetFilepathInput: HTMLInputElement;
-	referenceSubdirectoryRoot: string;
-	isSubdirectorizeReferencesLexically: boolean;
 	private _parsedBibEntry: BibEntry | undefined = undefined
 	private _parsedBibTexStr: string = ""
 	private _parsedFieldValueMap: { [key: string]: string } = {}
 
     constructor(
 		app: App,
-		referenceSubdirectoryRoot: string,
-		isSubdirectorizeReferencesLexically: boolean,
+		settings: BibliosidianSettings,
 		args: BibTexModalArgs,
     ) {
         super(app);
+        this.settings = settings
         this.args = args;
-		this.referenceSubdirectoryRoot = referenceSubdirectoryRoot;
-		this.isSubdirectorizeReferencesLexically = isSubdirectorizeReferencesLexically;
     }
 
     normalizeDisplayedFilepathEnding() {
@@ -530,6 +497,7 @@ class BibTexModal extends Modal {
 			let parseUpdatedValue = () => {
 				try {
 					let inputValue: string = textAreaComponent.getValue();
+					parsedInputSetting.descEl.empty()
 					if (inputValue) {
 						let result = getBibEntry(inputValue)
 						this._parsedBibEntry = result.bibEntry
@@ -537,7 +505,6 @@ class BibTexModal extends Modal {
 						this._parsedFieldValueMap = result.fieldValueMap
 						createKeyValueTable(parsedInputSetting.descEl, this._parsedFieldValueMap)
 					} else {
-						parsedInputSetting.descEl.empty()
 						this._parsedBibEntry = undefined
 						this._parsedBibTexStr = ""
 						this._parsedFieldValueMap = {}
@@ -586,6 +553,28 @@ class BibTexModal extends Modal {
 		});
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
 		let panelSetting = new Setting(toolPanel)
+
+
+		let isEnableAutoupdate = true
+		panelSetting.addToggle( toggle => {
+			toggle
+				.setValue(isEnableAutoupdate)
+				.onChange(async (value) => {
+					isEnableAutoupdate = value;
+				})
+		})
+
+		let setLocationFromBibTeX = () => {
+			if (this._parsedBibEntry) {
+				let filePath = computeBibEntryTargetFilePath(
+					this._parsedBibEntry,
+					this.settings,
+				)
+				mainInputComponent.setValue(filePath)
+			} else {
+			}
+		}
+
 		panelSetting.addButton( (button: ButtonComponent) => {
 			button
 			.setButtonText("Reset")
@@ -597,9 +586,10 @@ class BibTexModal extends Modal {
 			button
 			.setButtonText("Auto")
 			.onClick( () => {
-				mainInputComponent.setValue(initialValue)
+				setLocationFromBibTeX()
 			});
 		});
+
 	}
 
     onOpen() {
@@ -791,8 +781,7 @@ export function createReferenceNote(
 ) {
 	const bibtexModal = new BibTexModal(
 		app,
-		settings.referenceSubdirectoryRoot,
-		settings.isSubdirectorizeReferencesLexically,
+		settings,
 		{
 		targetFilepath: targetFilepath,
 		sourceBibTex: defaultBibTex,
