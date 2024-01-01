@@ -17,6 +17,10 @@ import {
 	generateReferenceLibrary,
 } from "./references"
 
+import {
+	FilePropertyData,
+} from "./fileProperties"
+
 
 interface BibliosidianSettings {
 	mySetting: string;
@@ -27,6 +31,7 @@ interface BibliosidianSettings {
 	authorsParentFolderPath: string
 	isSubdirectorizeAuthorsLexically: boolean
 	isCreateAuthorPages: boolean,
+	additionalMetadata: FilePropertyData,
 }
 
 const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
@@ -38,6 +43,7 @@ const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	authorsParentFolderPath: _path.join("sources", "authors"),
 	isSubdirectorizeAuthorsLexically: true,
 	isCreateAuthorPages: true,
+	additionalMetadata: {},
 }
 
 class BibliosidianSettingTab extends PluginSettingTab {
@@ -59,11 +65,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Source bibliographic data property name prefix")
-			.setDesc(`
-This will be prefixed to the normalized bibliographic (YAML frontmatter properties) data fields for reference bibliographic data.
-For example, if set to 'source-', the frontmatter YAML field will be 'source-authors' instead of just 'authors'.
-Better namespacing will come when Obsidian supports nested frontmatter YAML objects.
-			`)
+			.setDesc("This will be prefixed to the normalized bibliographic (YAML frontmatter properties) data fields for reference bibliographic data. For example, if set to 'source-', the frontmatter YAML field will be 'source-authors' instead of just 'authors'. Better namespacing will come when Obsidian supports nested frontmatter YAML objects.")
 			.addText(text => text
 				.setPlaceholder("(e.g., 'source-')")
 				.setValue(this.plugin.settings.referenceSourcePropertiesPrefix)
@@ -73,9 +75,7 @@ Better namespacing will come when Obsidian supports nested frontmatter YAML obje
 		}));
 		new Setting(containerEl)
 			.setName("Source BibTex property name")
-			.setDesc(`
-Name of text field on note that to track associated BibTeX data.
-			`)
+			.setDesc(` Name of text field on note that to track associated BibTeX data. `)
 			.addText(text => text
 				.setPlaceholder("(YAML frontmatter property name, e.g. 'source-bibtex')")
 				.setValue(this.plugin.settings.referenceSourceBibTex)
@@ -88,9 +88,7 @@ Name of text field on note that to track associated BibTeX data.
 
 		new Setting(containerEl)
 			.setName("References folder")
-			.setDesc(`
-Path to folder of reference notes.
-			`)
+			.setDesc("Path to folder of reference notes.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/references')")
 				.setValue(this.plugin.settings.referenceSubdirectoryRoot)
@@ -108,6 +106,18 @@ Path to folder of reference notes.
 					await this.plugin.saveSettings();
         }));
 
+		new Setting(containerEl)
+			.setName("Additional Properties")
+			.setDesc("Other metadata properties to be update (YAML).")
+			.addText(text => text
+				.setPlaceholder("(E.g. 'type: literature/reference")
+				.setValue(this.plugin.settings.referenceSubdirectoryRoot)
+				.onChange(async (value) => {
+					this.plugin.settings.referenceSubdirectoryRoot = value;
+					await this.plugin.saveSettings();
+		}));
+
+
 		containerEl.createEl("h2", { text: "Authors" })
 
 		new Setting(containerEl)
@@ -121,9 +131,7 @@ Path to folder of reference notes.
 		}));
 		new Setting(containerEl)
 			.setName("Authors folder")
-			.setDesc(`
-Path to folder of author notes.
-			`)
+			.setDesc("Path to folder of author notes.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/authors')")
 				.setValue(this.plugin.settings.authorsParentFolderPath)
@@ -140,6 +148,7 @@ Path to folder of author notes.
 					this.plugin.settings.isSubdirectorizeAuthorsLexically = value;
 					await this.plugin.saveSettings();
         }));
+
 	}
 
 
