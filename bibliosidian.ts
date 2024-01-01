@@ -516,14 +516,15 @@ class BibTexModal extends Modal {
 			this.parsedSourceTextAreaComponent.inputEl.addEventListener("blur", async () => {
 				parseUpdatedValue()
 			});
-		});
-		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
-		let panelSetting = new Setting(toolPanel)
-		panelSetting.addButton( (button: ButtonComponent) => {
-			button
-			.setButtonText("Reset")
-			.onClick( () => {
-				this.parsedSourceTextAreaComponent.setValue(initialValue)
+			let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
+			let panelSetting = new Setting(toolPanel)
+			panelSetting.addButton( (button: ButtonComponent) => {
+				button
+				.setButtonText("Reset")
+				.onClick( () => {
+					this.parsedSourceTextAreaComponent.setValue(initialValue)
+					parseUpdatedValue()
+				});
 			});
 		});
 	}
