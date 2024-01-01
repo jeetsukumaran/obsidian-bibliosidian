@@ -150,6 +150,11 @@ function generateSourceFrontmatter(
 	refProperties["entry-title"] = `**${inTextCitation}** ${compositeTitle}`
 	refProperties["entry-updated"] = updateDateStamp
 
+	// Add additional stuff
+	if (settings.referenceAdditionalMetadata) {
+		refProperties = { ... refProperties, ... settings.referenceAdditionalMetadata }
+	}
+
     refProperties[bibToYamlLabelFn("citekey")] = citekey
     refProperties[bibToYamlLabelFn("author")] = authorLinks.map( (link) => link.aliasedLink )
     refProperties[bibToYamlLabelFn("date")] = sourceYear
