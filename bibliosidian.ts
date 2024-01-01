@@ -54,6 +54,7 @@ export interface BibliosidianSettings {
 interface BibTexModalArgs {
     sourceBibTex: string;
     targetFilepath: string;
+	isCreateAuthorPages: boolean;
     onGenerate: (args: { targetFilepath: string, sourceBibTex: string }) => void;
     onCancel: () => void;
     isOpenNote: boolean;
@@ -359,7 +360,7 @@ function generateAuthorLinks(
 				authorParentFolderPath = settings.authorsParentFolderPath
 			}
             const authorFilePath = _path.join(authorParentFolderPath, authorFileName);
-            if (settings.isCreateAuthorPages) {
+            if (args.isCreateAuthorPages) {
                 let targetFilepath = authorFilePath;
                 if (!targetFilepath.endsWith(".md")) {
 					targetFilepath = targetFilepath + ".md"
@@ -596,13 +597,24 @@ class BibTexModal extends Modal {
 			this.args.targetFilepath,
 		)
 
+		contentEl.createEl("h2", { text: "Authors" })
+		let updateAuthorsSettings = new Setting(contentEl)
+		updateAuthorsSettings
+			.setName("Update associated source author notes")
+		updateAuthorsSettings.addToggle( toggle => {
+			toggle
+				.setValue(this.args.isCreateAuthorPages)
+				.onChange(async (value) => {
+					this.args.isCreateAuthorPages = value;
+				})
+		})
+
 		// contentEl.createEl("h2", { text: "Update" })
 		let inputSetting = new Setting(contentEl)
 		inputSetting.addButton( (button: ButtonComponent) => {
 			button
 			.setButtonText("Update")
 			.onClick( () => {
-				console.log("go")
 				this.args.onGenerate({
 					targetFilepath: this.referencePathTextComponent.getValue().endsWith(".md")
 						? this.referencePathTextComponent.getValue()
@@ -792,6 +804,7 @@ export function createReferenceNote(
 		{
 		sourceBibTex: defaultBibTex,
 		targetFilepath: targetFilepath,
+		isCreateAuthorPages: settings.isCreateAuthorPages, // settings gives default, args overrides
 		onGenerate: (args: BibTexModalArgs) => {
 			generateReference(
 				app,
