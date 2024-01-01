@@ -543,17 +543,18 @@ class BibTexModal extends Modal {
 	) {
 		let inputSetting = new Setting(containerEl)
 			.setName("Path to reference note")
-		let mainInputComponent: TextComponent
-		inputSetting.addText(text => {
+		let mainInputComponent: TextAreaComponent
+		inputSetting.addTextArea(text => {
 			mainInputComponent = text
 			mainInputComponent.setValue(initialValue);
 			mainInputComponent.inputEl.addEventListener("blur", async () => {
 				// parseUpdatedValue()
 			});
+			mainInputComponent.inputEl.style.width = "100%"
 		});
+
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
 		let panelSetting = new Setting(toolPanel)
-
 
 		let isEnableAutoupdate = true
 		panelSetting.addToggle( toggle => {
