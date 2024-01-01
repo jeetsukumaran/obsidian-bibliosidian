@@ -550,7 +550,9 @@ class BibTexModal extends Modal {
 				}
 			});
 		});
-		parsedInputSetting.addButton( (button: ButtonComponent) => {
+		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
+		let panelSetting = new Setting(toolPanel)
+		panelSetting.addButton( (button: ButtonComponent) => {
 			button
 			.setButtonText("Reset")
 			.onClick( () => {
