@@ -10,6 +10,7 @@ import {
 	// Plugin,
 	// PluginSettingTab,
 	Setting,
+	BaseComponent,
 	ButtonComponent,
 	TextComponent,
 	TextAreaComponent,
@@ -456,8 +457,8 @@ function replaceProblematicChars(input: string): string {
 class BibTexModal extends Modal {
     args: BibTexModalArgs;
 	settings: BibliosidianSettings;
-    sourceBibTexTextarea: HTMLTextAreaElement;
-    targetFilepathInput: HTMLInputElement;
+	parsedSourceTextAreaComponent: TextAreaComponent;
+	referencePathTextComponent: TextAreaComponent
 	private _parsedBibEntry: BibEntry | undefined = undefined
 	private _parsedBibTexStr: string = ""
 	private _parsedFieldValueMap: { [key: string]: string } = {}
@@ -472,13 +473,7 @@ class BibTexModal extends Modal {
         this.args = args;
     }
 
-    normalizeDisplayedFilepathEnding() {
-		if (this.targetFilepathInput.value.endsWith(".md")) {
-			this.targetFilepathInput.value = this.targetFilepathInput.value.slice(0, -3);
-		}
-    }
-
-	renderParsedInputTextArea(
+	buildParsedTextAreaComponent(
 		containerEl: HTMLElement,
 		initialValue: string = "",
 		valuePlaceholder: string = "",
@@ -486,17 +481,16 @@ class BibTexModal extends Modal {
 		let parsedInputSetting = new Setting(containerEl)
 			.setName("Source definition (BibTeX)")
 			// .setDesc(initialDescription)
-		let textAreaComponent: TextAreaComponent
 		parsedInputSetting.addTextArea(text => {
-			textAreaComponent = text
-			textAreaComponent
+			this.parsedSourceTextAreaComponent = text
+			this.parsedSourceTextAreaComponent
 				.setPlaceholder(valuePlaceholder)
 				.setValue(initialValue);
-			textAreaComponent.inputEl.style.height = "12rem"
-			// textAreaComponent.inputEl.style.width = "100%"
+			this.parsedSourceTextAreaComponent.inputEl.style.height = "12rem"
+			// this.parsedSourceTextAreaComponent.inputEl.style.width = "100%"
 			let parseUpdatedValue = () => {
 				try {
-					let inputValue: string = textAreaComponent.getValue();
+					let inputValue: string = this.parsedSourceTextAreaComponent.getValue();
 					parsedInputSetting.descEl.empty()
 					if (inputValue) {
 						let result = getBibEntry(inputValue)
@@ -515,7 +509,7 @@ class BibTexModal extends Modal {
 				}
 			}
 			parseUpdatedValue()
-			textAreaComponent.inputEl.addEventListener("blur", async () => {
+			this.parsedSourceTextAreaComponent.inputEl.addEventListener("blur", async () => {
 				parseUpdatedValue()
 			});
 		});
@@ -525,16 +519,9 @@ class BibTexModal extends Modal {
 			button
 			.setButtonText("Reset")
 			.onClick( () => {
-				textAreaComponent.setValue(initialValue)
+				this.parsedSourceTextAreaComponent.setValue(initialValue)
 			});
 		});
-		// panelSetting.addButton( (button: ButtonComponent) => {
-		// 	button
-		// 	.setButtonText("Reset")
-		// 	.onClick( () => {
-		// 		textAreaComponent.setValue(initialValue)
-		// 	});
-		// });
 	}
 
 	renderReferenceLocationInputTextArea(
@@ -543,14 +530,13 @@ class BibTexModal extends Modal {
 	) {
 		let inputSetting = new Setting(containerEl)
 			.setName("Path to reference note")
-		let mainInputComponent: TextAreaComponent
 		inputSetting.addTextArea(text => {
-			mainInputComponent = text
-			mainInputComponent.setValue(initialValue);
-			mainInputComponent.inputEl.addEventListener("blur", async () => {
+			this.referencePathTextComponent = text
+			this.referencePathTextComponent.setValue(initialValue);
+			this.referencePathTextComponent.inputEl.addEventListener("blur", async () => {
 				// parseUpdatedValue()
 			});
-			mainInputComponent.inputEl.style.width = "100%"
+			this.referencePathTextComponent.inputEl.style.width = "100%"
 		});
 
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
@@ -571,7 +557,7 @@ class BibTexModal extends Modal {
 					this._parsedBibEntry,
 					this.settings,
 				)
-				mainInputComponent.setValue(filePath)
+				this.referencePathTextComponent.setValue(filePath)
 			} else {
 			}
 		}
@@ -587,25 +573,30 @@ class BibTexModal extends Modal {
 			button
 			.setButtonText("Reset")
 			.onClick( () => {
-				mainInputComponent.setValue(initialValue)
+				this.referencePathTextComponent.setValue(initialValue)
 			});
 		});
-
 	}
 
     onOpen() {
         const { contentEl } = this;
 		contentEl.createEl("h1", { text: "Reference update" })
+
+		// this sets up referenceSourceBibTexComponent
 		contentEl.createEl("h2", { text: "Source" })
-		this.renderParsedInputTextArea(
+		let referenceSourceBibTexComponent = this.buildParsedTextAreaComponent(
 			contentEl,
 			this.args.sourceBibTex,
 		)
+
 		contentEl.createEl("h2", { text: "Reference" })
 		this.renderReferenceLocationInputTextArea(
 			contentEl,
 			this.args.targetFilepath,
 		)
+
+		// (1) another panel of buttons here, include "Generate", which requires values of "referenceSourceBibTexComponent"
+		// and referenceLocationComponent
 
     }
 
