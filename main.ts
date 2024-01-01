@@ -165,7 +165,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 			let currentAdditionalPropertiesString: string = "";
 			if (this.plugin.settings[settingsPropertyName]) {
 				let cachedValue: FilePropertyData = this.plugin.settings[settingsPropertyName] as FilePropertyData
-				if (cachedValue) {
+				if (cachedValue && cachedValue.length > 0) {
 					currentAdditionalPropertiesString = stringifyYaml(cachedValue)
 				}
 			}
