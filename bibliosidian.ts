@@ -213,6 +213,7 @@ function generateSourceFrontmatter(
 	if (abstract) {
 		refProperties["abstract"] = abstract
 	}
+	refProperties["aliases"] = addUniquePropertyListItems("aliases", [citekey, inTextCitation, compositeTitle, ])
 
     updateFileProperties(
     	this.app,
