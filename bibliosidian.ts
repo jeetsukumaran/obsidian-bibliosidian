@@ -484,16 +484,16 @@ class BibTexModal extends Modal {
 		let valuePlaceholder = (
 `
 E.g.:
-  @article{kullback1951,
-    title={On information and sufficiency},
-    author={Kullback, Solomon and Leibler, Richard A},
-    journal={The annals of mathematical statistics},
-    volume={22},
-    number={1},
-    pages={79--86},
-    year={1951},
-    publisher={JSTOR}
-  }
+    @article{kullback1951,
+        title={On information and sufficiency},
+        author={Kullback, Solomon and Leibler, Richard A},
+        journal={The annals of mathematical statistics},
+        volume={22},
+        number={1},
+        pages={79--86},
+        year={1951},
+        publisher={JSTOR}
+    }
 `
 		)
 		parsedInputSetting.addTextArea(text => {
@@ -501,7 +501,7 @@ E.g.:
 			this.parsedSourceTextAreaComponent
 				.setPlaceholder(valuePlaceholder)
 				.setValue(initialValue);
-			this.parsedSourceTextAreaComponent.inputEl.style.height = "12rem"
+			this.parsedSourceTextAreaComponent.inputEl.style.height = "16rem"
 			this.parsedSourceTextAreaComponent.inputEl.style.overflow = "scroll"
 			// this.parsedSourceTextAreaComponent.inputEl.style.width = "100%"
 			let parseUpdatedValue = () => {
@@ -568,7 +568,8 @@ E.g.:
 			this.referencePathTextComponent.inputEl.addEventListener("blur", async () => {
 				// parseUpdatedValue()
 			});
-			this.referencePathTextComponent.inputEl.style.width = "100%"
+			this.referencePathTextComponent.inputEl.style.height = "4rem"
+			this.referencePathTextComponent.inputEl.style.overflow = "scroll"
 		});
 
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
