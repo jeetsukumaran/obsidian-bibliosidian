@@ -483,16 +483,17 @@ class BibTexModal extends Modal {
 			// .setDesc(initialDescription)
 		let valuePlaceholder = (
 `
-@article{kullback1951,
-  title={On information and sufficiency},
-  author={Kullback, Solomon and Leibler, Richard A},
-  journal={The annals of mathematical statistics},
-  volume={22},
-  number={1},
-  pages={79--86},
-  year={1951},
-  publisher={JSTOR}
-}
+E.g.:
+  @article{kullback1951,
+    title={On information and sufficiency},
+    author={Kullback, Solomon and Leibler, Richard A},
+    journal={The annals of mathematical statistics},
+    volume={22},
+    number={1},
+    pages={79--86},
+    year={1951},
+    publisher={JSTOR}
+  }
 `
 		)
 		parsedInputSetting.addTextArea(text => {
@@ -501,6 +502,7 @@ class BibTexModal extends Modal {
 				.setPlaceholder(valuePlaceholder)
 				.setValue(initialValue);
 			this.parsedSourceTextAreaComponent.inputEl.style.height = "12rem"
+			this.parsedSourceTextAreaComponent.inputEl.style.overflow = "scroll"
 			// this.parsedSourceTextAreaComponent.inputEl.style.width = "100%"
 			let parseUpdatedValue = () => {
 				try {
