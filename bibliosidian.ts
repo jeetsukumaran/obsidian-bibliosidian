@@ -112,13 +112,6 @@ function generateSourceFrontmatter(
     let refProperties: FilePropertyData  = {}
 
 	let citekey = bibEntry._id.toLowerCase()
-    let authorLinks = generateAuthorLinks(
-    	app,
-		settings,
-		args,
-		bibEntry,
-		"author",
-	)
 	let authorLastNames: string[] = []
 	const authorField = bibEntry.getField("author");
 	(authorField as any).authors$.forEach((author: any) => {
@@ -133,9 +126,7 @@ function generateSourceFrontmatter(
 		bibEntry.getFieldAsString("subtitle"),
 	].filter( (p) => p )
 	let compositeTitle = titleParts.join(": ")
-
 	let sourceYear = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
-
 	let inTextCitationYear = sourceYear
 	let inTextCitationAuthors: string;
 	if (authorLastNames.length == 1) {
@@ -159,7 +150,17 @@ function generateSourceFrontmatter(
 		refProperties = { ... refProperties, ... settings.referenceAdditionalMetadata }
 	}
 
-	refProperties["entry-title"] = `**${inTextCitation}** ${compositeTitle}`
+
+	let entryTitle = `**${inTextCitation}** ${compositeTitle}`
+	refProperties["entry-title"] = entryTitle
+    let authorLinks = generateAuthorLinks(
+    	app,
+		settings,
+		args,
+		bibEntry,
+		entryTitle,
+		"author",
+	)
 	// refProperties["entry-updated"] = updateDateStamp
 	// refProperties["entry-updated"] = [ ... fileProperties.readPropertyList("entry-updated"), updateDateStamp]
 	// refProperties["entry-updated"] = appendPropertyListItems("entry-updated", [updateDateStamp])
@@ -168,7 +169,8 @@ function generateSourceFrontmatter(
 	refProperties["entry-parents"] = fileProperties.concatItems("entry-parents", authorBareLinks)
 
     refProperties[bibToYamlLabelFn("citekey")] = citekey
-    refProperties[bibToYamlLabelFn("author")] = authorLinks.map( (link) => link.aliasedLink )
+    // refProperties[bibToYamlLabelFn("author")] = authorLinks.map( (link) => link.aliasedLink )
+    refProperties[bibToYamlLabelFn("authors")] = authorLinks.map( (link) => link.aliasedLink )
     refProperties[bibToYamlLabelFn("date")] = sourceYear
 
     refProperties[bibToYamlLabelFn("title")] = compositeTitle
@@ -250,44 +252,6 @@ function getBibEntry(
 	let bibtexStrParts = []
 	if (entry !== undefined) {
 
-		// let fieldNames = [
-		// 	"author",
-		// 	"date",
-		// 	"year",
-		// 	"title",
-		// 	"subtitle",
-		// 	"journal",
-		// 	"volume",
-		// 	"number",
-		// 	"pages",
-		// 	"pagetotal",
-		// 	"doi",
-		// 	"isbn",
-		// 	"url",
-		// 	"publisher",
-		// 	"booktitle",
-		// 	"abstract",
-		// 	"keywords",
-		// 	"series",
-		// 	"address",
-		// 	"location",
-		// 	"edition",
-		// 	"chapter",
-		// 	"note",
-		// 	"institution",
-		// 	"month",
-		// 	"school",
-		// 	"thesis",
-		// 	"howpublished",
-		// ]
-		// fieldNames.forEach( (fieldName: string) => {
-		// 	let entryValue = entry?.getFieldAsString(fieldName)
-		// 	fieldValueMap[fieldName] = (entryValue && entryValue.toString()) || ""
-		// 	if (entryValue !== undefined) {
-		// 		bibtexStrParts.push(`  ${fieldName} = {${entryValue}},`)
-		// 	}
-		// })
-
 		// let entryFields: EntryFields = bibEntry.fields$?.forEach( [key: string]: value: FieldValue
 		let entryFields: EntryFields = entry.fields
 		if (entryFields) {
@@ -331,6 +295,7 @@ function generateAuthorLinks(
 	settings: BibliosidianSettings,
 	args: BibTexModalArgs,
     entry: BibEntry,
+	entryTitle: string,
     authorFieldName: string = "author",
 ): { bareLink: string; aliasedLink: string; }[] {
     let results: { bareLink: string; aliasedLink: string; }[] = [];
@@ -385,6 +350,12 @@ function generateAuthorLinks(
 							authorDisplayName,
 						],
 					)
+					let sourceLink = `[[${args.targetFilepath}|${entryTitle}]]`
+					authorProperties["references"] = fileProperties
+						.concatItems("references",
+									 [sourceLink]
+						)
+
 					updateFileProperties(
 						app,
 						targetFilepath,
