@@ -478,26 +478,25 @@ class BibTexModal extends Modal {
 		initialValue: string = "",
 	) {
 		let parsedInputSetting = new Setting(containerEl)
-			.setName("Source bibliographic data (BibTeX)")
-			// .setDesc("Source definition (BibTex)")
-			// .setDesc(initialDescription)
-		let valuePlaceholder = (`@article{suchard2003hierarchical,
-  title={Hierarchical phylogenetic models for analyzing multipartite sequence data},
-  author={Suchard, Marc A and Kitchen, Christina MR and Sinsheimer, Janet S and Weiss, Robert E},
-  journal={Systematic biology},
-  volume={52},
-  number={5},
-  pages={649--664},
-  year={2003},
-  publisher={Society of Systematic Zoology}
-}`)
+		let valuePlaceholder = (
+`@article{kullback1951,
+  title={On information and sufficiency},
+  author={Kullback, Solomon and Leibler, Richard A},
+  journal={The annals of mathematical statistics},
+  volume={22},
+  number={1},
+  pages={79--86},
+  year={1951},
+  publisher={JSTOR}
+}
+`)
 		parsedInputSetting.addTextArea(text => {
 			this.parsedSourceTextAreaComponent = text
 			this.parsedSourceTextAreaComponent
 				.setPlaceholder(valuePlaceholder)
 				.setValue(initialValue);
 			this.parsedSourceTextAreaComponent.inputEl.style.height = "12rem"
-			// this.parsedSourceTextAreaComponent.inputEl.style.width = "100%"
+			// this.parsedSourceTextAreaComponent.inputEl.style.width = "100% !important"
 			let parseUpdatedValue = () => {
 				try {
 					let inputValue: string = this.parsedSourceTextAreaComponent.getValue();
