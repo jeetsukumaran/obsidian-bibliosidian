@@ -10,12 +10,12 @@ It supplements them.
 
 It is a *light-weight* alternative to the much heavier (and better-featured) approaches that, for e.g. "talk" directly to Zotero or other applications, and is independent of any particular reference manager, working with all of them (that export BibTeX).
 
-The basic workflow expects you to somehow or other get a BibTeX entry into your clipboard after which this plugin will automate the following actions:
+The basic workflow starts after you get a BibTeX entry into your clipboard.
+This plugin will then automate the following actions:
 
 - Creation of a literature note based on the citekey
 - Generation of YAML frontmatter metadata in the literature extracted
 - Linking each author entry listed in the metadata to a corresponding "Author" note (creating it if required)
-
 
 ## Installation
 
