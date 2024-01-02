@@ -158,7 +158,7 @@ function generateSourceFrontmatter(
 		settings,
 		args,
 		bibEntry,
-		entryTitle,
+		`${inTextCitation} ${compositeTitle}`,
 		"author",
 	)
 	// refProperties["entry-updated"] = updateDateStamp
