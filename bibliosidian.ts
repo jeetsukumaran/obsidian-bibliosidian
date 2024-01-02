@@ -476,12 +476,37 @@ class BibTexModal extends Modal {
 	buildParsedTextAreaComponent(
 		containerEl: HTMLElement,
 		initialValue: string = "",
-		valuePlaceholder: string = "",
 	) {
 		let parsedInputSetting = new Setting(containerEl)
 			.setName("Source bibliographic data (BibTeX)")
 			// .setDesc("Source definition (BibTex)")
 			// .setDesc(initialDescription)
+		let placeholder = (`
+@article{shannon1948,
+  author = {
+    Shannon, C. E.
+  },
+  title = "A mathematical theory of communication",
+  journal = "The Bell System Technical Journal",
+  year = "1948",
+  volume = "27",
+  number = "3",
+  pages = "379-423",
+  month = "07",
+  url = "",
+  doi = "10.1002/j.1538-7305.1948.tb01338.x",
+  abstract = "The recent development of
+    various methods of modulation such as PCM and PPM which exchange bandwidth
+     for signal-to-noise ratio has intensified the interest in a general theory
+      of communication. A basis for such a theory is contained in the
+      important papers of Nyquist1 and Hartley2 on this subject. In the
+     present paper we will extend the theory to include a number of new
+     factors, in particular the effect of noise in the channel, and the savings
+     possible due to the statistical structure of the original message and due
+     to the nature of the final destination of the information."
+
+}
+`)
 		parsedInputSetting.addTextArea(text => {
 			this.parsedSourceTextAreaComponent = text
 			this.parsedSourceTextAreaComponent
