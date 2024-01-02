@@ -17,6 +17,29 @@ The basic workflow expects you to somehow or other get a BibTeX entry into your 
 - Linking each author entry listed in the metadata to a corresponding "Author" note (creating it if required)
 
 
+## Installation
+
+Until the package is not available on the Obsidian community store, you will need
+to clone the repository and build it yourself.
+
+1. You need to have the following installed:
+
+    - [npm](https://www.npmjs.com/)
+    - [git](https://git-scm.com/)
+
+2. Open the `.obsidian/plugins/` folder of your vault in a system shell or terminal.
+   You can get here directly in the terminal or otherwise have Obsidian help you:
+	- You will need to enable "Community Plugins" for this to work.
+	- Open the settings panel in Obsidian, and navigate to the Plugins section
+	- Enable community plugins and then click "open plugins folder".
+	- Open a terminal window in this folder.
+3. Run: `git clone git@github.com:jeetsukumaran/obsidian-bibliosidian.git`
+4. Run: `npm i`
+5. Run: `npm run build`
+6. Enable the plugin from the "Community Plugins" settings page
+
+This will produce a `main.js` file inside the repository folder, which Obsidian can open and make use of directly.
+There's nothing else you need to do.
 
 ## Acknowledgements and Dependencies
 
