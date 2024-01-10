@@ -136,7 +136,7 @@ function generateSourceFrontmatter(
 	} else {
 		inTextCitationAuthors = `${authorLastNames[0]} et al.`
 	}
-	let inTextCitation: string = `(${inTextCitationAuthors} ${inTextCitationYear})`
+	let inTextCitation: string = `(${inTextCitationAuthors.trim()} ${inTextCitationYear})`
 
 	// This stuff is part of a related project: a multihierarchical indexing system
 	// Should/will be abstracted out as part of custom user field creation
