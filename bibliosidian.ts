@@ -121,11 +121,20 @@ function generateSourceFrontmatter(
 		}
 	})
 
+
+    let cleanSingleLine = (s: string | undefined): string => {
+        if (s) {
+            return s.replace(/\s+/g, " ")
+        } else {
+            return ""
+        }
+    }
+
 	let titleParts = [
-		bibEntry.getFieldAsString("title"),
-		bibEntry.getFieldAsString("subtitle"),
+		cleanSingleLine(bibEntry.getFieldAsString("title")?.toString()),
+		cleanSingleLine(bibEntry.getFieldAsString("subtitle")?.toString()),
 	].filter( (p) => p )
-	let compositeTitle = titleParts.join(": ")
+	let compositeTitle = cleanSingleLine(titleParts.join(": "))
 	let sourceYear = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
 	let inTextCitationYear = sourceYear
 	let inTextCitationAuthors: string;
