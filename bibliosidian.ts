@@ -120,28 +120,24 @@ function generateSourceFrontmatter(
     	// "editor",
     // ];
     // auFieldNames.forEach( (auFieldName) => {
-    let creators: Authors[] = [];
-	let auFieldNames = [
-	    "author",
-    	"editor",
-    ];
-    auFieldNames.forEach( (auFieldName) => {
-        let fieldValue: FieldValue = bibEntry?.fields[auFieldName] as FieldValue
+    let creatorNames: { [key: string]: Authors } = {};
+    for (let creatorTypeName of ["author", "editor"]) {
+        let fieldValue: FieldValue = bibEntry?.fields[creatorTypeName] as FieldValue
         if (!fieldValue) {
-            return;
+            continue;
         }
         let authors: Authors;
         try {
-             authors = new Authors(fieldValue);
+            authors = new Authors(fieldValue);
         } catch(error) {
             console.log(error);
-            return;
+            continue;
         }
-        creators.push(authors);
+        creatorNames[creatorTypeName] = authors;
         try {
             authors.authors$?.forEach((author: any) => {
                 let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
-                console.log(lastName);
+                // console.log(lastName);
                 if (lastName) {
                     authorLastNames.push(lastName);
                 }
@@ -150,31 +146,38 @@ function generateSourceFrontmatter(
             console.log(error);
         }
 
-        // // let authorField = bibEntry?.getField(auFieldName);
-        // let authorField = bibEntry?.fields[auFieldName];
-        // if (!authorField) {
-        //     return;
-        // }
-        // if (!(authorField as any)?.author$) {
-        //     try {
-        //         authorField = authorField.map( (name) => parseAuthorName(name) );
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // }
-        // console.log(authorField);
-        // try {
-        //     (authorField as any)?.authors$?.forEach((author: any) => {
-        //         let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
-        //         if (lastName) {
-        //             authorLastNames.push(lastName);
-        //         }
-        //     });
-        // } catch (error) {
-        //     console.log(error);
-        // }
-    });
+    };
 
+    // let creators: Authors[] = [];
+	// let auFieldNames = [
+	    // "author",
+    // 	"editor",
+    // ];
+    // auFieldNames.forEach( (auFieldName) => {
+    //     let fieldValue: FieldValue = bibEntry?.fields[auFieldName] as FieldValue
+    //     if (!fieldValue) {
+    //         return;
+    //     }
+    //     let authors: Authors;
+    //     try {
+    //          authors = new Authors(fieldValue);
+    //     } catch(error) {
+    //         console.log(error);
+    //         return;
+    //     }
+    //     creators.push(authors);
+    //     try {
+    //         authors.authors$?.forEach((author: any) => {
+    //             let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
+    //             console.log(lastName);
+    //             if (lastName) {
+    //                 authorLastNames.push(lastName);
+    //             }
+    //         });
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // });
 
     let cleanSingleLine = (s: string | undefined): string => {
         if (s) {
@@ -218,24 +221,29 @@ function generateSourceFrontmatter(
 
 	let entryTitle = `**${inTextCitation}** ${compositeTitle}`
 	refProperties["entry-title"] = entryTitle
-    let authorLinks = generateAuthorLinks(
-    	app,
-		settings,
-		args,
-		bibEntry,
-		`${inTextCitation} ${compositeTitle}`,
-		creators,
-	)
-	// refProperties["entry-updated"] = updateDateStamp
-	// refProperties["entry-updated"] = [ ... fileProperties.readPropertyList("entry-updated"), updateDateStamp]
-	// refProperties["entry-updated"] = appendPropertyListItems("entry-updated", [updateDateStamp])
-	refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
-	let authorBareLinks = authorLinks.map( (link) => link.bareLink )
-	refProperties["entry-parents"] = fileProperties.concatItems("entry-parents", authorBareLinks)
 
+    refProperties["entry-parents"] = []
+	refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
     refProperties[bibToYamlLabelFn("citekey")] = citekey
-    // refProperties[bibToYamlLabelFn("author")] = authorLinks.map( (link) => link.aliasedLink )
-    refProperties[bibToYamlLabelFn("authors")] = authorLinks.map( (link) => link.aliasedLink )
+
+    Object.entries(creatorNames).forEach(([key, value]) => {
+        if (!bibEntry) {
+            return;
+        }
+        let authorLinks = generateAuthorLinks(
+            app,
+            settings,
+            args,
+            bibEntry,
+            `${inTextCitation} ${compositeTitle}`,
+            [value],
+        )
+        let authorBareLinks = authorLinks.map( (link) => link.bareLink )
+        refProperties[bibToYamlLabelFn(key)] = authorLinks.map( (link) => link.aliasedLink )
+        refProperties["entry-parents"].push(... fileProperties.concatItems("entry-parents", authorBareLinks))
+    })
+
+
     refProperties[bibToYamlLabelFn("date")] = sourceYear
 
     refProperties[bibToYamlLabelFn("title")] = compositeTitle
