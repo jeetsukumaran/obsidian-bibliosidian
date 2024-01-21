@@ -112,8 +112,9 @@ export class MoveFileModal extends Modal {
             }
             destinationPath = await ensureUniquePath(this.app, destinationPath);
             try {
-                await this.app.vault.rename(sourceFile, destinationPath);
-                new Notice('File moved successfully.');
+                // await this.app.vault.rename(sourceFile, destinationPath);
+                await this.app.fileManager.renameFile(sourceFile, destinationPath);
+                new Notice(`File moved from '${sourceFile.path}' to '${destinationPath}'`);
             } catch (error) {
                 new Notice(`Error moving '${sourceFile.path}' to '${destinationPath}': ` + error);
                 console.log(error);
