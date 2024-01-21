@@ -187,9 +187,8 @@ function generateSourceFrontmatter(
         }
     }
 
-	let bibTitle = bibEntry.title$
+	let bibTitle = bibEntry.title$ || cleanSingleLine(bibEntry.getFieldAsString("title")?.toString())
 	let titleParts = [
-		// cleanSingleLine(bibEntry.getFieldAsString("title")?.toString()),
 		cleanSingleLine(bibTitle),
 		cleanSingleLine(bibEntry.getFieldAsString("subtitle")?.toString()),
 	].filter( (p) => p )
