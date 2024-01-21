@@ -119,11 +119,13 @@ function generateSourceFrontmatter(
     ];
     auFieldNames.forEach( (auFieldName) => {
         const authorField = bibEntry?.getField(auFieldName);
+        console.log(authorField);
         if (!authorField) {
             return;
         }
+        console.log(authorField);
         try {
-            (authorField as any).authors$.forEach((author: any) => {
+            (authorField as any)?.authors$?.forEach((author: any) => {
                 let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
                 if (lastName) {
                     authorLastNames.push(lastName);
