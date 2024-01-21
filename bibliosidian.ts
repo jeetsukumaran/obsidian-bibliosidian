@@ -67,7 +67,6 @@ interface Author {
     jrs: string[]
 }
 
-
 function composeAuthorData(author: Author): {
     displayName: string,
     normalizedFileName: string,
