@@ -19,11 +19,13 @@ import {
 } from 'obsidian';
 
 import {
+	Authors,
 	parseBibFile,
 	normalizeFieldValue,
 	BibEntry,
 	EntryFields,
 	FieldValue,
+	parseAuthorName,
 } from "bibtex";
 
 import {
@@ -113,20 +115,31 @@ function generateSourceFrontmatter(
 
 	let citekey = bibEntry._id.toLowerCase();
 	let authorLastNames: string[] = [];
-	let auFieldNames: string[] = [
+	// let auFieldNames: string[] = [
+	//     "author",
+    	// "editor",
+    // ];
+    // auFieldNames.forEach( (auFieldName) => {
+	let auFieldNames = [
 	    "author",
     	"editor",
     ];
     auFieldNames.forEach( (auFieldName) => {
-        const authorField = bibEntry?.getField(auFieldName);
-        console.log(authorField);
-        if (!authorField) {
+        let fieldValue: FieldValue = bibEntry?.fields[auFieldName] as FieldValue
+        if (!fieldValue) {
             return;
         }
-        console.log(authorField);
+        let authors: Authors;
         try {
-            (authorField as any)?.authors$?.forEach((author: any) => {
+             authors = new Authors(fieldValue);
+        } catch(error) {
+            console.log(error);
+            return;
+        }
+        try {
+            authors.authors$?.forEach((author: any) => {
                 let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
+                console.log(lastName);
                 if (lastName) {
                     authorLastNames.push(lastName);
                 }
@@ -134,6 +147,30 @@ function generateSourceFrontmatter(
         } catch (error) {
             console.log(error);
         }
+
+        // // let authorField = bibEntry?.getField(auFieldName);
+        // let authorField = bibEntry?.fields[auFieldName];
+        // if (!authorField) {
+        //     return;
+        // }
+        // if (!(authorField as any)?.author$) {
+        //     try {
+        //         authorField = authorField.map( (name) => parseAuthorName(name) );
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // }
+        // console.log(authorField);
+        // try {
+        //     (authorField as any)?.authors$?.forEach((author: any) => {
+        //         let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
+        //         if (lastName) {
+        //             authorLastNames.push(lastName);
+        //         }
+        //     });
+        // } catch (error) {
+        //     console.log(error);
+        // }
     });
 
 
@@ -145,8 +182,10 @@ function generateSourceFrontmatter(
         }
     }
 
+	let bibTitle = bibEntry.title$
 	let titleParts = [
-		cleanSingleLine(bibEntry.getFieldAsString("title")?.toString()),
+		// cleanSingleLine(bibEntry.getFieldAsString("title")?.toString()),
+		cleanSingleLine(bibTitle),
 		cleanSingleLine(bibEntry.getFieldAsString("subtitle")?.toString()),
 	].filter( (p) => p )
 	let compositeTitle = cleanSingleLine(titleParts.join(": "))
@@ -279,7 +318,7 @@ function getBibEntry(
 // }
 
     // bibFileData = bibFileData.replace(/month = feb,/g,"")
-    // bibFileData = bibFileData.replace(/\s+?month\s*?=\s*[A-Za-z]+?\s*?,?$/g,"")
+    bibFileData = bibFileData.replace(/\s+?month\s*?=\s*[A-Za-z]+?\s*?,?$/g,"")
 	const bibFile = parseBibFile(bibFileData);
 	let entry: BibEntry | undefined;
 	if (citeKey) {
