@@ -111,15 +111,28 @@ function generateSourceFrontmatter(
 
     let refProperties: FilePropertyData  = {}
 
-	let citekey = bibEntry._id.toLowerCase()
-	let authorLastNames: string[] = []
-	const authorField = bibEntry.getField("author");
-	(authorField as any).authors$.forEach((author: any) => {
-		let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
-		if (lastName) {
-			authorLastNames.push(lastName)
-		}
-	})
+	let citekey = bibEntry._id.toLowerCase();
+	let authorLastNames: string[] = [];
+	let auFieldNames: string[] = [
+	    "author",
+    	"editor",
+    ];
+    auFieldNames.forEach( (auFieldName) => {
+        const authorField = bibEntry?.getField(auFieldName);
+        if (!authorField) {
+            return;
+        }
+        try {
+            (authorField as any).authors$.forEach((author: any) => {
+                let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
+                if (lastName) {
+                    authorLastNames.push(lastName);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    });
 
 
     let cleanSingleLine = (s: string | undefined): string => {
@@ -264,7 +277,7 @@ function getBibEntry(
 // }
 
     // bibFileData = bibFileData.replace(/month = feb,/g,"")
-    bibFileData = bibFileData.replace(/\s+month\s*=\s*[A-Za-z]+?\s*,/g,"")
+    // bibFileData = bibFileData.replace(/\s+?month\s*?=\s*[A-Za-z]+?\s*?,?$/g,"")
 	const bibFile = parseBibFile(bibFileData);
 	let entry: BibEntry | undefined;
 	if (citeKey) {
