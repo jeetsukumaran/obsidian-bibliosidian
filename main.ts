@@ -29,6 +29,10 @@ import {
 	createFilePropertyDataTable,
 } from "./fileProperties";
 
+import {
+    formatAttachmentPath,
+} from "./utility";
+
 
 const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	mySetting: 'default',
@@ -228,11 +232,21 @@ export default class Bibliosidian extends Plugin {
 	}
 
 
-    addHolding() {
+    async addHolding() {
         const files = app.vault.getFiles(); // Get all files in the vault
+        let activeFile = this.app.workspace.getActiveFile();
+        if (!activeFile) {
+            return;
+        }
+        let destPath: string = await formatAttachmentPath(
+            this.app,
+            activeFile,
+            "pdf",
+            "",
+        );
         const modal = new MoveFileModal(
             app,
-            'default/destination/path',
+            destPath,
             files
         );
         modal.open();

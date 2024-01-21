@@ -57,6 +57,16 @@ export async function ensureParentDirectoryExists(app: App, filePath: string): P
     }
 }
 
+export async function ensureDirectoryExists(app: App, dirPath: string): Promise<void> {
+    // Check if the parent directory exists
+    let dirNode = app.vault.getAbstractFileByPath(dirPath) as TFolder;
+
+    if (!dirNode) {
+        // Create the parent directory if it doesn't exist
+        await createDirectory(app, dirPath);
+    }
+}
+
 export async function createDirectory(app: App, dirPath: string): Promise<TFolder> {
     const pathParts = dirPath.split('/').filter(part => part.length);
 
@@ -118,4 +128,33 @@ export async function ensureUniquePath(app: App, fullPath: string): Promise<stri
     }
 
     return newFullPath;
+}
+
+
+export async function formatAttachmentPath(
+    app: App,
+    hostFile: TFile,
+    extension: string,
+    destinationFolderPath: string
+): Promise<string> {
+    // Use host file's directory if destinationFolderPath is empty
+    if (!destinationFolderPath) {
+        destinationFolderPath = path.dirname(hostFile.path);
+    } else {
+        // Ensure destination folder exists
+        await ensureDirectoryExists(app, destinationFolderPath);
+        ensureParentDirectoryExists
+    }
+
+    // Get the extension from the source file
+    // const extension = path.extname(sourceFilePath);
+
+    // Construct the new filename
+    const hostFileNameWithoutExtension = path.basename(hostFile.path, path.extname(hostFile.path));
+    let newFilePath = path.join(destinationFolderPath, hostFileNameWithoutExtension + extension);
+
+    // Ensure the new file path is unique
+    newFilePath = await ensureUniquePath(app, newFilePath);
+
+    return newFilePath;
 }
