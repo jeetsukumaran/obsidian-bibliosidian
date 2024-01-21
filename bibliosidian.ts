@@ -33,7 +33,11 @@ import {
 	FilePropertyData,
 	updateFileProperties,
 	// updateFrontmatterYaml,
-} from "./fileProperties"
+} from "./fileProperties";
+
+import {
+    createOrOpenNote,
+}  from "./utility";
 
 
 // import { parseBibFile } from "bibtex";
@@ -821,43 +825,6 @@ E.g.:
     }
 }
 
-async function createOrOpenNote(
-    app: App,
-    filePath: string,
-    isOpenNote: boolean = true,
-    mode: PaneType | boolean = false,
-): Promise<string> {
-
-    const path = require('path');
-    let notePath = path.join(filePath);
-    if (!notePath.endsWith(".md")) {
-    	notePath = notePath + ".md"
-    }
-
-    // Extract directory path from the file path
-    const directoryPath = path.dirname(notePath);
-
-    try {
-        // Check if the directory exists, and create it if it doesn't
-        if (!await app.vault.adapter.exists(directoryPath)) {
-            await app.vault.createFolder(directoryPath);
-        }
-
-        // Check if the note exists
-        const noteExists = await app.vault.adapter.exists(notePath);
-
-        if (!noteExists) {
-            // If the note does not exist, create it
-            await app.vault.create(notePath, "");
-        }
-		if (isOpenNote) {
-			app.workspace.openLinkText(notePath, '', mode);
-		}
-    } catch (error) {
-        console.error('Error creating or opening the note:', error);
-    }
-    return notePath;
-}
 
 
 export function generateReferenceLibrary(

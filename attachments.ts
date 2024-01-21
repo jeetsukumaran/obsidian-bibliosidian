@@ -8,6 +8,11 @@ import {
     TextAreaComponent
 } from 'obsidian';
 
+import {
+    ensureParentDirectoryExists,
+    ensureUniquePath,
+} from "./utility";
+
 // File Suggest Modal
 class FileSuggestModal extends FuzzySuggestModal<TFile> {
     files: TFile[];
@@ -95,11 +100,23 @@ export class MoveFileModal extends Modal {
     private async moveFile() {
         const sourceFile = this.app.vault.getAbstractFileByPath(this.sourcePath.getValue());
         if (sourceFile instanceof TFile) {
+            let destinationPath: string = this.destinationPath.getValue();
+            if (!destinationPath) {
+                return;
+            }
             try {
-                await this.app.vault.rename(sourceFile, this.destinationPath.getValue());
+                await ensureParentDirectoryExists(this.app, destinationPath);
+            } catch (error) {
+                new Notice(`Error ensuring parent directory for destination '${destinationPath}': ` + error);
+                console.log(error);
+            }
+            destinationPath = await ensureUniquePath(this.app, destinationPath);
+            try {
+                await this.app.vault.rename(sourceFile, destinationPath);
                 new Notice('File moved successfully.');
             } catch (error) {
-                new Notice('Error moving file: ' + error);
+                new Notice(`Error moving '${sourceFile.path}' to '${destinationPath}': ` + error);
+                console.log(error);
             }
         } else {
             new Notice('Source file does not exist.');
@@ -107,8 +124,4 @@ export class MoveFileModal extends Modal {
     }
 }
 
-// Example usage
-const files = app.vault.getFiles(); // Get all files in the vault
-const modal = new MoveFileModal(app, 'default/destination/path', files);
-modal.open();
 

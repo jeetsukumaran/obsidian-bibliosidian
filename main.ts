@@ -203,6 +203,9 @@ export default class Bibliosidian extends Plugin {
 		this.addRibbonIcon("book-up-2", "Create or update reference note from BibTeX data", () => {
 			this.updateReferenceNoteFromBibTex()
 		});
+		this.addRibbonIcon("book-plus", "Add a holding associated with this reference", () => {
+			this.addHolding()
+		});
 
 
 		this.addCommand({
@@ -215,12 +218,24 @@ export default class Bibliosidian extends Plugin {
 			name: 'Update multiple references from a BibTeX bibliography database file',
 			callback: this.updateReferenceLibraryFromBibTex,
 		});
+		this.addCommand({
+			id: 'bibliosidian-update-reference-library-from-bibtex',
+			name: 'Add a holding associated with this reference',
+			callback: this.updateReferenceLibraryFromBibTex,
+		});
 
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
 	}
 
 
-    attachFile() {
+    addHolding() {
+        const files = app.vault.getFiles(); // Get all files in the vault
+        const modal = new MoveFileModal(
+            app,
+            'default/destination/path',
+            files
+        );
+        modal.open();
     }
 
 	updateReferenceLibraryFromBibTex() {
