@@ -120,6 +120,7 @@ function generateSourceFrontmatter(
     	// "editor",
     // ];
     // auFieldNames.forEach( (auFieldName) => {
+    let creators: Authors[] = [];
 	let auFieldNames = [
 	    "author",
     	"editor",
@@ -136,6 +137,7 @@ function generateSourceFrontmatter(
             console.log(error);
             return;
         }
+        creators.push(authors);
         try {
             authors.authors$?.forEach((author: any) => {
                 let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
@@ -222,7 +224,7 @@ function generateSourceFrontmatter(
 		args,
 		bibEntry,
 		`${inTextCitation} ${compositeTitle}`,
-		"author",
+		creators,
 	)
 	// refProperties["entry-updated"] = updateDateStamp
 	// refProperties["entry-updated"] = [ ... fileProperties.readPropertyList("entry-updated"), updateDateStamp]
@@ -380,18 +382,18 @@ function generateAuthorLinks(
 	args: BibTexModalArgs,
     entry: BibEntry,
 	entryTitle: string,
-    authorFieldName: string = "author",
+    creatorSets: Authors[],
 ): { bareLink: string; aliasedLink: string; }[] {
     let results: { bareLink: string; aliasedLink: string; }[] = [];
     if (!entry) {
         return results;
     }
-    if (authorFieldName === "author") {
+    creatorSets.forEach( (creator: Authors) => {
         let authorLastNames: string[] = []
-        const authorField = entry.getField(authorFieldName);
 		const updateDate = new Date();
 		const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
-        results = (authorField as any).authors$.map((author: any) => {
+        // const authorField = entry.getField(authorFieldName);
+        results = creator.authors$.map((author: any) => {
 			let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
 			if (lastName) {
 				authorLastNames.push(lastName)
@@ -456,7 +458,7 @@ function generateAuthorLinks(
                 aliasedLink: `[[${authorFilePath}|${authorDisplayName}]]`,
             };
         });
-    }
+    });
     return results;
 }
 
