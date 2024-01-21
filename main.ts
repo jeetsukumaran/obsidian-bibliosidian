@@ -13,17 +13,21 @@ import {
 import * as _path from "path";
 
 import {
+    MoveFileModal,
+} from "./attachments";
+
+import {
 	BibliosidianSettings,
 	createReferenceNote,
 	generateReferenceLibrary,
-} from "./bibliosidian"
+} from "./bibliosidian";
 
 import {
 	FilePropertyData,
 	parseYaml,
 	stringifyYaml,
 	createFilePropertyDataTable,
-} from "./fileProperties"
+} from "./fileProperties";
 
 
 const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
@@ -214,6 +218,10 @@ export default class Bibliosidian extends Plugin {
 
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
 	}
+
+
+    attachFile() {
+    }
 
 	updateReferenceLibraryFromBibTex() {
 		let sourceBibTex = ""

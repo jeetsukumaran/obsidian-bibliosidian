@@ -1,4 +1,12 @@
-import { App, Modal, Notice, Setting, FuzzySuggestModal, TFile, TextAreaComponent } from 'obsidian';
+import {
+    App,
+    Modal,
+    Notice,
+    Setting,
+    FuzzySuggestModal,
+    TFile,
+    TextAreaComponent
+} from 'obsidian';
 
 // File Suggest Modal
 class FileSuggestModal extends FuzzySuggestModal<TFile> {
@@ -25,7 +33,7 @@ class FileSuggestModal extends FuzzySuggestModal<TFile> {
 }
 
 // Move File Modal
-class MoveFileModal extends Modal {
+export class MoveFileModal extends Modal {
     private sourcePath: TextAreaComponent;
     private destinationPath: TextAreaComponent;
     private defaultDestinationPath: string;
