@@ -241,7 +241,7 @@ export default class Bibliosidian extends Plugin {
         let destPath: string = await formatAttachmentPath(
             this.app,
             activeFile,
-            "pdf",
+            ".pdf",
             "",
         );
         const modal = new MoveFileModal(
