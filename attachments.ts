@@ -100,7 +100,7 @@ export class MoveFileModal extends Modal {
     private async moveFile() {
         const sourceFile = this.app.vault.getAbstractFileByPath(this.sourcePath.getValue());
         if (sourceFile instanceof TFile) {
-            let destinationPath: string = this.destinationPath.getValue();
+            let destinationPath: string = this.destinationPath.getValue().toString().trim();
             if (!destinationPath) {
                 return;
             }
