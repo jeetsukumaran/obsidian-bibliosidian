@@ -43,7 +43,7 @@ interface CustomFile extends File {
     path: string;
 }
 export class MoveFileModal extends Modal {
-    private sourcePath: TextAreaComponent;
+    private sourcePath: HTMLTextAreaElement;
     private destinationPath: TextAreaComponent;
     private defaultDestinationFolder: string;
 
@@ -63,8 +63,40 @@ export class MoveFileModal extends Modal {
             return;
         }
 
-        // File browser for source file
-        let fileInput = contentEl.createEl("input", {
+		contentEl.createEl("h1", { text: "Add a reference holding" });
+
+        // let sourceFilePathSetting = new Setting(contentEl)
+        //     .setName('Source File Path')
+        //     .addTextArea(text => {
+        //         this.sourcePath = text;
+        //         text.setPlaceholder('Enter source file path');
+        //     })
+
+        // let sourceFilePathTextArea = contentEl.createEl("textarea");
+        // sourceFilePathTextArea.style.width = "100%";  // Set width to 100% of parent
+        // sourceFilePathTextArea.style.boxSizing = "border-box";  // Ensure padding and borders are included in the width
+
+
+        let spDiv = contentEl.createEl("div", {});
+        // this.sourcePath = new TextAreaComponent(spDiv);
+        // this.sourcePath.style.width = "100%";
+        // let sourceFilePathTextArea = contentEl.createEl("textarea");
+        // let sourceFilePathTextArea = spDiv;
+        this.sourcePath = contentEl.createEl("textarea");
+        let sourceFilePathTextArea = this.sourcePath;
+        sourceFilePathTextArea.placeholder = 'Enter source file path';
+        sourceFilePathTextArea.style.width = "100%";
+        sourceFilePathTextArea.addEventListener('input', (event) => {
+            const target = event.target as HTMLTextAreaElement;
+            // this.sourcePath.setValue(target.value);
+            this.sourcePath.value = target.value;
+            // this.sourcePath.value = target.value
+        });
+
+		let browseDiv = contentEl.createEl("div", {});
+        browseDiv.style.width = "100%";
+        browseDiv.style.textAlign = "right";
+        let fileInput = browseDiv.createEl("input", {
             type: "file",
             attr: {
                 // multiple: ""
@@ -75,7 +107,8 @@ export class MoveFileModal extends Modal {
             if (input.files && input.files.length > 0) {
                 const file = input.files[0] as CustomFile;
                 let sourceFilePath = file.path;
-                this.sourcePath.setValue(sourceFilePath);
+                // this.sourcePath.setValue(sourceFilePath);
+                this.sourcePath.value = sourceFilePath
                 formatAttachmentPath(
                     this.app,
                     activeFile as TFile,
@@ -91,14 +124,7 @@ export class MoveFileModal extends Modal {
                 });
             }
         });
-
-        // Source file path setting
-        new Setting(contentEl)
-        .setName('Source File Path')
-        .addTextArea(text => {
-            this.sourcePath = text;
-            text.setPlaceholder('Enter source file path');
-        })
+		contentEl.createEl("br", {});
 
         // Destination file path setting
         new Setting(contentEl)
@@ -131,7 +157,8 @@ export class MoveFileModal extends Modal {
     }
 
     private async moveFile() {
-        const sourceFile = this.app.vault.getAbstractFileByPath(this.sourcePath.getValue());
+        // const sourceFile = this.app.vault.getAbstractFileByPath(this.sourcePath.getValue());
+        const sourceFile = this.app.vault.getAbstractFileByPath(this.sourcePath.value);
         if (sourceFile instanceof TFile) {
             let destinationPath: string = this.destinationPath.getValue().toString().trim();
             if (!destinationPath) {
