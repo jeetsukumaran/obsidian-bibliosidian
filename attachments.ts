@@ -74,6 +74,7 @@ export class MoveFileModal extends Modal {
         settings: BibliosidianSettings,
     ) {
         super(app);
+        this.settings = settings;
         this.defaultDestinationFolder = this.settings.holdingsSubdirectoryRoot;
     }
 
@@ -137,9 +138,16 @@ export class MoveFileModal extends Modal {
                     hostFilePath,
                     _path.extname(hostFilePath)
                 );
-                let destinationFolder = this.defaultDestinationFolder;
+                let parentPath = this.defaultDestinationFolder;
+                if (this.settings.isSubdirectorizeReferencesLexically) {
+                    let holdingSubDir = hostFilePath[0];
+                    if (holdingSubDir === "@") {
+                        holdingSubDir = hostFilePath[1];
+                    }
+                    parentPath = _path.join(parentPath, holdingSubDir)
+                }
                 let newFilePath = _path.join(
-                    destinationFolder,
+                    parentPath,
                     hostFileNameWithoutExtension + destExtension,
                 );
                 this.destinationPath.setValue(newFilePath);
