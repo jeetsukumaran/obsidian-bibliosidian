@@ -13,6 +13,11 @@ import * as _path from "path";
 import * as fs from 'fs';
 import { promisify } from 'util';
 
+import {
+	BibliosidianSettings,
+    DEFAULT_SETTINGS,
+} from "./settings";
+
 const copyFile = promisify(fs.copyFile);
 async function copyFileAsync(source: string, destination: string): Promise<void> {
     try {
@@ -62,13 +67,14 @@ export class MoveFileModal extends Modal {
     private sourcePath: HTMLTextAreaElement;
     private destinationPath: TextAreaComponent;
     private defaultDestinationFolder: string;
+    private settings: BibliosidianSettings;
 
     constructor(
         app: App,
-        defaultDestinationFolder: string,
+        settings: BibliosidianSettings,
     ) {
         super(app);
-        this.defaultDestinationFolder = defaultDestinationFolder;
+        this.defaultDestinationFolder = this.settings.holdingsSubdirectoryRoot;
     }
 
     onOpen() {
@@ -131,8 +137,9 @@ export class MoveFileModal extends Modal {
                     hostFilePath,
                     _path.extname(hostFilePath)
                 );
+                let destinationFolder = this.defaultDestinationFolder;
                 let newFilePath = _path.join(
-                    this.defaultDestinationFolder,
+                    destinationFolder,
                     hostFileNameWithoutExtension + destExtension,
                 );
                 this.destinationPath.setValue(newFilePath);

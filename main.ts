@@ -239,7 +239,7 @@ export default class Bibliosidian extends Plugin {
         }
         const modal = new MoveFileModal(
             app,
-            this.settings.holdingsSubdirectoryRoot,
+            this.settings,
         );
         modal.open();
     }
