@@ -135,6 +135,19 @@ class BibliosidianSettingTab extends PluginSettingTab {
 			"authorsAdditionalMetadata",
 		)
 
+		containerEl.createEl("h2", { text: "Holdings" })
+
+		new Setting(containerEl)
+			.setName("Holdings folder")
+			.setDesc("Path to root folder of reference holdings (attachments). Leave blank to store alongside reference file.")
+			.addText(text => text
+				.setPlaceholder("(E.g. 'sources/references')")
+				.setValue(this.plugin.settings.referenceSubdirectoryRoot)
+				.onChange(async (value) => {
+					this.plugin.settings.referenceSubdirectoryRoot = value;
+					await this.plugin.saveSettings();
+		}));
+
 	}
 
 

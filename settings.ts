@@ -10,16 +10,16 @@ import * as _path from "path";
 export interface BibliosidianSettings {
 	mySetting: string;
 	referenceSourcePropertiesPrefix: string;
-	referenceSourceBibTex: string
-	referenceSubdirectoryRoot: string
-	holdingsSubdirectoryRoot: string
-    holdingsPropertyName: string
+	referenceSourceBibTex: string;
+	referenceSubdirectoryRoot: string;
 	isSubdirectorizeReferencesLexically: boolean
-	referenceAdditionalMetadata: FilePropertyData,
-	authorsParentFolderPath: string
-	isSubdirectorizeAuthorsLexically: boolean
-	authorsAdditionalMetadata: FilePropertyData,
-	isCreateAuthorPages: boolean,
+	referenceAdditionalMetadata: FilePropertyData;
+	authorsParentFolderPath: string;
+	isSubdirectorizeAuthorsLexically: boolean;
+	authorsAdditionalMetadata: FilePropertyData;
+	isCreateAuthorPages: boolean;
+	holdingsSubdirectoryRoot: string;
+    holdingsPropertyName: string;
 }
 
 export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
@@ -27,13 +27,13 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	referenceSourcePropertiesPrefix: "source-",
 	referenceSourceBibTex: "entry-bibtex",
 	referenceSubdirectoryRoot: _path.join("sources", "references"),
-	holdingsSubdirectoryRoot: _path.join("sources", "holdings"),
-    holdingsPropertyName: "entry-holdings",
 	isSubdirectorizeReferencesLexically: true,
 	referenceAdditionalMetadata: {},
 	authorsParentFolderPath: _path.join("sources", "authors"),
 	isSubdirectorizeAuthorsLexically: true,
 	isCreateAuthorPages: true,
 	authorsAdditionalMetadata: {},
+	holdingsSubdirectoryRoot: _path.join("sources", "holdings"),
+    holdingsPropertyName: "entry-holdings",
 }
 
