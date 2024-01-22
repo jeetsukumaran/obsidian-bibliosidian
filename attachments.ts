@@ -65,11 +65,10 @@ class FileSuggestModal extends FuzzySuggestModal<TFile> {
     }
 }
 
-// Move File Modal
 interface CustomFile extends File {
     path: string;
 }
-export class MoveFileModal extends Modal {
+export class ImportHoldingModal extends Modal {
     private sourcePath: HTMLTextAreaElement;
     private destinationPath: TextAreaComponent;
     private defaultDestinationFolder: string;
@@ -163,14 +162,14 @@ export class MoveFileModal extends Modal {
             .addButton(btn => btn
                 .setButtonText('Import')
                 .onClick(() => {
-                    this.moveFile()
+                    this.importFile()
                         .then(runProcess);
                     this.close();
                 }))
             .addButton(btn => btn
                 .setButtonText('Import and Open')
                 .onClick(() => {
-                    this.moveFile()
+                    this.importFile()
                         .then(() => {
                             runProcess();
                             let mode: PaneType | boolean = false;
@@ -219,7 +218,7 @@ export class MoveFileModal extends Modal {
         return this.destinationPath.getValue().toString().trim();
     }
 
-    private async moveFile() {
+    private async importFile() {
         const sourceFilePath = _path.resolve(this.sourcePath.value.trim());
         // let destinationPath = _path.resolve(_path.join(this.getVaultBasePath(), this.destinationPath.getValue().toString().trim()));
         let destinationPath = this.cleanDestinationPath;
@@ -243,7 +242,7 @@ export class MoveFileModal extends Modal {
             // await this.app.vault.rename(sourceFile, destinationPath);
             // await this.app.fileManager.renameFile(sourceFile, destinationPath);
             await copyFileAsync(sourceFilePath, fullDestinationPath);
-            new Notice(`File moved from '${sourceFilePath}' to '${destinationPath}'`);
+            new Notice(`File imported from '${sourceFilePath}' to '${destinationPath}'`);
         } catch (error) {
             new Notice(`Error moving '${sourceFilePath}' to '${destinationPath}': ` + error);
             console.log(error);

@@ -20,7 +20,7 @@ import {
 } from "./fileProperties";
 
 import {
-    MoveFileModal,
+    ImportHoldingModal,
 } from "./attachments";
 
 import {
@@ -251,7 +251,7 @@ export default class Bibliosidian extends Plugin {
         if (!activeFile) {
             return;
         }
-        const modal = new MoveFileModal(
+        const modal = new ImportHoldingModal(
             app,
             this.settings,
         );
