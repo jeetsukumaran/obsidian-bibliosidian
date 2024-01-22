@@ -70,7 +70,8 @@ interface CustomFile extends File {
 }
 export class ImportHoldingModal extends Modal {
     private sourcePath: HTMLTextAreaElement;
-    private destinationPath: TextAreaComponent;
+    // private destinationPath: TextAreaComponent;
+    private destinationPath: HTMLTextAreaElement;
     private defaultDestinationFolder: string;
     private settings: BibliosidianSettings;
 
@@ -91,16 +92,14 @@ export class ImportHoldingModal extends Modal {
             return;
         }
 
-		contentEl.createEl("h1", { text: "Add a reference holding" });
+		contentEl.createEl("h1", { text: "Import a reference holding" });
+		contentEl.createEl("h2", { text: "Path to source file" });
         this.sourcePath = contentEl.createEl("textarea");
-        let sourceFilePathTextArea = this.sourcePath;
-        sourceFilePathTextArea.placeholder = 'Enter source file path';
-        sourceFilePathTextArea.style.width = "100%";
-        sourceFilePathTextArea.addEventListener('input', (event) => {
+        this.sourcePath.placeholder = 'Enter source file path';
+        this.sourcePath.style.width = "100%";
+        this.sourcePath.addEventListener('input', (event) => {
             const target = event.target as HTMLTextAreaElement;
-            // this.sourcePath.setValue(target.value);
             this.sourcePath.value = target.value;
-            // this.sourcePath.value = target.value
         });
 
 		let browseDiv = contentEl.createEl("div", {});
@@ -141,15 +140,18 @@ export class ImportHoldingModal extends Modal {
                     parentPath,
                     destinationFilename,
                 );
-                this.destinationPath.setValue(newFilePath);
+                this.destinationPath.value = newFilePath;
             }
         });
 		contentEl.createEl("br", {});
 
-        new Setting(contentEl)
-        .setName('Destination File Path')
-        .addTextArea(text => {
-            this.destinationPath = text;
+		contentEl.createEl("h2", { text: "Path to destination file" });
+        this.destinationPath = contentEl.createEl("textarea");
+        this.destinationPath.placeholder = 'Enter destination file path';
+        this.destinationPath.style.width = "100%";
+        this.destinationPath.addEventListener('input', (event) => {
+            const target = event.target as HTMLTextAreaElement;
+            this.destinationPath.value = target.value;
         });
 
         let runProcess = () => {
@@ -215,14 +217,13 @@ export class ImportHoldingModal extends Modal {
     }
 
     get cleanDestinationPath() {
-        return this.destinationPath.getValue().toString().trim();
+        // return this.destinationPath.getValue().toString().trim();
+        return this.destinationPath.value.toString().trim();
     }
 
     private async importFile() {
         const sourceFilePath = _path.resolve(this.sourcePath.value.trim());
-        // let destinationPath = _path.resolve(_path.join(this.getVaultBasePath(), this.destinationPath.getValue().toString().trim()));
         let destinationPath = this.cleanDestinationPath;
-        // let destinationPath: string = this.destinationPath.getValue().toString().trim();
         if (!destinationPath) {
             return;
         }
@@ -236,7 +237,7 @@ export class ImportHoldingModal extends Modal {
             console.log(destinationPath + ": " + error);
         }
         destinationPath = await ensureUniquePath(this.app, destinationPath);
-        this.destinationPath.setValue(destinationPath); // update with unique path
+        this.destinationPath.value = destinationPath; // update with unique path
         let fullDestinationPath = _path.join(this.getVaultBasePath(), destinationPath);
         try {
             // await this.app.vault.rename(sourceFile, destinationPath);
