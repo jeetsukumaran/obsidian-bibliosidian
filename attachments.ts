@@ -2,6 +2,7 @@ import {
     App,
     Modal,
     Notice,
+    PaneType,
     Setting,
     FuzzySuggestModal,
     TFile,
@@ -152,17 +153,29 @@ export class MoveFileModal extends Modal {
             this.destinationPath = text;
         });
 
+        let runProcess = () => {
+            this.updateHostFileHoldingsData(
+                activeFile?.path || "",
+                this.cleanDestinationPath
+            );
+        };
         new Setting(contentEl)
             .addButton(btn => btn
-                .setButtonText('OK')
+                .setButtonText('Import')
                 .onClick(() => {
                     this.moveFile()
-                        .then( () => {
-                            this.updateHostFileHoldingsData(
-                                activeFile?.path || "",
-                                this.cleanDestinationPath
-                            );
-                        });
+                        .then(runProcess);
+                    this.close();
+                }))
+            .addButton(btn => btn
+                .setButtonText('Import and Open')
+                .onClick(() => {
+                    this.moveFile()
+                        .then(() => {
+                            runProcess();
+                    });
+                    let mode: PaneType | boolean = false;
+                    app.workspace.openLinkText(this.cleanDestinationPath, '', mode);
                     this.close();
                 }))
             .addButton(btn => btn
