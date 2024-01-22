@@ -35,9 +35,9 @@ const copyFile = promisify(fs.copyFile);
 async function copyFileAsync(source: string, destination: string): Promise<void> {
     try {
         await copyFile(source, destination);
-        console.log(`File copied from ${source} to ${destination}`);
+        // console.log(`File copied from ${source} to ${destination}`);
     } catch (error) {
-        console.error('Error occurred:', error);
+        // console.error('Error occurred:', error);
     }
 }
 
@@ -219,6 +219,7 @@ export class MoveFileModal extends Modal {
             console.log(destinationPath + ": " + error);
         }
         destinationPath = await ensureUniquePath(this.app, destinationPath);
+        this.destinationPath.setValue(destinationPath); // update with unique path
         try {
             // await this.app.vault.rename(sourceFile, destinationPath);
             // await this.app.fileManager.renameFile(sourceFile, destinationPath);
