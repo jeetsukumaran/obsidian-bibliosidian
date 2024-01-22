@@ -11,6 +11,7 @@ import {
 import {
     ensureParentDirectoryExists,
     ensureUniquePath,
+    formatAttachmentPath,
 } from "./utility";
 
 // File Suggest Modal
@@ -44,19 +45,17 @@ interface CustomFile extends File {
 export class MoveFileModal extends Modal {
     private sourcePath: TextAreaComponent;
     private destinationPath: TextAreaComponent;
-    private defaultDestinationPath: string;
-    private fileSuggestModal: FileSuggestModal;
 
-    constructor(app: App, defaultDestinationPath: string, files: TFile[]) {
+    constructor(
+        app: App,
+    ) {
         super(app);
-        this.defaultDestinationPath = defaultDestinationPath;
-        // this.fileSuggestModal = new FileSuggestModal(app, files, (file: TFile) => {
-        //     this.sourcePath.setValue(file.path);
-        // });
     }
 
     onOpen() {
         const {contentEl} = this;
+
+        let activeFile = this.app.workspace.getActiveFile();
 
         // File browser for source file
         let fileInput = contentEl.createEl("input", {
@@ -66,14 +65,19 @@ export class MoveFileModal extends Modal {
             }
         });
         fileInput.addEventListener('change', (event) => {
-            // const selectedFiles = (event.target as HTMLInputElement).files;
-            // console.log(files);
-            // if (selectedFiles && selectedFiles.length > ) {
             const input = event.target as HTMLInputElement;
             if (input.files && input.files.length > 0) {
                 const file = input.files[0] as CustomFile;
-                this.sourcePath.setValue(file.path);
-                // this.sourcePath.setValue(input.files[0].path);
+                let sourceFilePath = file.path;
+                this.sourcePath.setValue(sourceFilePath);
+                formatAttachmentPath(this.app, activeFile, file.path, "")
+                .then(formattedPath => {
+                    this.destinationPath.setValue(formattedPath);
+                })
+                .catch(error => {
+                    console.error("Error formatting attachment path: ", error);
+                    // Handle the error appropriately
+                });
             }
         });
 
@@ -90,17 +94,17 @@ export class MoveFileModal extends Modal {
         .setName('Destination File Path')
         .addTextArea(text => {
             this.destinationPath = text;
-            text.setValue(this.defaultDestinationPath);
+            // text.setValue(this.defaultDestinationPath);
         });
 
 
         // Reset button
-        new Setting(contentEl)
-            .addButton(btn => btn
-                .setButtonText('Reset')
-                .onClick(() => {
-                    this.destinationPath.setValue(this.defaultDestinationPath);
-                }));
+        // new Setting(contentEl)
+        //     .addButton(btn => btn
+        //         .setButtonText('Reset')
+        //         .onClick(() => {
+        //             this.destinationPath.setValue(this.defaultDestinationPath);
+        //         }));
 
         // OK and Cancel buttons
         new Setting(contentEl)

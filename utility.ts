@@ -134,7 +134,7 @@ export async function ensureUniquePath(app: App, fullPath: string): Promise<stri
 export async function formatAttachmentPath(
     app: App,
     hostFile: TFile,
-    extension: string,
+    sourceFilePath: string,
     destinationFolderPath: string
 ): Promise<string> {
     // Use host file's directory if destinationFolderPath is empty
@@ -147,7 +147,7 @@ export async function formatAttachmentPath(
     }
 
     // Get the extension from the source file
-    // const extension = path.extname(sourceFilePath);
+    const extension = path.extname(sourceFilePath);
 
     // Construct the new filename
     const hostFileNameWithoutExtension = path.basename(hostFile.path, path.extname(hostFile.path));
