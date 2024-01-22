@@ -34,6 +34,6 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	isCreateAuthorPages: true,
 	authorsAdditionalMetadata: {},
 	holdingsSubdirectoryRoot: _path.join("sources", "holdings"),
-    holdingsPropertyName: "entry-holdings",
+    holdingsPropertyName: "source-holdings",
 }
 

@@ -52,7 +52,11 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Source bibliographic data property name prefix")
-			.setDesc("This will be prefixed to the normalized bibliographic (YAML frontmatter properties) data fields for reference bibliographic data. For example, if set to 'source-', the frontmatter YAML field will be 'source-authors' instead of just 'authors'. Better namespacing will come when Obsidian supports nested frontmatter YAML objects.")
+			.setDesc(
+                "This will be prefixed to the normalized bibliographic (YAML frontmatter properties)"
+                + " data fields for reference bibliographic data. For example, if set to 'source-',"
+                + " the frontmatter YAML field will be 'source-authors' instead of just 'authors'. "
+			)
 			.addText(text => text
 				.setPlaceholder("(e.g., 'source-')")
 				.setValue(this.plugin.settings.referenceSourcePropertiesPrefix)
@@ -62,7 +66,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		}));
 		new Setting(containerEl)
 			.setName("Source BibTex property name")
-			.setDesc(` Name of text field on note that to track associated BibTeX data. `)
+			.setDesc(` Property on reference note to store source BibTeX data. `)
 			.addText(text => text
 				.setPlaceholder("(YAML frontmatter property name, e.g. 'source-bibtex')")
 				.setValue(this.plugin.settings.referenceSourceBibTex)
@@ -142,9 +146,19 @@ class BibliosidianSettingTab extends PluginSettingTab {
 			.setDesc("Path to root folder of reference holdings (attachments). Leave blank to store alongside reference file.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/references')")
-				.setValue(this.plugin.settings.referenceSubdirectoryRoot)
+				.setValue(this.plugin.settings.holdingsSubdirectoryRoot)
 				.onChange(async (value) => {
-					this.plugin.settings.referenceSubdirectoryRoot = value;
+					this.plugin.settings.holdingsSubdirectoryRoot = value;
+					await this.plugin.saveSettings();
+		}));
+		new Setting(containerEl)
+			.setName("Holdings link property name:")
+			.setDesc("Name of property on reference note to update with link to this new holding.")
+			.addText(text => text
+				.setPlaceholder("(E.g. 'attachments' or 'pdfs')")
+				.setValue(this.plugin.settings.holdingsPropertyName)
+				.onChange(async (value) => {
+					this.plugin.settings.holdingsPropertyName = value;
 					await this.plugin.saveSettings();
 		}));
 
@@ -200,9 +214,9 @@ export default class Bibliosidian extends Plugin {
 		await this.loadSettings();
 
 
-		this.addRibbonIcon("library-square", "Update multiple references from a BibTeX bibliography database file", () => {
-			this.updateReferenceLibraryFromBibTex()
-		});
+		// this.addRibbonIcon("library-square", "Update multiple references from a BibTeX bibliography database file", () => {
+		// 	this.updateReferenceLibraryFromBibTex()
+		// });
 		this.addRibbonIcon("book-up-2", "Create or update reference note from BibTeX data", () => {
 			this.updateReferenceNoteFromBibTex()
 		});
@@ -221,11 +235,11 @@ export default class Bibliosidian extends Plugin {
 			name: 'Update multiple references from a BibTeX bibliography database file',
 			callback: this.updateReferenceLibraryFromBibTex,
 		});
-		this.addCommand({
-			id: 'bibliosidian-update-reference-library-from-bibtex',
-			name: 'Add a holding associated with this reference',
-			callback: this.updateReferenceLibraryFromBibTex,
-		});
+		// this.addCommand({
+		// 	id: 'bibliosidian-update-reference-library-from-bibtex',
+		// 	name: 'Add a holding associated with this reference',
+		// 	callback: this.updateReferenceLibraryFromBibTex,
+		// });
 
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
 	}
