@@ -30,7 +30,7 @@ async function copyFileAsync(source: string, destination: string): Promise<void>
 
 
 import {
-    ensureParentDirectoryExists,
+    ensureDirectoryExists,
     ensureUniquePath,
     // formatAttachmentPath,
 } from "./utility";
@@ -138,9 +138,13 @@ export class MoveFileModal extends Modal {
                     hostFilePath,
                     _path.extname(hostFilePath)
                 );
+                let destinationFilename = hostFileNameWithoutExtension + destExtension
+                if (destinationFilename.startsWith("@")) {
+                    destinationFilename = destinationFilename.slice(1);
+                }
                 let parentPath = this.defaultDestinationFolder;
                 if (this.settings.isSubdirectorizeReferencesLexically) {
-                    let holdingSubDir = hostFilePath[0];
+                    let holdingSubDir = destinationFilename[0] === "@" ? destinationFilename[1] : destinationFilename[0];
                     if (holdingSubDir === "@") {
                         holdingSubDir = hostFilePath[1];
                     }
@@ -148,7 +152,7 @@ export class MoveFileModal extends Modal {
                 }
                 let newFilePath = _path.join(
                     parentPath,
-                    hostFileNameWithoutExtension + destExtension,
+                    destinationFilename,
                 );
                 this.destinationPath.setValue(newFilePath);
                 // formatAttachmentPath(
@@ -243,10 +247,13 @@ export class MoveFileModal extends Modal {
             return;
         }
         try {
-            await ensureParentDirectoryExists(this.app, destinationPath);
+            await ensureDirectoryExists(
+                this.app,
+                _path.dirname(destinationPath),
+            );
         } catch (error) {
             new Notice(`Error ensuring parent directory for destination '${destinationPath}': ` + error);
-            console.log(error);
+            console.log(destinationPath + ": " + error);
         }
         destinationPath = await ensureUniquePath(this.app, destinationPath);
         try {

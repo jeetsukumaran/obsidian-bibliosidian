@@ -45,46 +45,46 @@ export async function createOrOpenNote(
     return notePath;
 }
 
-export async function ensureParentDirectoryExists(app: App, filePath: string): Promise<void> {
-    const parentDirPath = filePath.substring(0, filePath.lastIndexOf('/'));
+// export async function ensureParentDirectoryExists(app: App, filePath: string): Promise<void> {
+//     const parentDirPath = filePath.substring(0, filePath.lastIndexOf('/'));
 
-    // Check if the parent directory exists
-    let parentDir = app.vault.getAbstractFileByPath(parentDirPath) as TFolder;
+//     // Check if the parent directory exists
+//     let parentDir = app.vault.getAbstractFileByPath(parentDirPath) as TFolder;
 
-    if (!parentDir) {
-        // Create the parent directory if it doesn't exist
-        await createDirectory(app, parentDirPath);
-    }
-}
+//     if (!parentDir) {
+//         // Create the parent directory if it doesn't exist
+//         await createDirectory(app, parentDirPath);
+//     }
+// }
 
 export async function ensureDirectoryExists(app: App, dirPath: string): Promise<void> {
     // Check if the parent directory exists
-    let dirNode = app.vault.getAbstractFileByPath(dirPath) as TFolder;
 
+    let dirNode = app.vault.getAbstractFileByPath(dirPath) as TFolder;
     if (!dirNode) {
         // Create the parent directory if it doesn't exist
-        await createDirectory(app, dirPath);
+        await app.vault.createFolder(dirPath);
     }
 }
 
-export async function createDirectory(app: App, dirPath: string): Promise<TFolder> {
-    const pathParts = dirPath.split('/').filter(part => part.length);
+// export async function createDirectory(app: App, dirPath: string): Promise<TFolder> {
+//     const pathParts = dirPath.split('/').filter(part => part.length);
 
-    let currentPath = '';
-    let currentDir: TAbstractFile | null = null;
+//     let currentPath = '';
+//     let currentDir: TAbstractFile | null = null;
 
-    for (const part of pathParts) {
-        currentPath += '/' + part;
-        currentDir = app.vault.getAbstractFileByPath(currentPath);
+//     for (const part of pathParts) {
+//         currentPath += '/' + part;
+//         currentDir = app.vault.getAbstractFileByPath(currentPath);
 
-        if (!currentDir) {
-            // Create the directory if it doesn't exist
-            currentDir = await app.vault.createFolder(currentPath);
-        }
-    }
+//         if (!currentDir) {
+//             // Create the directory if it doesn't exist
+//             currentDir = await app.vault.createFolder(currentPath);
+//         }
+//     }
 
-    return currentDir as TFolder;
-}
+//     return currentDir as TFolder;
+// }
 
 export async function createUniqueNote(
     app: App,
