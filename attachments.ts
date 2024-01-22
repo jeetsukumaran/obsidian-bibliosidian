@@ -123,21 +123,32 @@ export class MoveFileModal extends Modal {
             if (input.files && input.files.length > 0) {
                 const file = input.files[0] as CustomFile;
                 let sourceFilePath = file.path;
+                let hostFilePath = (activeFile as TFile).path;
                 // this.sourcePath.setValue(sourceFilePath);
-                this.sourcePath.value = sourceFilePath
-                formatAttachmentPath(
-                    this.app,
-                    activeFile as TFile,
-                    file.path,
+                this.sourcePath.value = sourceFilePath;
+                const destExtension = _path.extname(sourceFilePath);
+                const hostFileNameWithoutExtension = _path.basename(
+                    hostFilePath,
+                    _path.extname(hostFilePath)
+                );
+                let newFilePath = _path.join(
                     this.defaultDestinationFolder,
-                )
-                .then(formattedPath => {
-                    // this.destinationPath.setValue(formattedPath);
-                    this.destinationPath.setValue(formattedPath);
-                })
-                .catch(error => {
-                    console.error("Error composing attachment path: ", error);
-                });
+                    hostFileNameWithoutExtension + destExtension,
+                );
+                this.destinationPath.setValue(newFilePath);
+                // formatAttachmentPath(
+                //     this.app,
+                //     activeFile as TFile,
+                //     file.path,
+                //     this.defaultDestinationFolder,
+                // )
+                // .then(formattedPath => {
+                //     // this.destinationPath.setValue(formattedPath);
+                //     this.destinationPath.setValue(formattedPath);
+                // })
+                // .catch(error => {
+                //     console.error("Error composing attachment path: ", error);
+                // });
             }
         });
 		contentEl.createEl("br", {});
