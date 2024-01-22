@@ -140,7 +140,8 @@ export async function formatAttachmentPath(
     // Use host file's directory if destinationFolderPath is empty
     if (!destinationFolderPath) {
         destinationFolderPath = path.dirname(hostFile.path);
-    } else {
+    }
+    else {
         // Ensure destination folder exists
         await ensureDirectoryExists(app, destinationFolderPath);
         ensureParentDirectoryExists

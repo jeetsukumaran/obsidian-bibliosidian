@@ -5,8 +5,24 @@ import {
     Setting,
     FuzzySuggestModal,
     TFile,
-    TextAreaComponent
+    TextAreaComponent,
+    FileSystemAdapter,
 } from 'obsidian';
+
+import * as _path from "path";
+import * as fs from 'fs';
+import { promisify } from 'util';
+
+const copyFile = promisify(fs.copyFile);
+async function copyFileAsync(source: string, destination: string): Promise<void> {
+    try {
+        await copyFile(source, destination);
+        console.log(`File copied from ${source} to ${destination}`);
+    } catch (error) {
+        console.error('Error occurred:', error);
+    }
+}
+
 
 import {
     ensureParentDirectoryExists,
@@ -95,7 +111,7 @@ export class MoveFileModal extends Modal {
 
 		let browseDiv = contentEl.createEl("div", {});
         browseDiv.style.width = "100%";
-        browseDiv.style.textAlign = "right";
+        // browseDiv.style.textAlign = "right";
         let fileInput = browseDiv.createEl("input", {
             type: "file",
             attr: {
@@ -156,31 +172,63 @@ export class MoveFileModal extends Modal {
                 .onClick(() => this.close()));
     }
 
+    // private async moveFile() {
+    //     const sourceFile = this.app.vault.getAbstractFileByPath(this.sourcePath.value);
+    //     if (sourceFile instanceof TFile) {
+    //         let destinationPath: string = this.destinationPath.getValue().toString().trim();
+    //         if (!destinationPath) {
+    //             return;
+    //         }
+    //         try {
+    //             await ensureParentDirectoryExists(this.app, destinationPath);
+    //         } catch (error) {
+    //             new Notice(`Error ensuring parent directory for destination '${destinationPath}': ` + error);
+    //             console.log(error);
+    //         }
+    //         destinationPath = await ensureUniquePath(this.app, destinationPath);
+    //         try {
+    //             // await this.app.vault.rename(sourceFile, destinationPath);
+    //             await this.app.fileManager.renameFile(sourceFile, destinationPath);
+    //             new Notice(`File moved from '${sourceFile.path}' to '${destinationPath}'`);
+    //         } catch (error) {
+    //             new Notice(`Error moving '${sourceFile.path}' to '${destinationPath}': ` + error);
+    //             console.log(error);
+    //         }
+    //     } else {
+    //         new Notice('Source file does not exist.');
+    //     }
+    // }
+
+    getVaultBasePath(): string {
+        const adapter = app.vault.adapter;
+        if (adapter instanceof FileSystemAdapter) {
+        return adapter.getBasePath();
+        }
+        return "";
+    }
+
     private async moveFile() {
-        // const sourceFile = this.app.vault.getAbstractFileByPath(this.sourcePath.getValue());
-        const sourceFile = this.app.vault.getAbstractFileByPath(this.sourcePath.value);
-        if (sourceFile instanceof TFile) {
-            let destinationPath: string = this.destinationPath.getValue().toString().trim();
-            if (!destinationPath) {
-                return;
-            }
-            try {
-                await ensureParentDirectoryExists(this.app, destinationPath);
-            } catch (error) {
-                new Notice(`Error ensuring parent directory for destination '${destinationPath}': ` + error);
-                console.log(error);
-            }
-            destinationPath = await ensureUniquePath(this.app, destinationPath);
-            try {
-                // await this.app.vault.rename(sourceFile, destinationPath);
-                await this.app.fileManager.renameFile(sourceFile, destinationPath);
-                new Notice(`File moved from '${sourceFile.path}' to '${destinationPath}'`);
-            } catch (error) {
-                new Notice(`Error moving '${sourceFile.path}' to '${destinationPath}': ` + error);
-                console.log(error);
-            }
-        } else {
-            new Notice('Source file does not exist.');
+        const sourceFilePath = _path.resolve(this.sourcePath.value.trim());
+        let destinationPath = _path.resolve(_path.join(this.getVaultBasePath(), this.destinationPath.getValue().toString().trim()));
+        // let destinationPath: string = this.destinationPath.getValue().toString().trim();
+        if (!destinationPath) {
+            return;
+        }
+        try {
+            await ensureParentDirectoryExists(this.app, destinationPath);
+        } catch (error) {
+            new Notice(`Error ensuring parent directory for destination '${destinationPath}': ` + error);
+            console.log(error);
+        }
+        destinationPath = await ensureUniquePath(this.app, destinationPath);
+        try {
+            // await this.app.vault.rename(sourceFile, destinationPath);
+            // await this.app.fileManager.renameFile(sourceFile, destinationPath);
+            await copyFileAsync(sourceFilePath, destinationPath);
+            new Notice(`File moved from '${sourceFilePath}' to '${destinationPath}'`);
+        } catch (error) {
+            new Notice(`Error moving '${sourceFilePath}' to '${destinationPath}': ` + error);
+            console.log(error);
         }
     }
 }
