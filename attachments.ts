@@ -18,6 +18,19 @@ import {
     DEFAULT_SETTINGS,
 } from "./settings";
 
+import {
+	FileProperties,
+	FilePropertyData,
+	updateFileProperties,
+	// updateFrontmatterYaml,
+} from "./fileProperties";
+
+import {
+    ensureDirectoryExists,
+    ensureUniquePath,
+    // formatAttachmentPath,
+} from "./utility";
+
 const copyFile = promisify(fs.copyFile);
 async function copyFileAsync(source: string, destination: string): Promise<void> {
     try {
@@ -28,14 +41,6 @@ async function copyFileAsync(source: string, destination: string): Promise<void>
     }
 }
 
-
-import {
-    ensureDirectoryExists,
-    ensureUniquePath,
-    // formatAttachmentPath,
-} from "./utility";
-
-// File Suggest Modal
 class FileSuggestModal extends FuzzySuggestModal<TFile> {
     files: TFile[];
     onSelect: (file: TFile) => void;
@@ -87,24 +92,6 @@ export class MoveFileModal extends Modal {
         }
 
 		contentEl.createEl("h1", { text: "Add a reference holding" });
-
-        // let sourceFilePathSetting = new Setting(contentEl)
-        //     .setName('Source File Path')
-        //     .addTextArea(text => {
-        //         this.sourcePath = text;
-        //         text.setPlaceholder('Enter source file path');
-        //     })
-
-        // let sourceFilePathTextArea = contentEl.createEl("textarea");
-        // sourceFilePathTextArea.style.width = "100%";  // Set width to 100% of parent
-        // sourceFilePathTextArea.style.boxSizing = "border-box";  // Ensure padding and borders are included in the width
-
-
-        let spDiv = contentEl.createEl("div", {});
-        // this.sourcePath = new TextAreaComponent(spDiv);
-        // this.sourcePath.style.width = "100%";
-        // let sourceFilePathTextArea = contentEl.createEl("textarea");
-        // let sourceFilePathTextArea = spDiv;
         this.sourcePath = contentEl.createEl("textarea");
         let sourceFilePathTextArea = this.sourcePath;
         sourceFilePathTextArea.placeholder = 'Enter source file path';
@@ -155,46 +142,25 @@ export class MoveFileModal extends Modal {
                     destinationFilename,
                 );
                 this.destinationPath.setValue(newFilePath);
-                // formatAttachmentPath(
-                //     this.app,
-                //     activeFile as TFile,
-                //     file.path,
-                //     this.defaultDestinationFolder,
-                // )
-                // .then(formattedPath => {
-                //     // this.destinationPath.setValue(formattedPath);
-                //     this.destinationPath.setValue(formattedPath);
-                // })
-                // .catch(error => {
-                //     console.error("Error composing attachment path: ", error);
-                // });
             }
         });
 		contentEl.createEl("br", {});
 
-        // Destination file path setting
         new Setting(contentEl)
         .setName('Destination File Path')
         .addTextArea(text => {
             this.destinationPath = text;
-            // text.setValue(this.defaultDestinationPath);
         });
 
-
-        // Reset button
-        // new Setting(contentEl)
-        //     .addButton(btn => btn
-        //         .setButtonText('Reset')
-        //         .onClick(() => {
-        //             this.destinationPath.setValue(this.defaultDestinationPath);
-        //         }));
-
-        // OK and Cancel buttons
         new Setting(contentEl)
             .addButton(btn => btn
                 .setButtonText('OK')
                 .onClick(() => {
                     this.moveFile();
+                    this.updateHostFileHoldingsData(
+                        activeFile?.path || "",
+                        this.cleanDestinationPath
+                    );
                     this.close();
                 }))
             .addButton(btn => btn
@@ -202,45 +168,42 @@ export class MoveFileModal extends Modal {
                 .onClick(() => this.close()));
     }
 
-    // private async moveFile() {
-    //     const sourceFile = this.app.vault.getAbstractFileByPath(this.sourcePath.value);
-    //     if (sourceFile instanceof TFile) {
-    //         let destinationPath: string = this.destinationPath.getValue().toString().trim();
-    //         if (!destinationPath) {
-    //             return;
-    //         }
-    //         try {
-    //             await ensureParentDirectoryExists(this.app, destinationPath);
-    //         } catch (error) {
-    //             new Notice(`Error ensuring parent directory for destination '${destinationPath}': ` + error);
-    //             console.log(error);
-    //         }
-    //         destinationPath = await ensureUniquePath(this.app, destinationPath);
-    //         try {
-    //             // await this.app.vault.rename(sourceFile, destinationPath);
-    //             await this.app.fileManager.renameFile(sourceFile, destinationPath);
-    //             new Notice(`File moved from '${sourceFile.path}' to '${destinationPath}'`);
-    //         } catch (error) {
-    //             new Notice(`Error moving '${sourceFile.path}' to '${destinationPath}': ` + error);
-    //             console.log(error);
-    //         }
-    //     } else {
-    //         new Notice('Source file does not exist.');
-    //     }
-    // }
+    updateHostFileHoldingsData(
+        hostFilePath: string,
+        newHoldingPath: string,
+    ) {
+        if (!hostFilePath) {
+            return;
+        }
+        let fileProperties = new FileProperties(this.app, hostFilePath);
+        let holdingsPropertyName = this.settings.holdingsPropertyName;
+        let refProperties: FilePropertyData = {}
+        let formattedNewHoldingPath = `[[${newHoldingPath}]]`;
+        refProperties[holdingsPropertyName] = fileProperties.concatItems(holdingsPropertyName, [formattedNewHoldingPath])
+        updateFileProperties(
+            this.app,
+            hostFilePath,
+            refProperties,
+            true,
+        )
+    }
 
     getVaultBasePath(): string {
         const adapter = app.vault.adapter;
         if (adapter instanceof FileSystemAdapter) {
-        return adapter.getBasePath();
+            return adapter.getBasePath();
         }
         return "";
+    }
+
+    get cleanDestinationPath() {
+        return this.destinationPath.getValue().toString().trim();
     }
 
     private async moveFile() {
         const sourceFilePath = _path.resolve(this.sourcePath.value.trim());
         // let destinationPath = _path.resolve(_path.join(this.getVaultBasePath(), this.destinationPath.getValue().toString().trim()));
-        let destinationPath = this.destinationPath.getValue().toString().trim();
+        let destinationPath = this.cleanDestinationPath;
         let fullDestinationPath = _path.join(this.getVaultBasePath(), destinationPath);
         // let destinationPath: string = this.destinationPath.getValue().toString().trim();
         if (!destinationPath) {
