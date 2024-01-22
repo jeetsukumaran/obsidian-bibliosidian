@@ -159,6 +159,9 @@ export class ImportHoldingModal extends Modal {
             );
         };
         new Setting(contentEl)
+            // .addButton(btn => btn
+            //     .setButtonText('Cancel')
+            //     .onClick(() => this.close()))
             .addButton(btn => btn
                 .setButtonText('Import')
                 .onClick(() => {
@@ -180,10 +183,7 @@ export class ImportHoldingModal extends Modal {
                             );
                             this.close();
                     });
-                }))
-            .addButton(btn => btn
-                .setButtonText('Cancel')
-                .onClick(() => this.close()));
+                }));
     }
 
     updateHostFileHoldingsData(
