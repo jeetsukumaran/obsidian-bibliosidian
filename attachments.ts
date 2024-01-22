@@ -38,6 +38,9 @@ class FileSuggestModal extends FuzzySuggestModal<TFile> {
 }
 
 // Move File Modal
+interface CustomFile extends File {
+    path: string;
+}
 export class MoveFileModal extends Modal {
     private sourcePath: TextAreaComponent;
     private destinationPath: TextAreaComponent;
@@ -47,34 +50,49 @@ export class MoveFileModal extends Modal {
     constructor(app: App, defaultDestinationPath: string, files: TFile[]) {
         super(app);
         this.defaultDestinationPath = defaultDestinationPath;
-        this.fileSuggestModal = new FileSuggestModal(app, files, (file: TFile) => {
-            this.sourcePath.setValue(file.path);
-        });
+        // this.fileSuggestModal = new FileSuggestModal(app, files, (file: TFile) => {
+        //     this.sourcePath.setValue(file.path);
+        // });
     }
 
     onOpen() {
         const {contentEl} = this;
 
-        contentEl.createEl('h2', {text: 'Move File'});
+        // File browser for source file
+        let fileInput = contentEl.createEl("input", {
+            type: "file",
+            attr: {
+                // multiple: ""
+            }
+        });
+        fileInput.addEventListener('change', (event) => {
+            // const selectedFiles = (event.target as HTMLInputElement).files;
+            // console.log(files);
+            // if (selectedFiles && selectedFiles.length > ) {
+            const input = event.target as HTMLInputElement;
+            if (input.files && input.files.length > 0) {
+                const file = input.files[0] as CustomFile;
+                this.sourcePath.setValue(file.path);
+                // this.sourcePath.setValue(input.files[0].path);
+            }
+        });
 
         // Source file path setting
         new Setting(contentEl)
-            .setName('Source File Path')
-            .addTextArea(text => {
-                this.sourcePath = text;
-                text.setPlaceholder('Enter source file path');
-            })
-            .addButton(btn => btn
-                .setButtonText('Browse')
-                .onClick(() => this.fileSuggestModal.open()));
+        .setName('Source File Path')
+        .addTextArea(text => {
+            this.sourcePath = text;
+            text.setPlaceholder('Enter source file path');
+        })
 
         // Destination file path setting
         new Setting(contentEl)
-            .setName('Destination File Path')
-            .addTextArea(text => {
-                this.destinationPath = text;
-                text.setValue(this.defaultDestinationPath);
-            });
+        .setName('Destination File Path')
+        .addTextArea(text => {
+            this.destinationPath = text;
+            text.setValue(this.defaultDestinationPath);
+        });
+
 
         // Reset button
         new Setting(contentEl)
