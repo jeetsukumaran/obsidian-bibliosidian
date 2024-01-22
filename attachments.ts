@@ -45,11 +45,14 @@ interface CustomFile extends File {
 export class MoveFileModal extends Modal {
     private sourcePath: TextAreaComponent;
     private destinationPath: TextAreaComponent;
+    private defaultDestinationFolder: string;
 
     constructor(
         app: App,
+        defaultDestinationFolder: string,
     ) {
         super(app);
+        this.defaultDestinationFolder = defaultDestinationFolder;
     }
 
     onOpen() {
@@ -77,7 +80,7 @@ export class MoveFileModal extends Modal {
                     this.app,
                     activeFile as TFile,
                     file.path,
-                    ""
+                    this.defaultDestinationFolder,
                 )
                 .then(formattedPath => {
                     // this.destinationPath.setValue(formattedPath);

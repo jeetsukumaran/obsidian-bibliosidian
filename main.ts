@@ -224,14 +224,9 @@ export default class Bibliosidian extends Plugin {
         if (!activeFile) {
             return;
         }
-        // let destPath: string = await formatAttachmentPath(
-        //     this.app,
-        //     activeFile,
-        //     ".pdf",
-        //     "",
-        // );
         const modal = new MoveFileModal(
             app,
+            this.settings.holdingsSubdirectoryRoot,
         );
         modal.open();
     }
