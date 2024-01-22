@@ -156,11 +156,13 @@ export class MoveFileModal extends Modal {
             .addButton(btn => btn
                 .setButtonText('OK')
                 .onClick(() => {
-                    this.moveFile();
-                    this.updateHostFileHoldingsData(
-                        activeFile?.path || "",
-                        this.cleanDestinationPath
-                    );
+                    this.moveFile()
+                        .then( () => {
+                            this.updateHostFileHoldingsData(
+                                activeFile?.path || "",
+                                this.cleanDestinationPath
+                            );
+                        });
                     this.close();
                 }))
             .addButton(btn => btn
