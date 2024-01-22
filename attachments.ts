@@ -56,6 +56,9 @@ export class MoveFileModal extends Modal {
         const {contentEl} = this;
 
         let activeFile = this.app.workspace.getActiveFile();
+        if (!activeFile) {
+            return;
+        }
 
         // File browser for source file
         let fileInput = contentEl.createEl("input", {
@@ -70,13 +73,17 @@ export class MoveFileModal extends Modal {
                 const file = input.files[0] as CustomFile;
                 let sourceFilePath = file.path;
                 this.sourcePath.setValue(sourceFilePath);
-                formatAttachmentPath(this.app, activeFile, file.path, "")
+                formatAttachmentPath(
+                    this.app,
+                    activeFile as TFile,
+                    file.path,
+                    ""
+                )
                 .then(formattedPath => {
                     this.destinationPath.setValue(formattedPath);
                 })
                 .catch(error => {
-                    console.error("Error formatting attachment path: ", error);
-                    // Handle the error appropriately
+                    console.error("Error composing attachment path: ", error);
                 });
             }
         });
