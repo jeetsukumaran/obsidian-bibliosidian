@@ -13,34 +13,25 @@ import {
 import * as _path from "path";
 
 import {
-    MoveFileModal,
-} from "./attachments";
-
-import {
-	BibliosidianSettings,
-	createReferenceNote,
-	generateReferenceLibrary,
-} from "./bibliosidian";
-
-import {
 	FilePropertyData,
 	parseYaml,
 	stringifyYaml,
 	createFilePropertyDataTable,
 } from "./fileProperties";
 
-const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
-	mySetting: 'default',
-	referenceSourcePropertiesPrefix: "source-",
-	referenceSourceBibTex: "entry-bibtex",
-	referenceSubdirectoryRoot: _path.join("sources", "references"),
-	isSubdirectorizeReferencesLexically: true,
-	referenceAdditionalMetadata: {},
-	authorsParentFolderPath: _path.join("sources", "authors"),
-	isSubdirectorizeAuthorsLexically: true,
-	isCreateAuthorPages: true,
-	authorsAdditionalMetadata: {},
-}
+import {
+    MoveFileModal,
+} from "./attachments";
+
+import {
+	createReferenceNote,
+	generateReferenceLibrary,
+} from "./bibliosidian";
+
+import {
+	BibliosidianSettings,
+    DEFAULT_SETTINGS,
+} from "./settings";
 
 class BibliosidianSettingTab extends PluginSettingTab {
 	plugin: Bibliosidian;

@@ -37,25 +37,14 @@ import {
 
 import {
     createOrOpenNote,
-}  from "./utility";
+} from "./utility";
 
+import {
+    BibliosidianSettings,
+} from "./settings";
 
 // import { parseBibFile } from "bibtex";
 import * as _path from "path";
-
-export interface BibliosidianSettings {
-	mySetting: string;
-	referenceSourcePropertiesPrefix: string;
-	referenceSourceBibTex: string
-	referenceSubdirectoryRoot: string
-	isSubdirectorizeReferencesLexically: boolean
-	referenceAdditionalMetadata: FilePropertyData,
-	authorsParentFolderPath: string
-	isSubdirectorizeAuthorsLexically: boolean
-	authorsAdditionalMetadata: FilePropertyData,
-	isCreateAuthorPages: boolean,
-}
-
 
 interface BibTexModalArgs {
     sourceBibTex: string;
