@@ -151,7 +151,10 @@ export async function formatAttachmentPath(
 
     // Construct the new filename
     const hostFileNameWithoutExtension = path.basename(hostFile.path, path.extname(hostFile.path));
-    let newFilePath = path.join(destinationFolderPath, hostFileNameWithoutExtension + extension);
+    let newFilePath = path.join(
+        destinationFolderPath,
+        hostFileNameWithoutExtension + extension,
+    );
 
     // Ensure the new file path is unique
     newFilePath = await ensureUniquePath(app, newFilePath);

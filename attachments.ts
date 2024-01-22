@@ -80,6 +80,7 @@ export class MoveFileModal extends Modal {
                     ""
                 )
                 .then(formattedPath => {
+                    // this.destinationPath.setValue(formattedPath);
                     this.destinationPath.setValue(formattedPath);
                 })
                 .catch(error => {
