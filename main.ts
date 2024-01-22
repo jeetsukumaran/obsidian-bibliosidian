@@ -88,7 +88,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 		}));
 		new Setting(containerEl)
-			.setName("Organize reference into subdirectories based on citekey")
+			.setName("Organize reference into subdirectories based on citation key")
 			.setDesc("Enable or disable lexical organization of references into subdirectories.")
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.isSubdirectorizeReferencesLexically)

@@ -105,7 +105,7 @@ function generateSourceFrontmatter(
 
     let refProperties: FilePropertyData  = {}
 
-	let citekey = bibEntry._id.toLowerCase();
+	let citationKey = bibEntry._id.toLowerCase();
 	let authorLastNames: string[] = [];
 	// let auFieldNames: string[] = [
 	//     "author",
@@ -215,7 +215,7 @@ function generateSourceFrontmatter(
 
     refProperties["entry-parents"] = []
 	refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
-    refProperties[bibToYamlLabelFn("citekey")] = citekey
+    refProperties[bibToYamlLabelFn("citekey")] = citationKey
 
     Object.entries(creatorNames).forEach(([key, value]) => {
         if (!bibEntry) {
@@ -266,7 +266,7 @@ function generateSourceFrontmatter(
 		.trim()
 		.replace(/\n/g, " ")
 		.replace(/\s+/g, " ")
-	// let entryTitle = `(@${citekey}) ${compositeTitle}`
+	// let entryTitle = `(@${citationKey}) ${compositeTitle}`
 
 	refProperties["title"] = `${compositeTitle} ${inTextCitation}`
 	if (abstract) {
@@ -275,7 +275,7 @@ function generateSourceFrontmatter(
 	refProperties["aliases"] = fileProperties.concatItems(
 		"aliases",
 		[
-			`@${citekey}`,
+			`@${citationKey}`,
 			inTextCitation,
 			compositeTitle,
 		],
@@ -492,11 +492,11 @@ function computeBibEntryTargetFilePath(
 	bibEntry: BibEntry,
 	settings: BibliosidianSettings,
 ): string {
-	let citekey = bibEntry._id
-	let citekeyMarkedUp = `@${citekey}`
+	let citationKey = bibEntry._id
+	let citekeyMarkedUp = `@${citationKey}`
 	let parentPath = settings.referenceSubdirectoryRoot
 	if (settings.isSubdirectorizeReferencesLexically) {
-		parentPath = _path.join(parentPath, replaceProblematicChars(citekey[0]))
+		parentPath = _path.join(parentPath, replaceProblematicChars(citationKey[0]))
 	}
 	return _path.join(parentPath, citekeyMarkedUp + ".md")
 }
