@@ -131,34 +131,34 @@ export async function ensureUniquePath(app: App, fullPath: string): Promise<stri
 }
 
 
-export async function formatAttachmentPath(
-    app: App,
-    hostFile: TFile,
-    sourceFilePath: string,
-    destinationFolderPath: string
-): Promise<string> {
-    // Use host file's directory if destinationFolderPath is empty
-    if (!destinationFolderPath) {
-        destinationFolderPath = path.dirname(hostFile.path);
-    }
-    else {
-        // Ensure destination folder exists
-        await ensureDirectoryExists(app, destinationFolderPath);
-        ensureParentDirectoryExists
-    }
+// export async function formatAttachmentPath(
+//     app: App,
+//     hostFile: TFile,
+//     sourceFilePath: string,
+//     destinationFolderPath: string
+// ): Promise<string> {
+//     // Use host file's directory if destinationFolderPath is empty
+//     if (!destinationFolderPath) {
+//         destinationFolderPath = path.dirname(hostFile.path);
+//     }
+//     else {
+//         // Ensure destination folder exists
+//         await ensureDirectoryExists(app, destinationFolderPath);
+//         ensureParentDirectoryExists
+//     }
 
-    // Get the extension from the source file
-    const extension = path.extname(sourceFilePath);
+//     // Get the extension from the source file
+//     const extension = path.extname(sourceFilePath);
 
-    // Construct the new filename
-    const hostFileNameWithoutExtension = path.basename(hostFile.path, path.extname(hostFile.path));
-    let newFilePath = path.join(
-        destinationFolderPath,
-        hostFileNameWithoutExtension + extension,
-    );
+//     // Construct the new filename
+//     const hostFileNameWithoutExtension = path.basename(hostFile.path, path.extname(hostFile.path));
+//     let newFilePath = path.join(
+//         destinationFolderPath,
+//         hostFileNameWithoutExtension + extension,
+//     );
 
-    // Ensure the new file path is unique
-    newFilePath = await ensureUniquePath(app, newFilePath);
+//     // Ensure the new file path is unique
+//     newFilePath = await ensureUniquePath(app, newFilePath);
 
-    return newFilePath;
-}
+//     return newFilePath;
+// }

@@ -27,7 +27,7 @@ async function copyFileAsync(source: string, destination: string): Promise<void>
 import {
     ensureParentDirectoryExists,
     ensureUniquePath,
-    formatAttachmentPath,
+    // formatAttachmentPath,
 } from "./utility";
 
 // File Suggest Modal
@@ -220,7 +220,9 @@ export class MoveFileModal extends Modal {
 
     private async moveFile() {
         const sourceFilePath = _path.resolve(this.sourcePath.value.trim());
-        let destinationPath = _path.resolve(_path.join(this.getVaultBasePath(), this.destinationPath.getValue().toString().trim()));
+        // let destinationPath = _path.resolve(_path.join(this.getVaultBasePath(), this.destinationPath.getValue().toString().trim()));
+        let destinationPath = this.destinationPath.getValue().toString().trim();
+        let fullDestinationPath = _path.join(this.getVaultBasePath(), destinationPath);
         // let destinationPath: string = this.destinationPath.getValue().toString().trim();
         if (!destinationPath) {
             return;
@@ -235,7 +237,7 @@ export class MoveFileModal extends Modal {
         try {
             // await this.app.vault.rename(sourceFile, destinationPath);
             // await this.app.fileManager.renameFile(sourceFile, destinationPath);
-            await copyFileAsync(sourceFilePath, destinationPath);
+            await copyFileAsync(sourceFilePath, fullDestinationPath);
             new Notice(`File moved from '${sourceFilePath}' to '${destinationPath}'`);
         } catch (error) {
             new Notice(`Error moving '${sourceFilePath}' to '${destinationPath}': ` + error);
