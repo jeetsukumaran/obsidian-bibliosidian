@@ -173,10 +173,14 @@ export class MoveFileModal extends Modal {
                     this.moveFile()
                         .then(() => {
                             runProcess();
+                            let mode: PaneType | boolean = false;
+                            app.workspace.openLinkText(
+                                this.cleanDestinationPath,
+                                '',
+                                mode,
+                            );
+                            this.close();
                     });
-                    let mode: PaneType | boolean = false;
-                    app.workspace.openLinkText(this.cleanDestinationPath, '', mode);
-                    this.close();
                 }))
             .addButton(btn => btn
                 .setButtonText('Cancel')
