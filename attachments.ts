@@ -204,7 +204,6 @@ export class MoveFileModal extends Modal {
         const sourceFilePath = _path.resolve(this.sourcePath.value.trim());
         // let destinationPath = _path.resolve(_path.join(this.getVaultBasePath(), this.destinationPath.getValue().toString().trim()));
         let destinationPath = this.cleanDestinationPath;
-        let fullDestinationPath = _path.join(this.getVaultBasePath(), destinationPath);
         // let destinationPath: string = this.destinationPath.getValue().toString().trim();
         if (!destinationPath) {
             return;
@@ -220,6 +219,7 @@ export class MoveFileModal extends Modal {
         }
         destinationPath = await ensureUniquePath(this.app, destinationPath);
         this.destinationPath.setValue(destinationPath); // update with unique path
+        let fullDestinationPath = _path.join(this.getVaultBasePath(), destinationPath);
         try {
             // await this.app.vault.rename(sourceFile, destinationPath);
             // await this.app.fileManager.renameFile(sourceFile, destinationPath);
