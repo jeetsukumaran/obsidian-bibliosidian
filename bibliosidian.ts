@@ -552,12 +552,10 @@ class BibTexModal extends Modal {
 
         // containerEl.createEl("h3", { text: "Reference data" })
         containerEl.createEl("br");
-        containerEl.createEl("br");
         let descEl = containerEl.createEl("div");
         descEl.style.width = "100%";
         // descEl.style.height = "8rem";
         descEl.style.border = "solid 1px";
-        containerEl.createEl("br");
         containerEl.createEl("br");
 
         let parseUpdatedValue = () => {
@@ -640,17 +638,28 @@ class BibTexModal extends Modal {
         containerEl.createEl("h3", { text: "Reference note path" })
         this.referencePathTextComponent = containerEl.createEl("textarea");
         this.referencePathTextComponent.style.width = "100%";
-        this.referencePathTextComponent.style.height = "3rem";
+        this.referencePathTextComponent.style.height = "1.5rem";
 
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
 		let panelSetting = new Setting(toolPanel)
+
 		panelSetting.addToggle( toggle => {
 			toggle
 				.setValue(this.isEnableReferencePathAutoUpdate)
 				.onChange(async (value) => {
 					this.isEnableReferencePathAutoUpdate = value;
 				})
-		})
+		});
+        panelSetting.controlEl.appendChild(document.createTextNode("Set from BibTex"));
+
+        panelSetting.addToggle( toggle => {
+            toggle
+            .setValue(this.args.isCreateAuthorPages)
+            .onChange(async (value) => {
+                this.args.isCreateAuthorPages = value;
+            })
+        });
+        panelSetting.controlEl.appendChild(document.createTextNode("Update authors"));
 
 		panelSetting.addButton( (button: ButtonComponent) => {
 			button
@@ -670,35 +679,35 @@ class BibTexModal extends Modal {
 
     onOpen() {
         const { contentEl } = this;
-		contentEl.createEl("h1", { text: "Reference update" })
+		contentEl.createEl("h1", { text: "Create or update a reference note" })
 
-		contentEl.createEl("h2", { text: "Source" })
+		contentEl.createEl("br");
+		contentEl.createEl("h2", { text: "Source" });
 		let referenceSourceBibTexComponent = this.buildParsedTextAreaComponent(
 			contentEl,
 			this.args.sourceBibTex,
-		)
+		);
 
-		contentEl.createEl("h2", { text: "Reference" })
+		contentEl.createEl("br");
+		contentEl.createEl("h2", { text: "Destination" })
 		this.renderReferenceLocationInputTextArea(
 			contentEl,
 			this.args.targetFilepath,
-		)
+		);
 
-		contentEl.createEl("h2", { text: "Authors" })
-		let updateAuthorsSettings = new Setting(contentEl)
-		updateAuthorsSettings
-			.setName("Update source author notes")
-			.setDesc("Create or update associated source author notes.")
-			// .setDesc("Create or update reference and associated author notes.")
-		updateAuthorsSettings.addToggle( toggle => {
-			toggle
-				.setValue(this.args.isCreateAuthorPages)
-				.onChange(async (value) => {
-					this.args.isCreateAuthorPages = value;
-				})
-		})
-
-		contentEl.createEl("h2", { text: "Update" })
+		// // contentEl.createEl("h2", { text: "Authors" })
+		// let updateAuthorsSettings = new Setting(contentEl)
+		// updateAuthorsSettings
+		// 	.setName("Update source author notes")
+		// 	.setDesc("Create or update associated source author notes.")
+		// 	// .setDesc("Create or update reference and associated author notes.")
+		// updateAuthorsSettings.addToggle( toggle => {
+		// 	toggle
+		// 		.setValue(this.args.isCreateAuthorPages)
+		// 		.onChange(async (value) => {
+		// 			this.args.isCreateAuthorPages = value;
+		// 		})
+		// })
 
 		let execute = (isQuiet: boolean = true) => {
 			this.args.targetFilepath = this.referencePathTextComponent.value.endsWith(".md") ? this.referencePathTextComponent.value : this.referencePathTextComponent.value + ".md"
@@ -732,92 +741,6 @@ class BibTexModal extends Modal {
 
 
     }
-
-
-    // onOpen() {
-    //     const { contentEl } = this;
-		// contentEl.createEl("h1", { text: "Reference update" })
-		// contentEl.createEl("h2", { text: "Source" })
-
-    //     // Source BibTex section
-    //     contentEl.createEl("h3", { text: "BibTex" });
-    //     this.sourceBibTexTextarea = contentEl.createEl("textarea");
-    //     this.sourceBibTexTextarea.textContent = this.args.sourceBibTex;
-    //     this.sourceBibTexTextarea.style.width = "100%";
-    //     this.sourceBibTexTextarea.style.height = "16rem";
-
-    //     // Reset button for Source BibTex
-    //     const resetSourceButton = contentEl.createEl("button", { text: "Reset" });
-    //     resetSourceButton.onclick = () => {
-    //         this.sourceBibTexTextarea.value = this.args.sourceBibTex;
-    //     };
-
-    //     // Auto-update handler for Source BibTex
-    //     this.sourceBibTexTextarea.oninput = () => {
-    //         this.targetFilepathInput.value = computeTargetFilePath(
-    //         	this.sourceBibTexTextarea.value,
-				// this.referenceSubdirectoryRoot,
-				// this.isSubdirectorizeReferencesLexically,
-    //         );
-			// this.normalizeDisplayedFilepathEnding()
-    //     };
-
-    //     // Target filepath section
-    //     contentEl.createEl("h4", { text: "Reference filepath" });
-    //     this.targetFilepathInput = contentEl.createEl("input", {
-    //         type: "text",
-    //         value: this.args.targetFilepath
-    //     });
-    //     this.targetFilepathInput.style.width = "100%"; // this needs to be css
-		// this.normalizeDisplayedFilepathEnding()
-
-		// // Add event listener for input changes
-		// this.targetFilepathInput.addEventListener("input", () => {
-			// this.normalizeDisplayedFilepathEnding()
-		// });
-
-    //     // Reset button for Target filepath
-    //     const resetTargetPathButton = contentEl.createEl("button", { text: "Reset" });
-    //     resetTargetPathButton.onclick = () => {
-    //         this.targetFilepathInput.value = this.args.targetFilepath;
-			// this.normalizeDisplayedFilepathEnding()
-    //     };
-
-    //     // Auto button for Target filepath
-    //     const autoTargetPathButton = contentEl.createEl("button", { text: "Auto" });
-    //     autoTargetPathButton.onclick = () => {
-    //         this.targetFilepathInput.value = computeTargetFilePath(
-    //         	this.sourceBibTexTextarea.value,
-				// this.referenceSubdirectoryRoot,
-				// this.isSubdirectorizeReferencesLexically,
-    //         );
-			// this.normalizeDisplayedFilepathEnding()
-    //     };
-
-    //     // Button container
-    //     let buttonContainer = contentEl.createEl("div");
-    //     buttonContainer.style.textAlign = "right";
-
-    //     // Generate button
-    //     const generateButton = buttonContainer.createEl("button", { text: "Generate" });
-    //     generateButton.onclick = () => {
-    //         this.args.onGenerate({
-				// targetFilepath: this.targetFilepathInput.value.endsWith(".md")
-    //                 ? this.targetFilepathInput.value
-    //                 : this.targetFilepathInput.value + ".md",
-    //             sourceBibTex: this.sourceBibTexTextarea.value
-    //         });
-    //         this.close();
-    //     };
-
-    //     // Cancel button
-    //     const cancelButton = buttonContainer.createEl("button", { text: "Cancel" });
-    //     cancelButton.onclick = () => {
-    //         this.args.onCancel();
-    //         this.close();
-    //     };
-    // }
-
 
     onClose() {
         const { contentEl } = this;
