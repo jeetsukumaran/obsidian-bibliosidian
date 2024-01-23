@@ -696,11 +696,11 @@ class BibTexModal extends Modal {
 			this.args.targetFilepath,
 		);
 
-		// contentEl.createEl("h2", { text: "Authors" })
+		contentEl.createEl("h2", { text: "Authors" })
 		let updateAuthorsSettings = new Setting(contentEl)
 		updateAuthorsSettings
 			.setName("Update source author notes")
-			.setDesc("Create or update associated source author notes.")
+			.setDesc("Create or update notes for each author, cross-linking to this reference.")
 			// .setDesc("Create or update reference and associated author notes.")
 		updateAuthorsSettings.addToggle( toggle => {
 			toggle
