@@ -700,7 +700,7 @@ class BibTexModal extends Modal {
 		let updateAuthorsSettings = new Setting(contentEl)
 		updateAuthorsSettings
 			.setName("Update source author notes")
-			.setDesc("Create or update notes for each author, adding links to reference note an vice versa.")
+			.setDesc("Create or update notes for each author, adding links to reference note and vice versa.")
 			// .setDesc("Create or update reference and associated author notes.")
 		updateAuthorsSettings.addToggle( toggle => {
 			toggle
