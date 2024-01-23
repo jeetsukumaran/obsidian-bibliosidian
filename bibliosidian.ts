@@ -554,9 +554,9 @@ class BibTexModal extends Modal {
         containerEl.createEl("br");
         let descEl = containerEl.createEl("div");
         descEl.style.width = "100%";
+        descEl.style.marginBottom = "0.5rem";
         // descEl.style.height = "8rem";
-        descEl.style.border = "solid 1px";
-        containerEl.createEl("br");
+        // descEl.style.border = "solid 1px";
 
         let parseUpdatedValue = () => {
             try {
@@ -635,7 +635,6 @@ class BibTexModal extends Modal {
 		// });
 
 
-        containerEl.createEl("h3", { text: "Reference note path" })
         this.referencePathTextComponent = containerEl.createEl("textarea");
         this.referencePathTextComponent.style.width = "100%";
         this.referencePathTextComponent.style.height = "1.5rem";
@@ -643,6 +642,7 @@ class BibTexModal extends Modal {
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
 		let panelSetting = new Setting(toolPanel)
 
+        panelSetting.controlEl.appendChild(document.createTextNode("Set from BibTeX"));
 		panelSetting.addToggle( toggle => {
 			toggle
 				.setValue(this.isEnableReferencePathAutoUpdate)
@@ -650,8 +650,8 @@ class BibTexModal extends Modal {
 					this.isEnableReferencePathAutoUpdate = value;
 				})
 		});
-        panelSetting.controlEl.appendChild(document.createTextNode("Set from BibTex"));
 
+        panelSetting.controlEl.appendChild(document.createTextNode("Update authors"));
         panelSetting.addToggle( toggle => {
             toggle
             .setValue(this.args.isCreateAuthorPages)
@@ -659,7 +659,6 @@ class BibTexModal extends Modal {
                 this.args.isCreateAuthorPages = value;
             })
         });
-        panelSetting.controlEl.appendChild(document.createTextNode("Update authors"));
 
 		panelSetting.addButton( (button: ButtonComponent) => {
 			button
@@ -681,14 +680,12 @@ class BibTexModal extends Modal {
         const { contentEl } = this;
 		contentEl.createEl("h1", { text: "Create or update a reference note" })
 
-		contentEl.createEl("br");
 		contentEl.createEl("h2", { text: "Source" });
 		let referenceSourceBibTexComponent = this.buildParsedTextAreaComponent(
 			contentEl,
 			this.args.sourceBibTex,
 		);
 
-		contentEl.createEl("br");
 		contentEl.createEl("h2", { text: "Destination" })
 		this.renderReferenceLocationInputTextArea(
 			contentEl,
