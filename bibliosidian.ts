@@ -533,25 +533,25 @@ class BibTexModal extends Modal {
 		containerEl: HTMLElement,
 		initialValue: string = "",
 	) {
+        let valuePlaceholder = (
+                `
+                E.g.:
+                    @article{kullback1951,
+                        title={On information and sufficiency},
+                            author={Kullback, Solomon and Leibler, Richard A},
+                            journal={The annals of mathematical statistics},
+                            volume={22},
+                            number={1},
+                            pages={79--86},
+                            year={1951},
+                            publisher={JSTOR}
+                }
+                `
+            )
 		let parsedInputSetting = new Setting(containerEl)
 			.setName("Source bibliographic data (BibTeX)")
 			// .setDesc("Source definition (BibTex)")
 			// .setDesc(initialDescription)
-		let valuePlaceholder = (
-`
-E.g.:
-    @article{kullback1951,
-        title={On information and sufficiency},
-        author={Kullback, Solomon and Leibler, Richard A},
-        journal={The annals of mathematical statistics},
-        volume={22},
-        number={1},
-        pages={79--86},
-        year={1951},
-        publisher={JSTOR}
-    }
-`
-		)
 		parsedInputSetting.addTextArea(text => {
 			this.parsedSourceTextAreaComponent = text
 			this.parsedSourceTextAreaComponent
