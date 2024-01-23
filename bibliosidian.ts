@@ -210,7 +210,7 @@ function generateSourceFrontmatter(
 	}
 
 
-	let entryTitle = `**${inTextCitation}** ${compositeTitle}`
+	let entryTitle = `${inTextCitation} *${compositeTitle}*`
 	refProperties["entry-title"] = entryTitle
 
     refProperties["entry-parents"] = []
