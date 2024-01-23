@@ -535,37 +535,28 @@ class BibTexModal extends Modal {
 	) {
         let valuePlaceholder = (
                 `
-E.g.:
-    @article{kullback1951,
-        title={On information and sufficiency},
-            author={Kullback, Solomon and Leibler, Richard A},
-            journal={The annals of mathematical statistics},
-            volume={22},
-            number={1},
-            pages={79--86},
-            year={1951},
-            publisher={JSTOR}
+@article{kullback1951,
+  title={On information and sufficiency},
+  author={Kullback, Solomon and Leibler, Richard A},
+  journal={The annals of mathematical statistics},
+  volume={22},
+  number={1},
+  pages={79--86},
+  year={1951},
 }
 `
             )
+        containerEl.createEl("h3", { text: "Reference BibTeX" })
         this.parsedSourceTextAreaComponent = containerEl.createEl("textarea");
         this.parsedSourceTextAreaComponent.placeholder = valuePlaceholder;
         this.parsedSourceTextAreaComponent.style.width = "100%";
-        this.parsedSourceTextAreaComponent.style.height = "16rem";
+        this.parsedSourceTextAreaComponent.style.height = "10rem";
 
-        let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
-        let panelSetting = new Setting(toolPanel)
-        panelSetting.addButton( (button: ButtonComponent) => {
-            button
-            .setButtonText("Reset")
-            .onClick( () => {
-                this.parsedSourceTextAreaComponent.value = initialValue;
-                parseUpdatedValue()
-            });
-        });
+        containerEl.createEl("h3", { text: "Reference Data" })
         let descEl = containerEl.createEl("div");
         descEl.style.width = "100%";
-        descEl.style.height = "16rem";
+        descEl.style.height = "10rem";
+        descEl.style.border = "solid 1px";
 
         let parseUpdatedValue = () => {
             try {
@@ -599,6 +590,17 @@ E.g.:
         parseUpdatedValue()
         this.parsedSourceTextAreaComponent.addEventListener("blur", async () => {
             parseUpdatedValue()
+        });
+
+        let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
+        let panelSetting = new Setting(toolPanel)
+        panelSetting.addButton( (button: ButtonComponent) => {
+            button
+            .setButtonText("Reset")
+            .onClick( () => {
+                this.parsedSourceTextAreaComponent.value = initialValue;
+                parseUpdatedValue()
+            });
         });
 
 	}
