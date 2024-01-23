@@ -510,7 +510,7 @@ class BibTexModal extends Modal {
     args: BibTexModalArgs;
 	settings: BibliosidianSettings;
 	parsedSourceTextAreaComponent: HTMLTextAreaElement;
-	referencePathTextComponent: TextAreaComponent
+	referencePathTextComponent: HTMLTextAreaElement;
 	isEnableReferencePathAutoUpdate: boolean = true
 	onGenerate: (args:BibTexModalArgs) => void;
 	private _parsedBibEntry: BibEntry | undefined = undefined
@@ -534,8 +534,7 @@ class BibTexModal extends Modal {
 		initialValue: string = "",
 	) {
         let valuePlaceholder = (
-                `
-@article{kullback1951,
+`@article{kullback1951,
   title={On information and sufficiency},
   author={Kullback, Solomon and Leibler, Richard A},
   journal={The annals of mathematical statistics},
@@ -543,20 +542,23 @@ class BibTexModal extends Modal {
   number={1},
   pages={79--86},
   year={1951},
-}
-`
+}`
             )
-        containerEl.createEl("h3", { text: "Reference BibTeX" })
+        // containerEl.createEl("h3", { text: "Reference BibTeX" })
         this.parsedSourceTextAreaComponent = containerEl.createEl("textarea");
         this.parsedSourceTextAreaComponent.placeholder = valuePlaceholder;
         this.parsedSourceTextAreaComponent.style.width = "100%";
-        this.parsedSourceTextAreaComponent.style.height = "10rem";
+        this.parsedSourceTextAreaComponent.style.height = "12rem";
 
-        containerEl.createEl("h3", { text: "Reference Data" })
+        // containerEl.createEl("h3", { text: "Reference data" })
+        containerEl.createEl("br");
+        containerEl.createEl("br");
         let descEl = containerEl.createEl("div");
         descEl.style.width = "100%";
-        descEl.style.height = "10rem";
+        // descEl.style.height = "8rem";
         descEl.style.border = "solid 1px";
+        containerEl.createEl("br");
+        containerEl.createEl("br");
 
         let parseUpdatedValue = () => {
             try {
@@ -603,6 +605,7 @@ class BibTexModal extends Modal {
             });
         });
 
+
 	}
 
 	setReferencePathTextComponentFromSource() {
@@ -611,7 +614,7 @@ class BibTexModal extends Modal {
 				this._parsedBibEntry,
 				this.settings,
 			)
-			this.referencePathTextComponent.setValue(filePath)
+			this.referencePathTextComponent.value = filePath;
 		} else {
 		}
 	}
@@ -620,18 +623,24 @@ class BibTexModal extends Modal {
 		containerEl: HTMLElement,
 		initialValue: string = "",
 	) {
-		let inputSetting = new Setting(containerEl)
-			.setName("Reference note path")
-			.setDesc("Path to file in folder where this reference will be stored.")
-		inputSetting.addTextArea(text => {
-			this.referencePathTextComponent = text
-			this.referencePathTextComponent.setValue(initialValue);
-			this.referencePathTextComponent.inputEl.addEventListener("blur", async () => {
-				// parseUpdatedValue()
-			});
-			this.referencePathTextComponent.inputEl.style.height = "4rem"
-			this.referencePathTextComponent.inputEl.style.overflow = "scroll"
-		});
+		// let inputSetting = new Setting(containerEl)
+		// 	.setName("Reference note path")
+		// 	.setDesc("Path to file in folder where this reference will be stored.")
+		// inputSetting.addTextArea(text => {
+		// 	this.referencePathTextComponent = text
+		// 	this.referencePathTextComponent.setValue(initialValue);
+		// 	this.referencePathTextComponent.inputEl.addEventListener("blur", async () => {
+		// 		// parseUpdatedValue()
+		// 	});
+		// 	this.referencePathTextComponent.inputEl.style.height = "4rem"
+		// 	this.referencePathTextComponent.inputEl.style.overflow = "scroll"
+		// });
+
+
+        containerEl.createEl("h3", { text: "Reference note path" })
+        this.referencePathTextComponent = containerEl.createEl("textarea");
+        this.referencePathTextComponent.style.width = "100%";
+        this.referencePathTextComponent.style.height = "3rem";
 
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
 		let panelSetting = new Setting(toolPanel)
@@ -654,7 +663,7 @@ class BibTexModal extends Modal {
 			button
 			.setButtonText("Reset")
 			.onClick( () => {
-				this.referencePathTextComponent.setValue(initialValue)
+				this.referencePathTextComponent.value = initialValue;
 			});
 		});
 	}
@@ -692,7 +701,7 @@ class BibTexModal extends Modal {
 		contentEl.createEl("h2", { text: "Update" })
 
 		let execute = (isQuiet: boolean = true) => {
-			this.args.targetFilepath = this.referencePathTextComponent.getValue().endsWith(".md") ? this.referencePathTextComponent.getValue() : this.referencePathTextComponent.getValue() + ".md"
+			this.args.targetFilepath = this.referencePathTextComponent.value.endsWith(".md") ? this.referencePathTextComponent.value : this.referencePathTextComponent.value + ".md"
 			this.args.sourceBibTex = this.parsedSourceTextAreaComponent.value;
 			this.onGenerate(this.args);
 			if (!isQuiet) {
