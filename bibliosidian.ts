@@ -593,8 +593,12 @@ class BibTexModal extends Modal {
         });
 
         let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
+        toolPanel.style.width = "100%";
+        // toolPanel.style.textAlign = "left";
         let panelSetting = new Setting(toolPanel)
-        panelSetting.addButton( (button: ButtonComponent) => {
+        panelSetting.controlEl.style.width = "100%";
+        // panelSetting.controlEl.style.textAlign = "left";
+        let resetButton = panelSetting.addButton( (button: ButtonComponent) => {
             button
             .setButtonText("Reset")
             .onClick( () => {
