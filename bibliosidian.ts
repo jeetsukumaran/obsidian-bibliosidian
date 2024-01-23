@@ -641,7 +641,7 @@ class BibTexModal extends Modal {
 
         this.referencePathTextComponent = containerEl.createEl("textarea");
         this.referencePathTextComponent.style.width = "100%";
-        this.referencePathTextComponent.style.height = "1.5rem";
+        this.referencePathTextComponent.style.height = "2rem";
 
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
 		let panelSetting = new Setting(toolPanel)
@@ -684,23 +684,23 @@ class BibTexModal extends Modal {
         const { contentEl } = this;
 		contentEl.createEl("h1", { text: "Create or update a reference note" })
 
-		contentEl.createEl("h2", { text: "Source" });
+		contentEl.createEl("h2", { text: "Source BibTeX bibliographic data" });
 		let referenceSourceBibTexComponent = this.buildParsedTextAreaComponent(
 			contentEl,
 			this.args.sourceBibTex,
 		);
 
-		contentEl.createEl("h2", { text: "Destination" })
+		contentEl.createEl("h2", { text: "Destination reference note" })
 		this.renderReferenceLocationInputTextArea(
 			contentEl,
 			this.args.targetFilepath,
 		);
 
-		contentEl.createEl("h2", { text: "Authors" })
+		contentEl.createEl("h2", { text: "Author note(s)" })
 		let updateAuthorsSettings = new Setting(contentEl)
 		updateAuthorsSettings
 			.setName("Update source author notes")
-			.setDesc("Create or update notes for each author, cross-linking to this reference.")
+			.setDesc("Create or update notes for each author, adding links to reference note an vice versa.")
 			// .setDesc("Create or update reference and associated author notes.")
 		updateAuthorsSettings.addToggle( toggle => {
 			toggle
