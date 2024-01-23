@@ -509,7 +509,7 @@ function replaceProblematicChars(input: string): string {
 class BibTexModal extends Modal {
     args: BibTexModalArgs;
 	settings: BibliosidianSettings;
-	parsedSourceTextAreaComponent: TextAreaComponent;
+	parsedSourceTextAreaComponent: HTMLTextAreaElement;
 	referencePathTextComponent: TextAreaComponent
 	isEnableReferencePathAutoUpdate: boolean = true
 	onGenerate: (args:BibTexModalArgs) => void;
@@ -535,72 +535,72 @@ class BibTexModal extends Modal {
 	) {
         let valuePlaceholder = (
                 `
-                E.g.:
-                    @article{kullback1951,
-                        title={On information and sufficiency},
-                            author={Kullback, Solomon and Leibler, Richard A},
-                            journal={The annals of mathematical statistics},
-                            volume={22},
-                            number={1},
-                            pages={79--86},
-                            year={1951},
-                            publisher={JSTOR}
-                }
-                `
+E.g.:
+    @article{kullback1951,
+        title={On information and sufficiency},
+            author={Kullback, Solomon and Leibler, Richard A},
+            journal={The annals of mathematical statistics},
+            volume={22},
+            number={1},
+            pages={79--86},
+            year={1951},
+            publisher={JSTOR}
+}
+`
             )
-		let parsedInputSetting = new Setting(containerEl)
-			.setName("Source bibliographic data (BibTeX)")
-			// .setDesc("Source definition (BibTex)")
-			// .setDesc(initialDescription)
-		parsedInputSetting.addTextArea(text => {
-			this.parsedSourceTextAreaComponent = text
-			this.parsedSourceTextAreaComponent
-				.setPlaceholder(valuePlaceholder)
-				.setValue(initialValue);
-			this.parsedSourceTextAreaComponent.inputEl.style.height = "16rem"
-			this.parsedSourceTextAreaComponent.inputEl.style.overflow = "scroll"
-			// this.parsedSourceTextAreaComponent.inputEl.style.width = "100%"
-			let parseUpdatedValue = () => {
-				try {
-					let inputValue: string = this.parsedSourceTextAreaComponent.getValue();
-					parsedInputSetting.descEl.empty()
-					if (inputValue) {
-						// as of 2024-01-16, the parser doesn't handle `month = feb`,
-						// and lots of sources emit this
-						let result = getBibEntry(inputValue)
-						this._parsedBibEntry = result.bibEntry
-						this._parsedBibTexStr = result.bibtexStr
-						this._parsedFieldValueMap = result.fieldValueMap
-						createKeyValueTable(parsedInputSetting.descEl, this._parsedFieldValueMap)
-						if (this.isEnableReferencePathAutoUpdate) {
-							this.setReferencePathTextComponentFromSource()
-						}
-					} else {
-						this._parsedBibEntry = undefined
-						this._parsedBibTexStr = ""
-						this._parsedFieldValueMap = {}
-					}
-					// createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
-				} catch (error) {
-					console.log(error);
-					parsedInputSetting.setDesc("Parse error: " + error.message);
-				}
-			}
-			parseUpdatedValue()
-			this.parsedSourceTextAreaComponent.inputEl.addEventListener("blur", async () => {
-				parseUpdatedValue()
-			});
-			let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
-			let panelSetting = new Setting(toolPanel)
-			panelSetting.addButton( (button: ButtonComponent) => {
-				button
-				.setButtonText("Reset")
-				.onClick( () => {
-					this.parsedSourceTextAreaComponent.setValue(initialValue)
-					parseUpdatedValue()
-				});
-			});
-		});
+        this.parsedSourceTextAreaComponent = containerEl.createEl("textarea");
+        this.parsedSourceTextAreaComponent.placeholder = valuePlaceholder;
+        this.parsedSourceTextAreaComponent.style.width = "100%";
+        this.parsedSourceTextAreaComponent.style.height = "16rem";
+
+        let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
+        let panelSetting = new Setting(toolPanel)
+        panelSetting.addButton( (button: ButtonComponent) => {
+            button
+            .setButtonText("Reset")
+            .onClick( () => {
+                this.parsedSourceTextAreaComponent.value = initialValue;
+                parseUpdatedValue()
+            });
+        });
+        let descEl = containerEl.createEl("div");
+        descEl.style.width = "100%";
+        descEl.style.height = "16rem";
+
+        let parseUpdatedValue = () => {
+            try {
+                let inputValue: string = this.parsedSourceTextAreaComponent.value;
+                descEl.empty()
+                if (inputValue) {
+                    // as of 2024-01-16, the parser doesn't handle `month = feb`,
+                    // and lots of sources emit this
+                    let result = getBibEntry(inputValue)
+                    this._parsedBibEntry = result.bibEntry
+                    this._parsedBibTexStr = result.bibtexStr
+                    this._parsedFieldValueMap = result.fieldValueMap
+                    createKeyValueTable(descEl, this._parsedFieldValueMap)
+                    if (this.isEnableReferencePathAutoUpdate) {
+                        this.setReferencePathTextComponentFromSource()
+                    }
+                } else {
+                    this._parsedBibEntry = undefined
+                    this._parsedBibTexStr = ""
+                    this._parsedFieldValueMap = {}
+                }
+                // createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
+            } catch (error) {
+                console.log(error);
+                let messageStr = "Parse error: " + error.message;
+                let messageNode = document.createTextNode(messageStr);
+                descEl.empty()
+                descEl.appendChild(messageNode);
+            }
+        }
+        parseUpdatedValue()
+        this.parsedSourceTextAreaComponent.addEventListener("blur", async () => {
+            parseUpdatedValue()
+        });
+
 	}
 
 	setReferencePathTextComponentFromSource() {
@@ -691,7 +691,7 @@ class BibTexModal extends Modal {
 
 		let execute = (isQuiet: boolean = true) => {
 			this.args.targetFilepath = this.referencePathTextComponent.getValue().endsWith(".md") ? this.referencePathTextComponent.getValue() : this.referencePathTextComponent.getValue() + ".md"
-			this.args.sourceBibTex = this.parsedSourceTextAreaComponent.getValue()
+			this.args.sourceBibTex = this.parsedSourceTextAreaComponent.value;
 			this.onGenerate(this.args);
 			if (!isQuiet) {
 				new Notice(`Reference updated: '${this.args.targetFilepath}' `)
