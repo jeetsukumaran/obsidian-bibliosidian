@@ -655,14 +655,14 @@ class BibTexModal extends Modal {
 				})
 		});
 
-        panelSetting.controlEl.appendChild(document.createTextNode("Update authors"));
-        panelSetting.addToggle( toggle => {
-            toggle
-            .setValue(this.args.isCreateAuthorPages)
-            .onChange(async (value) => {
-                this.args.isCreateAuthorPages = value;
-            })
-        });
+        // panelSetting.controlEl.appendChild(document.createTextNode("Update authors"));
+        // panelSetting.addToggle( toggle => {
+        //     toggle
+        //     .setValue(this.args.isCreateAuthorPages)
+        //     .onChange(async (value) => {
+        //         this.args.isCreateAuthorPages = value;
+        //     })
+        // });
 
 		panelSetting.addButton( (button: ButtonComponent) => {
 			button
@@ -696,19 +696,19 @@ class BibTexModal extends Modal {
 			this.args.targetFilepath,
 		);
 
-		// // contentEl.createEl("h2", { text: "Authors" })
-		// let updateAuthorsSettings = new Setting(contentEl)
-		// updateAuthorsSettings
-		// 	.setName("Update source author notes")
-		// 	.setDesc("Create or update associated source author notes.")
-		// 	// .setDesc("Create or update reference and associated author notes.")
-		// updateAuthorsSettings.addToggle( toggle => {
-		// 	toggle
-		// 		.setValue(this.args.isCreateAuthorPages)
-		// 		.onChange(async (value) => {
-		// 			this.args.isCreateAuthorPages = value;
-		// 		})
-		// })
+		// contentEl.createEl("h2", { text: "Authors" })
+		let updateAuthorsSettings = new Setting(contentEl)
+		updateAuthorsSettings
+			.setName("Update source author notes")
+			.setDesc("Create or update associated source author notes.")
+			// .setDesc("Create or update reference and associated author notes.")
+		updateAuthorsSettings.addToggle( toggle => {
+			toggle
+				.setValue(this.args.isCreateAuthorPages)
+				.onChange(async (value) => {
+					this.args.isCreateAuthorPages = value;
+				})
+		})
 
 		let execute = (isQuiet: boolean = true) => {
 			this.args.targetFilepath = this.referencePathTextComponent.value.endsWith(".md") ? this.referencePathTextComponent.value : this.referencePathTextComponent.value + ".md"
