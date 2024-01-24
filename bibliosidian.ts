@@ -299,27 +299,7 @@ function getBibEntry(
 		fieldValueMap: { [key: string]: string },
 		indexTitle: string,
 }{
-    // bibFileData = bibFileData.replace(/\s+month\s+=\s+[A-Za-z]\s+,/g,"")
-    // @article{wu2020phylogenetic,
-  // title = {Phylogenetic {{Tree Inference}}: {{A Top-Down Approach}} to {{Track Tumor Evolution}}},
-  // shorttitle = {Phylogenetic {{Tree Inference}}},
-  // author = {Wu, Pin and Hou, Linjun and Zhang, Yingdong and Zhang, Liye},
-  // year = {2020},
-  // month = feb,
-  // journal = {Frontiers in Genetics},
-  // volume = {10},
-  // pages = {1371},
-  // issn = {1664-8021},
-  // doi = {10.3389/fgene.2019.01371},
-  // url = {https://www.frontiersin.org/article/10.3389/fgene.2019.01371/full},
-  // urldate = {2023-11-30},
-  // abstract = {Recently, an increasing number of studies sequence multiple biopsies of primary tumors, and even paired metastatic tumors to understand heterogeneity and the evolutionary trajectory of cancer progression. Although several algorithms are available to infer the phylogeny, most tools rely on accurate measurements of mutation allele frequencies from deep sequencing, which is often hard to achieve for clinical samples (especially FFPE samples). In this study, we present a novel and easy-to-use method, PTI (Phylogenetic Tree Inference), which use an iterative top-down approach to infer the phylogenetic tree structure of multiple tumor biopsies from same patient using just the presence or absence of somatic mutations without their allele frequencies. Therefore PTI can be used in a wide range of cases even when allele frequency data is not available. Comparison with existing state-of-the-art methods, such as LICHeE, Treeomics, and BAMSE, shows that PTI achieves similar or slightly better performance within a short run time. Moreover, this method is generally applicable to infer phylogeny for any other data sets (such as epigenetics) with a similar zero and one feature-by-sample matrix.},
-  // langid = {english},
-  // file = {/home/jeetsukumaran/site/storage/workspaces/reference/libraries/zotero/storage/V8SJ3JLH/Wu et al. - 2020 - Phylogenetic Tree Inference A Top-Down Approach t.pdf}
-// }
-
-    // bibFileData = bibFileData.replace(/month = feb,/g,"")
-    bibFileData = bibFileData.replace(/\s+?month\s*?=\s*[A-Za-z]+?\s*?,?$/g,"")
+    bibFileData = bibFileData.replace(/month\s*=\s*([a-zA-Z0-9]+)\s*,/g,"month = {$1},");
 	const bibFile = parseBibFile(bibFileData);
 	let entry: BibEntry | undefined;
 	if (citeKey) {
