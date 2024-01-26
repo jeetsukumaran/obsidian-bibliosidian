@@ -122,8 +122,10 @@ export async function updateFileProperties(
 			try {
 				parsedFrontmatter = { ... parseYaml(frontmatter) }
 			} catch (err) {
-				new Notice( `Malformed existing YAML frontmatter in file '${filePath}': ${err}`)
 				console.log(err)
+                // console.log(propertyValueMap)
+                console.log(frontmatter)
+				new Notice( `Malformed existing YAML frontmatter in file '${filePath}': ${err}`)
 				return
 			}
         }
