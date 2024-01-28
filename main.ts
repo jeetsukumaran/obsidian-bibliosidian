@@ -29,6 +29,14 @@ import {
 } from "./bibliosidian";
 
 import {
+    CitationList,
+} from "./CitationList";
+
+import {
+    DataService,
+} from "./DataService";
+
+import {
 	BibliosidianSettings,
     DEFAULT_SETTINGS,
 } from "./settings";
@@ -209,9 +217,11 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 export default class Bibliosidian extends Plugin {
 	settings: BibliosidianSettings;
+    dataService: DataService;
 
 	async onload() {
 		await this.loadSettings();
+		this.dataService = new DataService();
 
 
 		// this.addRibbonIcon("library-square", "Update multiple references from a BibTeX bibliography database file", () => {
@@ -231,34 +241,37 @@ export default class Bibliosidian extends Plugin {
 			callback: this.updateReferenceNoteFromBibTex,
 		});
 
-		this.addCommand({
-			id: 'bibliosidian-update-reference-library-from-bibtex',
-			name: 'Update multiple references from a BibTeX bibliography database file',
-			callback: this.updateReferenceLibraryFromBibTex,
-		});
+		// this.addCommand({
+		// 	id: 'bibliosidian-update-reference-library-from-bibtex',
+		// 	name: 'Update multiple references from a BibTeX bibliography database file',
+		// 	callback: this.updateReferenceLibraryFromBibTex,
+		// });
 		this.addCommand({
 			id: 'bibliosidian-add-holding',
 			name: 'Add a holding associated with this reference',
 			callback: this.addHolding,
 		});
 
-        // this.addCommand({
-        //     id: 'generate-azimuths-citation-list',
-        //     name: 'Generate citation list',
-        //     editorCallback: (editor: Editor) => {
-        //         let citationList = new CitationList(
-        //             this,
-        //             this.settings,
-        //             this.dataService,
-        //             this.app.workspace.getActiveFile(),
-        //         );
-        //         let results = citationList.generate();
-        //         editor.replaceRange(
-        //             results,
-        //             editor.getCursor(),
-        //         );
-        //     },
-        // });
+        this.addCommand({
+            id: 'generatecitation-list',
+            name: 'Generate citation list',
+            editorCallback: (editor: Editor) => {
+                let activeFile = this.app.workspace.getActiveFile();
+                if (!activeFile) {
+                    return;
+                }
+                let citationList = new CitationList(
+                    activeFile,
+		            this.dataService,
+                    this.settings,
+                );
+                let results = citationList.generate();
+                editor.replaceRange(
+                    results,
+                    editor.getCursor(),
+                );
+            },
+        });
 
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
 	}

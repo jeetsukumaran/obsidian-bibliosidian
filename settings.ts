@@ -20,6 +20,8 @@ export interface BibliosidianSettings {
 	isCreateAuthorPages: boolean;
 	holdingsSubdirectoryRoot: string;
     holdingsPropertyName: string;
+    citationOutlinkPropertyNames: string[];
+    citationInlinkPropertyNames: string[];
 }
 
 export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
@@ -35,5 +37,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	authorsAdditionalMetadata: {},
 	holdingsSubdirectoryRoot: _path.join("sources", "holdings"),
     holdingsPropertyName: "source-holdings",
+    citationOutlinkPropertyNames: ["entry-references", ],
+    citationInlinkPropertyNames: ["entry-collections", ],
 }
 
