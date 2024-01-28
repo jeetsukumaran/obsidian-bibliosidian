@@ -77,12 +77,9 @@ export class CitationList {
         const citationKey: string = this.settings.citationKeyPropertyNames
             // .map( (key) => fileData[key])
             .map( (key) => {
-                console.log(key);
-                console.log(fileData[key]);
                 return fileData[key];
             })
             .find( (value) => value != null) || '';
-        console.log(citationKey);
         return this.formatCitationKey(citationKey);
     }
 
