@@ -36,6 +36,10 @@ export class CitationList {
     }
 
 
+    formatCitationKey(citationKey: string): string {
+        return `${this.settings.citationKeyPrefix}${citationKey}${this.settings.citationKeyPostfix}`;
+    }
+
     generate(): string {
         let citations: string[] = [];
         let vaultFileRecords = this.dataService.refresh();
@@ -53,7 +57,7 @@ export class CitationList {
                         if (value && value.path && value.path === this.hostFile.path) {
                             const citationKey: string = this.settings.citationKeyPropertyNames
                                 .map(key => fileData[key]).find(value => value != null) || '';
-                            citations.push(citationKey);
+                            citations.push(this.formatCitationKey(citationKey));
                         }
                     });
                 }
