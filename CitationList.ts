@@ -40,30 +40,76 @@ export class CitationList {
         return `- ${this.settings.citationKeyPrefix}${citationKey}${this.settings.citationKeyPostfix}`;
     }
 
-    generate(): string {
-        let citations: string[] = [];
-        let vaultFileRecords = this.dataService.refresh();
-        vaultFileRecords.forEach( (fileData: FileNodeDataRecords) => {
-            this.settings.citationInlinkPropertyNames.forEach( (propertyName: string) => {
-                if (fileData[propertyName]) {
-                    let propertyValues: FileNodeDataType[];
-                    let pagePropertyValue = fileData[propertyName];
-                    if (!Array.isArray(pagePropertyValue)) {
-                        propertyValues = [ pagePropertyValue ];
-                    } else {
-                        propertyValues = [ ... pagePropertyValue ];
-                    }
-                    propertyValues.forEach( (value: FileNodeDataType) => {
-                        if (value && value.path && value.path === this.hostFile.path) {
-                            const citationKey: string = this.settings.citationKeyPropertyNames
-                                .map(key => fileData[key]).find(value => value != null) || '';
-                            citations.push(this.formatCitationKey(citationKey));
-                        }
-                    });
+
+    filterSources(
+        fileData: FileNodeDataType,
+        propertyNames: string[],
+        processFn: (value: FileNodeDataType) => void,
+    ) {
+        propertyNames.forEach( (propertyName: string) => {
+            if (fileData[propertyName]) {
+                let propertyValues: FileNodeDataType[];
+                let pagePropertyValue = fileData[propertyName];
+                if (!Array.isArray(pagePropertyValue)) {
+                    propertyValues = [ pagePropertyValue ];
+                } else {
+                    propertyValues = [ ... pagePropertyValue ];
                 }
-            });
+                propertyValues.forEach( (value: FileNodeDataType) => {
+                    if (value && value.path) { // a valid link item
+                        processFn(value);
+                    }
+                    // if (filterFn(value)) {
+                    //     const citationKey: string = this.settings.citationKeyPropertyNames
+                    //     .map(key => fileData[key]).find(value => value != null) || '';
+                    //     citations.push(this.formatCitationKey(citationKey));
+                    // }
+
+                });
+            }
         });
-        return citations.join("\n");
+    }
+
+    extractCitationKey(fileData: FileNodeDataType) {
+        const citationKey: string = this.settings.citationKeyPropertyNames
+            .map(key => fileData[key]).find(value => value != null) || '';
+        console.log(citationKey);
+        return this.formatCitationKey(citationKey);
+    }
+
+    generate(): string {
+        let vaultFileRecords = this.dataService.refresh();
+        let citations: string[] = [];
+
+        let hostFileData = this.dataService.readFileNodeDataRecords(this.hostFile.path)
+        this.filterSources(
+            hostFileData,
+            this.settings.citationOutlinkPropertyNames,
+            (value: FileNodeDataType) => {
+                console.log(value);
+                let key = this.extractCitationKey(value);
+                if (key) {
+                    citations.push(key);
+                }
+            },
+        );
+        // vaultFileRecords.forEach( (fileData: FileNodeDataRecords) => {
+        //     this.extractCitations(
+        //         citations,
+        //         fileData,
+        //         this.settings.citationInlinkPropertyNames,
+        //     );
+        // });
+        // if (value && value.path && value.path === this.hostFile.path) {
+        // processFn(value);
+        // if (filterFn(value)) {
+        //     const citationKey: string = this.settings.citationKeyPropertyNames
+        //     .map(key => fileData[key]).find(value => value != null) || '';
+        //     citations.push(this.formatCitationKey(citationKey));
+        // }
+        return citations
+            .sort()
+            .join("\n");
     }
 
 }
