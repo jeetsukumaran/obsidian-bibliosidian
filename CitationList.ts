@@ -62,12 +62,6 @@ export class CitationList {
                     if (value && value.path) { // a valid link item
                         processFn(value);
                     }
-                    // if (filterFn(value)) {
-                    //     const citationKey: string = this.settings.citationKeyPropertyNames
-                    //     .map(key => fileData[key]).find(value => value != null) || '';
-                    //     citations.push(this.formatCitationKey(citationKey));
-                    // }
-
                 });
             }
         });
@@ -101,20 +95,22 @@ export class CitationList {
                 }
             },
         );
-        // vaultFileRecords.forEach( (fileData: FileNodeDataRecords) => {
-        //     this.extractCitations(
-        //         citations,
-        //         fileData,
-        //         this.settings.citationInlinkPropertyNames,
-        //     );
-        // });
-        // if (value && value.path && value.path === this.hostFile.path) {
-        // processFn(value);
-        // if (filterFn(value)) {
-        //     const citationKey: string = this.settings.citationKeyPropertyNames
-        //     .map(key => fileData[key]).find(value => value != null) || '';
-        //     citations.push(this.formatCitationKey(citationKey));
-        // }
+
+        vaultFileRecords.forEach( (fileData: FileNodeDataRecords) => {
+            this.processCitationProperties(
+                fileData,
+                this.settings.citationInlinkPropertyNames,
+                (propertyValue: FileNodeDataType) => {
+                    if (propertyValue.path && propertyValue.path === this.hostFile.path) {
+                        let key = this.extractCitationKey(fileData);
+                        if (key) {
+                            citations.push(key);
+                        }
+                    }
+                },
+            );
+        });
+
         return citations
             .sort()
             .join("\n");
