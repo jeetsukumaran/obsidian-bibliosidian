@@ -230,16 +230,35 @@ export default class Bibliosidian extends Plugin {
 			name: 'Update active file properties from BibTeX',
 			callback: this.updateReferenceNoteFromBibTex,
 		});
+
 		this.addCommand({
 			id: 'bibliosidian-update-reference-library-from-bibtex',
 			name: 'Update multiple references from a BibTeX bibliography database file',
 			callback: this.updateReferenceLibraryFromBibTex,
 		});
-		// this.addCommand({
-		// 	id: 'bibliosidian-update-reference-library-from-bibtex',
-		// 	name: 'Add a holding associated with this reference',
-		// 	callback: this.updateReferenceLibraryFromBibTex,
-		// });
+		this.addCommand({
+			id: 'bibliosidian-add-holding',
+			name: 'Add a holding associated with this reference',
+			callback: this.addHolding,
+		});
+
+        // this.addCommand({
+        //     id: 'generate-azimuths-citation-list',
+        //     name: 'Generate citation list',
+        //     editorCallback: (editor: Editor) => {
+        //         let citationList = new CitationList(
+        //             this,
+        //             this.settings,
+        //             this.dataService,
+        //             this.app.workspace.getActiveFile(),
+        //         );
+        //         let results = citationList.generate();
+        //         editor.replaceRange(
+        //             results,
+        //             editor.getCursor(),
+        //         );
+        //     },
+        // });
 
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
 	}
