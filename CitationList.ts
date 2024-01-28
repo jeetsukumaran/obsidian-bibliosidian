@@ -51,7 +51,9 @@ export class CitationList {
                     }
                     propertyValues.forEach( (value: FileNodeDataType) => {
                         if (value && value.path && value.path === this.hostFile.path) {
-                            citations.push(value.path);
+                            const citationKey: string = this.settings.citationKeyPropertyNames
+                                .map(key => fileData[key]).find(value => value != null) || '';
+                            citations.push(citationKey);
                         }
                     });
                 }

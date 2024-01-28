@@ -22,6 +22,9 @@ export interface BibliosidianSettings {
     holdingsPropertyName: string;
     citationOutlinkPropertyNames: string[];
     citationInlinkPropertyNames: string[];
+    citationKeyPropertyNames: string[];
+    citationKeyPrefix: string;
+    citationKeyPostfix: string;
 }
 
 export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
@@ -39,5 +42,8 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
     holdingsPropertyName: "source-holdings",
     citationOutlinkPropertyNames: ["entry-references", ],
     citationInlinkPropertyNames: ["entry-collections", ],
+    citationKeyPropertyNames: ["citekey", "citationKey", "source-citekey"],
+    citationKeyPrefix: "[@",
+    citationKeyPostfix: "]",
 }
 
