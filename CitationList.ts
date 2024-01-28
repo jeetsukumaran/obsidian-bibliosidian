@@ -79,7 +79,7 @@ export class CitationList {
 
     generate(): string {
         let vaultFileRecords = this.dataService.refresh();
-        let citations: string[] = [];
+        let citations: Set<string> = new Set<string>();
 
         let hostFileData = this.dataService.readFileNodeDataRecords(this.hostFile.path)
         this.processCitationProperties(
@@ -90,7 +90,7 @@ export class CitationList {
                     let fileData = this.dataService.readFileNodeDataRecords(propertyValue.path)
                     let key = this.extractCitationKey(fileData);
                     if (key) {
-                        citations.push(key);
+                        citations.add(key);
                     }
                 }
             },
@@ -104,14 +104,14 @@ export class CitationList {
                     if (propertyValue.path && propertyValue.path === this.hostFile.path) {
                         let key = this.extractCitationKey(fileData);
                         if (key) {
-                            citations.push(key);
+                            citations.add(key);
                         }
                     }
                 },
             );
         });
 
-        return citations
+        return Array.from(citations)
             .sort()
             .join("\n");
     }
