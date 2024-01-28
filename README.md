@@ -14,6 +14,8 @@ The basic workflow starts after you get a BibTeX entry into your clipboard.
 This plugin will then automate the following actions:
 
 
+## Features
+
 ### Source reference note creation
 
 - Creation of a literature note based on the citation key
@@ -26,6 +28,10 @@ This plugin also reloves some of the busy work of integrating an external PDF in
 
 - Renaming the imported file to match the (base) filename of the active file (assumed to be a reference note, o otherwise, a note you want to associate with the imported file), and copying it into the vault into a (customizable) subdirectory.
 - Adding a link to the newly imported file to the active file's frontmatter YAML metadata.
+
+### Generate citation list from outlinked or inlinked properties
+
+A list of citations (``[@citekey]``) can be generated based on reference notes either linking to or being linked from the current note.
 
 ## Installation
 
