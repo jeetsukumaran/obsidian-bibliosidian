@@ -37,7 +37,7 @@ export class CitationList {
 
 
     formatCitationKey(citationKey: string): string {
-        return `${this.settings.citationKeyPrefix}${citationKey}${this.settings.citationKeyPostfix}`;
+        return `- ${this.settings.citationKeyPrefix}${citationKey}${this.settings.citationKeyPostfix}`;
     }
 
     generate(): string {
