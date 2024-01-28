@@ -37,14 +37,17 @@ export class CitationList {
 
 
     formatCitationKey(citationKey: string): string {
+        if (!citationKey) {
+            return "";
+        }
         return `- ${this.settings.citationKeyPrefix}${citationKey}${this.settings.citationKeyPostfix}`;
     }
 
 
-    filterSources(
+    processCitationProperties(
         fileData: FileNodeDataType,
         propertyNames: string[],
-        processFn: (value: FileNodeDataType) => void,
+        processFn: (propertyValue: FileNodeDataType) => void,
     ) {
         propertyNames.forEach( (propertyName: string) => {
             if (fileData[propertyName]) {
@@ -72,7 +75,13 @@ export class CitationList {
 
     extractCitationKey(fileData: FileNodeDataType) {
         const citationKey: string = this.settings.citationKeyPropertyNames
-            .map(key => fileData[key]).find(value => value != null) || '';
+            // .map( (key) => fileData[key])
+            .map( (key) => {
+                console.log(key);
+                console.log(fileData[key]);
+                return fileData[key];
+            })
+            .find( (value) => value != null) || '';
         console.log(citationKey);
         return this.formatCitationKey(citationKey);
     }
@@ -82,14 +91,16 @@ export class CitationList {
         let citations: string[] = [];
 
         let hostFileData = this.dataService.readFileNodeDataRecords(this.hostFile.path)
-        this.filterSources(
+        this.processCitationProperties(
             hostFileData,
             this.settings.citationOutlinkPropertyNames,
-            (value: FileNodeDataType) => {
-                console.log(value);
-                let key = this.extractCitationKey(value);
-                if (key) {
-                    citations.push(key);
+            (propertyValue: FileNodeDataType) => {
+                if (propertyValue.path) {
+                    let fileData = this.dataService.readFileNodeDataRecords(propertyValue.path)
+                    let key = this.extractCitationKey(fileData);
+                    if (key) {
+                        citations.push(key);
+                    }
                 }
             },
         );
