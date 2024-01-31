@@ -141,6 +141,16 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					this.plugin.settings.isSubdirectorizeAuthorsLexically = value;
 					await this.plugin.saveSettings();
         }));
+		new Setting(containerEl)
+			.setName("Reference link property name:")
+			.setDesc("Name of property on author note to update with link to this reference.")
+			.addText(text => text
+				.setPlaceholder("(E.g. 'references', 'works', 'bibliographies')")
+				.setValue(this.plugin.settings.authorReferenceOutlinkPropertyName)
+				.onChange(async (value) => {
+					this.plugin.settings.authorReferenceOutlinkPropertyName = value
+					await this.plugin.saveSettings();
+		}));
 
 		this.manageAdditionalPropertiesSettings(
 			containerEl,

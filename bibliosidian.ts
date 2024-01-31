@@ -416,11 +416,11 @@ function generateAuthorLinks(
 						],
 					)
 					let sourceLink = `[[${args.targetFilepath}|${entryTitle}]]`
-					authorProperties["references"] = fileProperties
-						.concatItems("references",
+                    let refPropName = this.plugin.settings.authorReferenceOutlinkPropertyName || "references";
+					authorProperties[refPropName] = fileProperties
+						.concatItems(refPropName,
 									 [sourceLink]
-						)
-
+						);
 					updateFileProperties(
 						app,
 						targetFilepath,

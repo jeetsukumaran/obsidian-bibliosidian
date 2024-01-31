@@ -16,6 +16,7 @@ export interface BibliosidianSettings {
 	referenceAdditionalMetadata: FilePropertyData;
 	authorsParentFolderPath: string;
 	isSubdirectorizeAuthorsLexically: boolean;
+	authorReferenceOutlinkPropertyName: string;
 	authorsAdditionalMetadata: FilePropertyData;
 	isCreateAuthorPages: boolean;
 	holdingsSubdirectoryRoot: string;
@@ -40,6 +41,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	authorsAdditionalMetadata: {},
 	holdingsSubdirectoryRoot: _path.join("sources", "holdings"),
     holdingsPropertyName: "source-holdings",
+    authorReferenceOutlinkPropertyName: "entry-references",
     citationOutlinkPropertyNames: ["entry-references", ],
     citationInlinkPropertyNames: ["entry-collections", ],
     citationKeyPropertyNames: ["citekey", "citationKey", "source-citekey"],
