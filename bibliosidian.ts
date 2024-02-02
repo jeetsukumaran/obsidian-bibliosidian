@@ -409,18 +409,11 @@ function generateAuthorLinks(
 					}
 					authorProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 					authorProperties["title"] = authorDisplayName;
-					authorProperties["aliases"] = fileProperties.concatItems(
-						"aliases",
-						[
-							authorDisplayName,
-						],
-					)
+					authorProperties["aliases"] = fileProperties.concatItems( "aliases", [ authorDisplayName, ],);
 					let sourceLink = `[[${args.targetFilepath}|${entryTitle}]]`
-                    let refPropName = this.plugin.settings.authorReferenceOutlinkPropertyName || "references";
+                    let refPropName = settings.authorReferenceOutlinkPropertyName || "references";
 					authorProperties[refPropName] = fileProperties
-						.concatItems(refPropName,
-									 [sourceLink]
-						);
+						.concatItems(refPropName, [sourceLink]);
 					updateFileProperties(
 						app,
 						targetFilepath,
