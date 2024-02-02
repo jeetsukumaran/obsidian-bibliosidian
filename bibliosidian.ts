@@ -278,6 +278,7 @@ function generateSourceFrontmatter(
 			`@${citationKey}`,
 			inTextCitation,
 			compositeTitle,
+			entryTitle,
 		],
 	)
 
