@@ -95,12 +95,12 @@ export class ImportHoldingModal extends Modal {
 		contentEl.createEl("h1", { text: "Import a reference holding" });
 		contentEl.createEl("h2", { text: "Path to source file" });
         this.sourcePath = contentEl.createEl("textarea");
-        this.sourcePath.placeholder = 'Enter source file path';
+        this.sourcePath.placeholder = 'Selected source file path';
         this.sourcePath.style.width = "100%";
-        this.sourcePath.addEventListener('input', (event) => {
-            const target = event.target as HTMLTextAreaElement;
-            this.sourcePath.value = target.value;
-        });
+        // this.sourcePath.addEventListener('input', (event) => {
+        //     const target = event.target as HTMLTextAreaElement;
+        //     this.sourcePath.value = target.value;
+        // });
 
 		let browseDiv = contentEl.createEl("div", {});
         browseDiv.style.width = "100%";
@@ -111,36 +111,44 @@ export class ImportHoldingModal extends Modal {
                 // multiple: ""
             }
         });
+        let sourcePathUpdatedFn = (sourceFilePath: string) => {
+            let hostFilePath = (activeFile as TFile).path;
+            // this.sourcePath.setValue(sourceFilePath);
+            this.sourcePath.value = sourceFilePath;
+            const destExtension = _path.extname(sourceFilePath);
+            const hostFileNameWithoutExtension = _path.basename(
+                hostFilePath,
+                _path.extname(hostFilePath)
+            );
+            let destinationFilename = hostFileNameWithoutExtension + destExtension
+            if (destinationFilename.startsWith("@")) {
+                destinationFilename = destinationFilename.slice(1);
+            }
+            let parentPath = this.defaultDestinationFolder;
+            if (this.settings.isSubdirectorizeReferencesLexically) {
+                let holdingSubDir = destinationFilename[0] === "@" ? destinationFilename[1] : destinationFilename[0];
+                if (holdingSubDir === "@") {
+                    holdingSubDir = hostFilePath[1];
+                }
+                parentPath = _path.join(parentPath, holdingSubDir)
+            }
+            let newFilePath = _path.join(
+                parentPath,
+                destinationFilename,
+            );
+            this.destinationPath.value = newFilePath;
+        };
+        this.sourcePath.addEventListener('input', (event) => {
+            const target = event.target as HTMLTextAreaElement;
+            this.sourcePath.value = target.value;
+            sourcePathUpdatedFn(this.sourcePath.value);
+        });
         fileInput.addEventListener('change', (event) => {
             const input = event.target as HTMLInputElement;
             if (input.files && input.files.length > 0) {
                 const file = input.files[0] as CustomFile;
                 let sourceFilePath = file.path;
-                let hostFilePath = (activeFile as TFile).path;
-                // this.sourcePath.setValue(sourceFilePath);
-                this.sourcePath.value = sourceFilePath;
-                const destExtension = _path.extname(sourceFilePath);
-                const hostFileNameWithoutExtension = _path.basename(
-                    hostFilePath,
-                    _path.extname(hostFilePath)
-                );
-                let destinationFilename = hostFileNameWithoutExtension + destExtension
-                if (destinationFilename.startsWith("@")) {
-                    destinationFilename = destinationFilename.slice(1);
-                }
-                let parentPath = this.defaultDestinationFolder;
-                if (this.settings.isSubdirectorizeReferencesLexically) {
-                    let holdingSubDir = destinationFilename[0] === "@" ? destinationFilename[1] : destinationFilename[0];
-                    if (holdingSubDir === "@") {
-                        holdingSubDir = hostFilePath[1];
-                    }
-                    parentPath = _path.join(parentPath, holdingSubDir)
-                }
-                let newFilePath = _path.join(
-                    parentPath,
-                    destinationFilename,
-                );
-                this.destinationPath.value = newFilePath;
+                sourcePathUpdatedFn(file.path);
             }
         });
 		contentEl.createEl("br", {});
