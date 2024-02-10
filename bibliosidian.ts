@@ -229,9 +229,13 @@ function generateSourceFrontmatter(
             `${inTextCitation} ${compositeTitle}`,
             [value],
         )
-        let authorBareLinks = authorLinks.map( (link) => link.bareLink )
-        refProperties[bibToYamlLabelFn(key)] = authorLinks.map( (link) => link.aliasedLink )
-        refProperties["entry-parents"].push(... fileProperties.concatItems("entry-parents", authorBareLinks))
+        let authorBareLinks = authorLinks.map( (link) => link.bareLink );
+        if (!key.endsWith("s")) {
+            key = key + "s" // authors not author
+        }
+        let refKey: string = bibToYamlLabelFn(key);
+        refProperties[refKey] = authorLinks.map( (link) => link.aliasedLink );
+        // refProperties["entry-parents"].push(... fileProperties.concatItems("entry-parents", authorBareLinks))
     })
 
 
