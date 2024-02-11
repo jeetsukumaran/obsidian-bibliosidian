@@ -147,9 +147,12 @@ export async function updateFileProperties(
 			// https://eemeli.org/yaml/#tostring-options
 			{
 				// collectionStyle: "block",
-				defaultStringType: "QUOTE_DOUBLE",
-				doubleQuotedMinMultiLineLength: 1000,
-				singleQuote: false,
+				// defaultKeyType: "PLAIN",
+				// defaultStringType: "QUOTE_DOUBLE", // this will quote abstracts etc.
+				doubleQuotedMinMultiLineLength: 900000,
+				lineWidth: 0,
+				// simpleKeys: true,
+				// singleQuote: false,
 			}
         ).trim()}\n---`
 
