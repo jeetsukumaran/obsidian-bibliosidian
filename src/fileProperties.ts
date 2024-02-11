@@ -21,7 +21,7 @@ const {
 } = require('yaml')
 export {
 	parseYaml,
-	stringifyYaml
+	stringifyYaml,
 };
 
 
@@ -144,8 +144,12 @@ export async function updateFileProperties(
 		// parsedFrontmatter[propertyName] = newValues
         let newFrontmatterStr: string = `---\n${stringifyYaml(
 			parsedFrontmatter,
+			// https://eemeli.org/yaml/#tostring-options
 			{
 				// collectionStyle: "block",
+				defaultStringType: "QUOTE_DOUBLE",
+				doubleQuotedMinMultiLineLength: 1000,
+				singleQuote: false,
 			}
         ).trim()}\n---`
 
