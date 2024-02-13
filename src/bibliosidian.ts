@@ -688,8 +688,16 @@ class BibTexModal extends Modal {
 				})
 		})
 
-		let execute = (isQuiet: boolean = true) => {
+		let execute = (isQuiet: boolean = true, isCopyLink = false) => {
 			this.args.targetFilepath = this.biblioNotePathTextComponent.value.endsWith(".md") ? this.biblioNotePathTextComponent.value : this.biblioNotePathTextComponent.value + ".md"
+			if (isCopyLink) {
+                let basenameWithoutExtension: string = _path.basename(this.args.targetFilepath, ".md");
+                let clipText = `[[${basenameWithoutExtension}]]`;
+                navigator.clipboard.writeText(clipText);
+                // let basenameWithoutExtension: string = ....
+                // let clipText = `[[${basenameWithoutExtension}]]`;
+                // ... copy clipTextToClipboard
+			}
 			this.args.sourceBibTex = this.parsedSourceTextAreaComponent.value;
 			this.onGenerate(this.args);
 			if (!isQuiet) {
@@ -706,17 +714,26 @@ class BibTexModal extends Modal {
 				.setButtonText("Update")
 				.onClick( () => {
 					this.args.isOpenNote = false
-					execute(false)
+					execute(false, true)
 				});
 			})
 			.addButton( (button: ButtonComponent) => {
 				button
-				.setButtonText("Update and Open")
+				.setButtonText("Update and open")
 				.onClick( () => {
 					this.args.isOpenNote = true
-					execute(true)
+					execute(true, true)
 				});
-			});
+			})
+			.addButton( (button: ButtonComponent) => {
+				button
+				.setButtonText("Update and copy citation")
+				.onClick( () => {
+					this.args.isOpenNote = false
+					execute(false, true)
+				});
+			})
+			;
 
 
     }
