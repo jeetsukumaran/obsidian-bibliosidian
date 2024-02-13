@@ -660,15 +660,15 @@ class BibTexModal extends Modal {
 
     onOpen() {
         const { contentEl } = this;
-		contentEl.createEl("h1", { text: "Create or update a biblioNote note" })
+		contentEl.createEl("h1", { text: "Create or update a bibliographic note" })
 
-		contentEl.createEl("h2", { text: "Source BibTeX bibliographic data" });
+		contentEl.createEl("h2", { text: "Source BibTeX" });
 		let biblioNoteSourceBibTexComponent = this.buildParsedTextAreaComponent(
 			contentEl,
 			this.args.sourceBibTex,
 		);
 
-		contentEl.createEl("h2", { text: "Destination biblioNote note" })
+		contentEl.createEl("h2", { text: "Destination bibliographic note path" })
 		this.renderBiblioNoteLocationInputTextArea(
 			contentEl,
 			this.args.targetFilepath,
@@ -678,7 +678,7 @@ class BibTexModal extends Modal {
 		let updateAuthorsSettings = new Setting(contentEl)
 		updateAuthorsSettings
 			.setName("Update source author notes")
-			.setDesc("Create or update notes for each author, adding links to biblioNote note and vice versa.")
+			.setDesc("Create or update notes for each author, adding links to bibliographic note and vice versa.")
 			// .setDesc("Create or update biblioNote and associated author notes.")
 		updateAuthorsSettings.addToggle( toggle => {
 			toggle
