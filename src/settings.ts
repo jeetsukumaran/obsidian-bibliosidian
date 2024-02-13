@@ -32,7 +32,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	mySetting: 'default',
 	biblioNoteSourcePropertiesPrefix: "source-",
 	biblioNoteSourceBibTex: "entry-bibtex",
-	biblioNoteSubdirectoryRoot: _path.join("sources", "biblioNotes"),
+	biblioNoteSubdirectoryRoot: _path.join("sources", "references"),
 	isSubdirectorizeBiblioNotesLexically: true,
 	biblioNoteAdditionalMetadata: {},
 	authorsParentFolderPath: _path.join("sources", "authors"),
@@ -41,9 +41,15 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	authorsAdditionalMetadata: {},
 	holdingsSubdirectoryRoot: _path.join("sources", "holdings"),
     holdingsPropertyName: "source-holdings",
-    authorBiblioNoteOutlinkPropertyName: "biblioNotes",
-    citationOutlinkPropertyNames: ["biblioNotes", ],
-    citationInlinkPropertyNames: ["collections", ],
+    authorBiblioNoteOutlinkPropertyName: "author-references",
+    citationOutlinkPropertyNames: [
+        "references",
+        "bibliography",
+    ],
+    citationInlinkPropertyNames: [
+        "collections",
+        "bibliographies",
+    ],
     citationKeyPropertyNames: [
         "citekey",
         "citation-key",
