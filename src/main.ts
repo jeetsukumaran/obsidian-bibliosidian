@@ -83,7 +83,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 		}));
 
-		containerEl.createEl("h2", { text: "Bibliographical notes" })
+		containerEl.createEl("h2", { text: "Bibliographic notes" })
 
 		new Setting(containerEl)
 			.setName("Bibliographic notes folder")
@@ -97,7 +97,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		}));
 		new Setting(containerEl)
 			.setName("Organize bibliographic notes into subdirectories based on citation key")
-			.setDesc("Enable or disable lexical organization of bibliographical notes into subdirectories.")
+			.setDesc("Enable or disable lexical organization of bibliographic notes into subdirectories.")
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.isSubdirectorizeBiblioNotesLexically)
 				.onChange(async (value) => {
