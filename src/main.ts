@@ -83,10 +83,10 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 		}));
 
-		containerEl.createEl("h2", { text: "BiblioNotes" })
+		containerEl.createEl("h2", { text: "Bibliographical notes" })
 
 		new Setting(containerEl)
-			.setName("BiblioNotes folder")
+			.setName("Bibliographic notes folder")
 			.setDesc("Path to folder of bibliographic notes.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/references')")
@@ -97,7 +97,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		}));
 		new Setting(containerEl)
 			.setName("Organize bibliographic notes into subdirectories based on citation key")
-			.setDesc("Enable or disable lexical organization of biblioNotes into subdirectories.")
+			.setDesc("Enable or disable lexical organization of bibliographical notes into subdirectories.")
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.isSubdirectorizeBiblioNotesLexically)
 				.onChange(async (value) => {
@@ -142,8 +142,8 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
         }));
 		new Setting(containerEl)
-			.setName("BiblioNote link property name:")
-			.setDesc("Name of property on author note to update with link to this biblioNote.")
+			.setName("Bibliographic note link property name:")
+			.setDesc("Name of property on author note linking to associated bibliographic notes.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'references', 'works', 'bibliographies')")
 				.setValue(this.plugin.settings.authorBiblioNoteOutlinkPropertyName)
@@ -188,7 +188,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		settingsPropertyName: "biblioNoteAdditionalMetadata" | "authorsAdditionalMetadata",
 		settingsPropertyDisplayName: string = "Additional properties (YAML)",
 		settingsPropertyParameterInitialDescription: string = "Other metadata properties to be updated specified in YAML.",
-		settingsPropertyParameterPlaceholder: string = "(E.g., 'type: source/biblioNote)",
+		settingsPropertyParameterPlaceholder: string = "(E.g., 'type: literature)",
 	) {
 			let currentAdditionalPropertiesString: string = "";
 			if (this.plugin.settings[settingsPropertyName]) {
