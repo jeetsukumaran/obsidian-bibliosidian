@@ -62,7 +62,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 			.setName("Source bibliographic data property name prefix")
 			.setDesc(
                 "This will be prefixed to the normalized bibliographic (YAML frontmatter properties)"
-                + " data fields for biblioNote bibliographic data. For example, if set to 'source-',"
+                + " data fields. For example, if set to 'source-',"
                 + " the frontmatter YAML field will be 'source-authors' instead of just 'authors'. "
 			)
 			.addText(text => text
@@ -74,7 +74,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		}));
 		new Setting(containerEl)
 			.setName("Source BibTex property name")
-			.setDesc(` Property on biblioNote note to store source BibTeX data. `)
+			.setDesc(` Property on bibliographic note to store source BibTeX data. `)
 			.addText(text => text
 				.setPlaceholder("(YAML frontmatter property name, e.g. 'source-bibtex')")
 				.setValue(this.plugin.settings.biblioNoteSourceBibTex)
@@ -87,16 +87,16 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("BiblioNotes folder")
-			.setDesc("Path to folder of biblioNote notes.")
+			.setDesc("Path to folder of bibliographic notes.")
 			.addText(text => text
-				.setPlaceholder("(E.g. 'sources/biblioNotes')")
+				.setPlaceholder("(E.g. 'sources/references')")
 				.setValue(this.plugin.settings.biblioNoteSubdirectoryRoot)
 				.onChange(async (value) => {
 					this.plugin.settings.biblioNoteSubdirectoryRoot = value;
 					await this.plugin.saveSettings();
 		}));
 		new Setting(containerEl)
-			.setName("Organize biblioNote into subdirectories based on citation key")
+			.setName("Organize bibliographic notes into subdirectories based on citation key")
 			.setDesc("Enable or disable lexical organization of biblioNotes into subdirectories.")
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.isSubdirectorizeBiblioNotesLexically)
@@ -107,7 +107,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Create author notes automatically")
-			.setDesc("Enable or disable creation or updating of linked author notes when creating or updating biblioNote notes.")
+			.setDesc("Enable or disable creation or updating of linked author notes when creating or updating bibliographic notes.")
 			.addToggle(toggle => toggle
 					.setValue(this.plugin.settings.isCreateAuthorPages)
 					.onChange(async (value) => {
@@ -145,7 +145,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 			.setName("BiblioNote link property name:")
 			.setDesc("Name of property on author note to update with link to this biblioNote.")
 			.addText(text => text
-				.setPlaceholder("(E.g. 'biblioNotes', 'works', 'bibliographies')")
+				.setPlaceholder("(E.g. 'references', 'works', 'bibliographies')")
 				.setValue(this.plugin.settings.authorBiblioNoteOutlinkPropertyName)
 				.onChange(async (value) => {
 					this.plugin.settings.authorBiblioNoteOutlinkPropertyName = value
@@ -161,17 +161,17 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Holdings folder")
-			.setDesc("Path to root folder of biblioNote holdings (attachments). Leave blank to store alongside biblioNote file.")
+			.setDesc("Path to parent or root folder of holdings (attachments). Leave blank to store alongside bibliographic file.")
 			.addText(text => text
-				.setPlaceholder("(E.g. 'sources/biblioNotes')")
+				.setPlaceholder("(E.g. 'sources/references')")
 				.setValue(this.plugin.settings.holdingsSubdirectoryRoot)
 				.onChange(async (value) => {
 					this.plugin.settings.holdingsSubdirectoryRoot = value;
 					await this.plugin.saveSettings();
 		}));
 		new Setting(containerEl)
-			.setName("Holdings link property name:")
-			.setDesc("Name of property on biblioNote note to update with link to this new holding.")
+			.setName("Holdings outlink property name:")
+			.setDesc("Name of property on bibliographic note to update with link to imported holdings.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'attachments' or 'pdfs')")
 				.setValue(this.plugin.settings.holdingsPropertyName)
@@ -237,16 +237,16 @@ export default class Bibliosidian extends Plugin {
 		// this.addRibbonIcon("library-square", "Update multiple biblioNotes from a BibTeX bibliography database file", () => {
 		// 	this.updateBiblioNoteLibraryFromBibTex()
 		// });
-		this.addRibbonIcon("book-up-2", "Create or update biblioNote note from BibTeX data", () => {
+		this.addRibbonIcon("book-up-2", "Create or update bibliographic note from BibTeX data", () => {
 			this.updateBiblioNoteFromBibTex()
 		});
-		this.addRibbonIcon("book-plus", "Add a holding associated with this biblioNote", () => {
+		this.addRibbonIcon("book-plus", "Add a holding associated with this bibliographic note", () => {
 			this.addHolding()
 		});
 
 
 		this.addCommand({
-			id: 'bibliosidian-update-biblioNote-from-bibtex',
+			id: 'bibliosidian-update-biblionote-from-bibtex',
 			name: 'Update active file properties from BibTeX',
 			callback: this.updateBiblioNoteFromBibTex,
 		});
@@ -258,7 +258,7 @@ export default class Bibliosidian extends Plugin {
 		// });
 		this.addCommand({
 			id: 'bibliosidian-add-holding',
-			name: 'Add a holding associated with this biblioNote',
+			name: 'Add a holding associated with this note',
 			callback: this.addHolding,
 		});
 
