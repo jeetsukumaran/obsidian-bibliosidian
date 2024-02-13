@@ -99,7 +99,7 @@ function generateSourceFrontmatter(
     let { bibEntry, bibtexStr, fieldValueMap } = getBibEntry(args.sourceBibTex, citeKey)
 
     if (!bibEntry) {
-    	new Notice("BiblioNote data could not be resolved")
+    	new Notice("Bibliographic note data could not be resolved")
     	return
     }
 
@@ -701,7 +701,7 @@ class BibTexModal extends Modal {
 			this.args.sourceBibTex = this.parsedSourceTextAreaComponent.value;
 			this.onGenerate(this.args);
 			if (!isQuiet) {
-				new Notice(`BiblioNote updated: '${this.args.targetFilepath}' `)
+				new Notice(`Bibliographic note updated: '${this.args.targetFilepath}' `)
 			}
 			this.close();
 		}
