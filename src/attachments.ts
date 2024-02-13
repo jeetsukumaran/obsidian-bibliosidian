@@ -92,10 +92,10 @@ export class ImportHoldingModal extends Modal {
             return;
         }
 
-		contentEl.createEl("h1", { text: "Import a reference holding" });
-		contentEl.createEl("h2", { text: "Path to source file" });
+		contentEl.createEl("h1", { text: "Import a holding" });
+		contentEl.createEl("h2", { text: "Path to file to be imported" });
         this.sourcePath = contentEl.createEl("textarea");
-        this.sourcePath.placeholder = 'Selected source file path';
+        this.sourcePath.placeholder = "E.g., '/home/user/Downloads/papers/attachment.pdf'";
         this.sourcePath.style.width = "100%";
         // this.sourcePath.addEventListener('input', (event) => {
         //     const target = event.target as HTMLTextAreaElement;
@@ -125,7 +125,7 @@ export class ImportHoldingModal extends Modal {
                 destinationFilename = destinationFilename.slice(1);
             }
             let parentPath = this.defaultDestinationFolder;
-            if (this.settings.isSubdirectorizeReferencesLexically) {
+            if (this.settings.isSubdirectorizeBiblioNotesLexically) {
                 let holdingSubDir = destinationFilename[0] === "@" ? destinationFilename[1] : destinationFilename[0];
                 if (holdingSubDir === "@") {
                     holdingSubDir = hostFilePath[1];
@@ -153,9 +153,9 @@ export class ImportHoldingModal extends Modal {
         });
 		contentEl.createEl("br", {});
 
-		contentEl.createEl("h2", { text: "Path to destination file" });
+		contentEl.createEl("h2", { text: "Path to destination" });
         this.destinationPath = contentEl.createEl("textarea");
-        this.destinationPath.placeholder = 'Enter destination file path';
+        this.destinationPath.placeholder = "E.g., 'source/holdings'";
         this.destinationPath.style.width = "100%";
         this.destinationPath.addEventListener('input', (event) => {
             const target = event.target as HTMLTextAreaElement;

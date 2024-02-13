@@ -94,12 +94,12 @@ function generateSourceFrontmatter(
     citeKey?: string,
 ) {
 
-	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${settings.referenceSourcePropertiesPrefix}${bibStr}`
+	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${settings.biblioNoteSourcePropertiesPrefix}${bibStr}`
 
     let { bibEntry, bibtexStr, fieldValueMap } = getBibEntry(args.sourceBibTex, citeKey)
 
     if (!bibEntry) {
-    	new Notice("Reference data could not be resolved")
+    	new Notice("BiblioNote data could not be resolved")
     	return
     }
 
@@ -205,8 +205,8 @@ function generateSourceFrontmatter(
 
 	// Add additional stuff
 	// could try and merge with existing but right now, the additional m
-	if (settings.referenceAdditionalMetadata) {
-		refProperties = { ... refProperties, ... settings.referenceAdditionalMetadata }
+	if (settings.biblioNoteAdditionalMetadata) {
+		refProperties = { ... refProperties, ... settings.biblioNoteAdditionalMetadata }
 	}
 
 
@@ -416,7 +416,7 @@ function generateAuthorLinks(
 					authorProperties["title"] = authorDisplayName;
 					authorProperties["aliases"] = fileProperties.concatItems( "aliases", [ authorDisplayName, ],);
 					let sourceLink = `[[${args.targetFilepath}|${entryTitle}]]`
-                    let refPropName = settings.authorReferenceOutlinkPropertyName || "references";
+                    let refPropName = settings.authorBiblioNoteOutlinkPropertyName || "biblioNotes";
 					authorProperties[refPropName] = fileProperties
 						.concatItems(refPropName, [sourceLink]);
 					updateFileProperties(
@@ -440,7 +440,7 @@ function generateAuthorLinks(
 }
 
 
-function generateReference(
+function generateBiblioNote(
 	app: App,
 	settings: BibliosidianSettings,
 	args: BibTexModalArgs,
@@ -472,8 +472,8 @@ function computeBibEntryTargetFilePath(
 ): string {
 	let citationKey = bibEntry._id
 	let citekeyMarkedUp = `@${citationKey}`
-	let parentPath = settings.referenceSubdirectoryRoot
-	if (settings.isSubdirectorizeReferencesLexically) {
+	let parentPath = settings.biblioNoteSubdirectoryRoot
+	if (settings.isSubdirectorizeBiblioNotesLexically) {
 		parentPath = _path.join(parentPath, replaceProblematicChars(citationKey[0]))
 	}
 	return _path.join(parentPath, citekeyMarkedUp + ".md")
@@ -488,8 +488,8 @@ class BibTexModal extends Modal {
     args: BibTexModalArgs;
 	settings: BibliosidianSettings;
 	parsedSourceTextAreaComponent: HTMLTextAreaElement;
-	referencePathTextComponent: HTMLTextAreaElement;
-	isEnableReferencePathAutoUpdate: boolean = true
+	biblioNotePathTextComponent: HTMLTextAreaElement;
+	isEnableBiblioNotePathAutoUpdate: boolean = true
 	onGenerate: (args:BibTexModalArgs) => void;
 	private _parsedBibEntry: BibEntry | undefined = undefined
 	private _parsedBibTexStr: string = ""
@@ -522,13 +522,13 @@ class BibTexModal extends Modal {
   year={1951},
 }`
             )
-        // containerEl.createEl("h3", { text: "Reference BibTeX" })
+        // containerEl.createEl("h3", { text: "BiblioNote BibTeX" })
         this.parsedSourceTextAreaComponent = containerEl.createEl("textarea");
         this.parsedSourceTextAreaComponent.placeholder = valuePlaceholder;
         this.parsedSourceTextAreaComponent.style.width = "100%";
         this.parsedSourceTextAreaComponent.style.height = "12rem";
 
-        // containerEl.createEl("h3", { text: "Reference data" })
+        // containerEl.createEl("h3", { text: "BiblioNote data" })
         containerEl.createEl("br");
         let descEl = containerEl.createEl("div");
         descEl.style.width = "100%";
@@ -548,8 +548,8 @@ class BibTexModal extends Modal {
                     this._parsedBibTexStr = result.bibtexStr
                     this._parsedFieldValueMap = result.fieldValueMap
                     createKeyValueTable(descEl, this._parsedFieldValueMap)
-                    if (this.isEnableReferencePathAutoUpdate) {
-                        this.setReferencePathTextComponentFromSource()
+                    if (this.isEnableBiblioNotePathAutoUpdate) {
+                        this.setBiblioNotePathTextComponentFromSource()
                     }
                 } else {
                     this._parsedBibEntry = undefined
@@ -588,38 +588,38 @@ class BibTexModal extends Modal {
 
 	}
 
-	setReferencePathTextComponentFromSource() {
+	setBiblioNotePathTextComponentFromSource() {
 		if (this._parsedBibEntry) {
 			let filePath = computeBibEntryTargetFilePath(
 				this._parsedBibEntry,
 				this.settings,
 			)
-			this.referencePathTextComponent.value = filePath;
+			this.biblioNotePathTextComponent.value = filePath;
 		} else {
 		}
 	}
 
-	renderReferenceLocationInputTextArea(
+	renderBiblioNoteLocationInputTextArea(
 		containerEl: HTMLElement,
 		initialValue: string = "",
 	) {
 		// let inputSetting = new Setting(containerEl)
-		// 	.setName("Reference note path")
-		// 	.setDesc("Path to file in folder where this reference will be stored.")
+		// 	.setName("BiblioNote note path")
+		// 	.setDesc("Path to file in folder where this biblioNote will be stored.")
 		// inputSetting.addTextArea(text => {
-		// 	this.referencePathTextComponent = text
-		// 	this.referencePathTextComponent.setValue(initialValue);
-		// 	this.referencePathTextComponent.inputEl.addEventListener("blur", async () => {
+		// 	this.biblioNotePathTextComponent = text
+		// 	this.biblioNotePathTextComponent.setValue(initialValue);
+		// 	this.biblioNotePathTextComponent.inputEl.addEventListener("blur", async () => {
 		// 		// parseUpdatedValue()
 		// 	});
-		// 	this.referencePathTextComponent.inputEl.style.height = "4rem"
-		// 	this.referencePathTextComponent.inputEl.style.overflow = "scroll"
+		// 	this.biblioNotePathTextComponent.inputEl.style.height = "4rem"
+		// 	this.biblioNotePathTextComponent.inputEl.style.overflow = "scroll"
 		// });
 
 
-        this.referencePathTextComponent = containerEl.createEl("textarea");
-        this.referencePathTextComponent.style.width = "100%";
-        this.referencePathTextComponent.style.height = "2rem";
+        this.biblioNotePathTextComponent = containerEl.createEl("textarea");
+        this.biblioNotePathTextComponent.style.width = "100%";
+        this.biblioNotePathTextComponent.style.height = "2rem";
 
 		let toolPanel = containerEl.createEl("div", { cls: ["model-input-support-panel"] })
 		let panelSetting = new Setting(toolPanel)
@@ -627,9 +627,9 @@ class BibTexModal extends Modal {
         panelSetting.controlEl.appendChild(document.createTextNode("Set from BibTeX"));
 		panelSetting.addToggle( toggle => {
 			toggle
-				.setValue(this.isEnableReferencePathAutoUpdate)
+				.setValue(this.isEnableBiblioNotePathAutoUpdate)
 				.onChange(async (value) => {
-					this.isEnableReferencePathAutoUpdate = value;
+					this.isEnableBiblioNotePathAutoUpdate = value;
 				})
 		});
 
@@ -646,30 +646,30 @@ class BibTexModal extends Modal {
 			button
 			.setButtonText("Auto")
 			.onClick( () => {
-				this.setReferencePathTextComponentFromSource()
+				this.setBiblioNotePathTextComponentFromSource()
 			});
 		});
 		panelSetting.addButton( (button: ButtonComponent) => {
 			button
 			.setButtonText("Reset")
 			.onClick( () => {
-				this.referencePathTextComponent.value = initialValue;
+				this.biblioNotePathTextComponent.value = initialValue;
 			});
 		});
 	}
 
     onOpen() {
         const { contentEl } = this;
-		contentEl.createEl("h1", { text: "Create or update a reference note" })
+		contentEl.createEl("h1", { text: "Create or update a biblioNote note" })
 
 		contentEl.createEl("h2", { text: "Source BibTeX bibliographic data" });
-		let referenceSourceBibTexComponent = this.buildParsedTextAreaComponent(
+		let biblioNoteSourceBibTexComponent = this.buildParsedTextAreaComponent(
 			contentEl,
 			this.args.sourceBibTex,
 		);
 
-		contentEl.createEl("h2", { text: "Destination reference note" })
-		this.renderReferenceLocationInputTextArea(
+		contentEl.createEl("h2", { text: "Destination biblioNote note" })
+		this.renderBiblioNoteLocationInputTextArea(
 			contentEl,
 			this.args.targetFilepath,
 		);
@@ -678,8 +678,8 @@ class BibTexModal extends Modal {
 		let updateAuthorsSettings = new Setting(contentEl)
 		updateAuthorsSettings
 			.setName("Update source author notes")
-			.setDesc("Create or update notes for each author, adding links to reference note and vice versa.")
-			// .setDesc("Create or update reference and associated author notes.")
+			.setDesc("Create or update notes for each author, adding links to biblioNote note and vice versa.")
+			// .setDesc("Create or update biblioNote and associated author notes.")
 		updateAuthorsSettings.addToggle( toggle => {
 			toggle
 				.setValue(this.args.isCreateAuthorPages)
@@ -689,11 +689,11 @@ class BibTexModal extends Modal {
 		})
 
 		let execute = (isQuiet: boolean = true) => {
-			this.args.targetFilepath = this.referencePathTextComponent.value.endsWith(".md") ? this.referencePathTextComponent.value : this.referencePathTextComponent.value + ".md"
+			this.args.targetFilepath = this.biblioNotePathTextComponent.value.endsWith(".md") ? this.biblioNotePathTextComponent.value : this.biblioNotePathTextComponent.value + ".md"
 			this.args.sourceBibTex = this.parsedSourceTextAreaComponent.value;
 			this.onGenerate(this.args);
 			if (!isQuiet) {
-				new Notice(`Reference updated: '${this.args.targetFilepath}' `)
+				new Notice(`BiblioNote updated: '${this.args.targetFilepath}' `)
 			}
 			this.close();
 		}
@@ -729,19 +729,19 @@ class BibTexModal extends Modal {
 
 
 
-export function generateReferenceLibrary(
+export function generateBiblioNoteLibrary(
 	app: App,
 	bibFileData: string,
-	referenceSourcePropertiesPrefix: string,
-	referenceSubdirectoryRoot: string = "",
-	isSubdirectorizeReferencesLexically: boolean = true,
+	biblioNoteSourcePropertiesPrefix: string,
+	biblioNoteSubdirectoryRoot: string = "",
+	isSubdirectorizeBiblioNotesLexically: boolean = true,
 	authorsParentFolderPath: string,
 	isSubdirectorizeAuthorsLexically: boolean = true,
 	isCreateAuthorPages: boolean = true,
 ) {
 }
 
-export function createReferenceNote(
+export function createBiblioNote(
 	app: App,
 	settings: BibliosidianSettings,
 	defaultBibTex: string,
@@ -753,7 +753,7 @@ export function createReferenceNote(
 		app,
 		settings,
 		(updatedArgs: BibTexModalArgs) => {
-			generateReference(
+			generateBiblioNote(
 				app,
 				settings,
 				updatedArgs,
