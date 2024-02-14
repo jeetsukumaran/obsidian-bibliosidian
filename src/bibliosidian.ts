@@ -276,7 +276,7 @@ function generateSourceFrontmatter(
 	}
     let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
     let basenameWithoutExtension: string = _path.basename(args.targetFilepath, ".md");
-	refProperties["citations"] = [
+	refProperties["aliases"] = [
 			`@${citationKey}`,
 			inTextCitation,
 			compositeTitle,
