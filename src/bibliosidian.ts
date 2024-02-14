@@ -212,11 +212,9 @@ function generateSourceFrontmatter(
 
 	let entryTitle = `${inTextCitation} *${compositeTitle}*`
 	refProperties["entry-title"] = entryTitle
-
-    refProperties["entry-parents"] = []
 	refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
-    refProperties[bibToYamlLabelFn("citekey")] = citationKey
 
+    refProperties[bibToYamlLabelFn("citekey")] = citationKey
     Object.entries(creatorNames).forEach(([key, value]) => {
         if (!bibEntry) {
             return;
@@ -276,6 +274,8 @@ function generateSourceFrontmatter(
 	if (abstract) {
 		refProperties["abstract"] = abstract
 	}
+    let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
+    let basenameWithoutExtension: string = _path.basename(this.args.targetFilepath, ".md");
 	refProperties["aliases"] = fileProperties.concatItems(
 		"aliases",
 		[
@@ -285,6 +285,14 @@ function generateSourceFrontmatter(
 			entryTitle,
 		],
 	)
+    refProperties["citations"] = [
+        `[[@${citationKey}]]`,
+        `[@${citationKey}]`,
+		`@${citationKey}`,
+		inTextCitation,
+		`[[${internalLinkPath}]]`,
+		`[[${basenameWithoutExtension}]]`,
+    ];
 
     updateFileProperties(
     	this.app,
@@ -416,7 +424,7 @@ function generateAuthorLinks(
 					authorProperties["title"] = authorDisplayName;
 					authorProperties["aliases"] = fileProperties.concatItems( "aliases", [ authorDisplayName, ],);
 					let sourceLink = `[[${args.targetFilepath}|${entryTitle}]]`
-                    let refPropName = settings.authorBiblioNoteOutlinkPropertyName || "biblioNotes";
+                    let refPropName = settings.authorBiblioNoteOutlinkPropertyName || "references";
 					authorProperties[refPropName] = fileProperties
 						.concatItems(refPropName, [sourceLink]);
 					updateFileProperties(
