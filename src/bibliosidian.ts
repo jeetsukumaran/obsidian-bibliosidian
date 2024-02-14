@@ -275,16 +275,13 @@ function generateSourceFrontmatter(
 		refProperties["abstract"] = abstract
 	}
     let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
-    let basenameWithoutExtension: string = _path.basename(this.args.targetFilepath, ".md");
-	refProperties["aliases"] = fileProperties.concatItems(
-		"aliases",
-		[
+    let basenameWithoutExtension: string = _path.basename(args.targetFilepath, ".md");
+	refProperties["citations"] = [
 			`@${citationKey}`,
 			inTextCitation,
 			compositeTitle,
 			entryTitle,
-		],
-	)
+	]
     refProperties["citations"] = [
         `[[@${citationKey}]]`,
         `[@${citationKey}]`,
@@ -722,7 +719,7 @@ class BibTexModal extends Modal {
 				.setButtonText("Update")
 				.onClick( () => {
 					this.args.isOpenNote = false
-					execute(false, true)
+					execute(false, false)
 				});
 			})
 			.addButton( (button: ButtonComponent) => {
@@ -730,7 +727,7 @@ class BibTexModal extends Modal {
 				.setButtonText("Update and open")
 				.onClick( () => {
 					this.args.isOpenNote = true
-					execute(true, true)
+					execute(true, false)
 				});
 			})
 			.addButton( (button: ButtonComponent) => {
