@@ -41,6 +41,13 @@ import {
     DEFAULT_SETTINGS,
 } from "./settings";
 
+interface Footnote {
+    original: string;
+    footnote: string;
+    index: number;
+}
+
+
 class BibliosidianSettingTab extends PluginSettingTab {
 	plugin: Bibliosidian;
 
@@ -283,6 +290,37 @@ export default class Bibliosidian extends Plugin {
             },
         });
 
+        this.addCommand({
+            id: 'convert-links-to-footnotes',
+            name: 'Convert links to footnotes',
+            editorCallback: (editor, view) => {
+                const text = editor.getSelection();
+                if (text) {
+                    const { updatedText, footnotes } = this.convertLinksToFootnotes(text);
+                    editor.replaceSelection(updatedText + "\n\n" + footnotes.join("\n"));
+                } else {
+                    const doc = editor.getDoc();
+                    const fullText = doc.getValue();
+                    const { updatedText, footnotes } = this.convertLinksToFootnotes(fullText);
+                    doc.setValue(updatedText + "\n\n" + footnotes.join("\n"));
+                }
+            }
+        });
+
+        this.addCommand({
+            id: 'convert-to-sentence-case',
+            name: 'Convert to sentence-case style headings',
+            editorCallback: (editor, view) => {
+                const selection = editor.getSelection();
+                if (selection) {
+                    editor.replaceSelection(this.convertToSentenceCase(selection));
+                } else {
+                    const fullText = editor.getValue();
+                    editor.setValue(this.convertToSentenceCase(fullText));
+                }
+            }
+        });
+
 		this.addSettingTab(new BibliosidianSettingTab(this.app, this));
 	}
 
@@ -344,5 +382,30 @@ export default class Bibliosidian extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
+    convertLinksToFootnotes(text: string): { updatedText: string, footnotes: string[] } {
+        const linkRegex = /\[\[([^\]]+?)(\|([^\]]+?))?\]\]|(?:\[(.*?)\]\((.*?)\))/g;
+        let match;
+        const footnotes: Footnote[] = [];
+        let index = 1;
+
+        let updatedText = text.replace(linkRegex, (match, wikiLink, _, wikiText, markdownText, markdownLink) => {
+            const displayText = wikiText || markdownText || wikiLink;
+            const link = markdownLink || wikiLink;
+            const footnote = `[^${index}]`;
+            footnotes.push({ original: link, footnote: footnote, index: index++ });
+            return `${displayText} ${footnote}`;
+        });
+
+        const footnoteTexts = footnotes.map(fn => `${fn.footnote}: ${fn.original}`);
+
+        return { updatedText, footnotes: footnoteTexts };
+    }
+
+    convertToSentenceCase(text: string): string {
+        return text.replace(/^(#+)\s*(.*)$/gm, (match, hashes, heading) => {
+            return `${hashes} ${heading.charAt(0).toUpperCase() + heading.slice(1).toLowerCase()}`;
+        });
+    }
 }
 
