@@ -288,6 +288,7 @@ function generateSourceFrontmatter(
 		`@${citationKey}`,
 		inTextCitation,
 		`[[${internalLinkPath}]]`,
+		`[[${internalLinkPath}|${entryTitle}]]`,
 		`[[${basenameWithoutExtension}]]`,
     ];
 
