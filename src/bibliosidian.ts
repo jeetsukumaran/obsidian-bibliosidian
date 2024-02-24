@@ -233,7 +233,7 @@ function generateSourceFrontmatter(
     let quotationStrings: string[] = [
         `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
         "",
-        `    > [!quote]+ Abstract [[${internalLinkPath}|${inTextCitation}]]`,
+        `    > [!quote]+ Abstract [[@${citationKey}]]]`,
         "    >",
         `    > ${abstract ? abstract : '...'}`,
     ]
