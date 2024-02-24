@@ -212,6 +212,7 @@ export class ImportHoldingModal extends Modal {
             this.app,
             hostFilePath,
             refProperties,
+            [],
             true,
         )
     }

@@ -211,6 +211,44 @@ function generateSourceFrontmatter(
 
 
 	let entryTitle = `${inTextCitation} *${compositeTitle}*`
+	let unformattedEntryTitle = `${inTextCitation}: ${compositeTitle}`
+	let abstract = (bibEntry.getFieldAsString("abstract")?.toString() || "")
+		.trim()
+		.replace(/\n/g, " ")
+		.replace(/\s+/g, " ")
+		.replace(/``/g, '"')
+		.replace(/`/g, "'")
+	// let entryTitle = `(@${citationKey}) ${compositeTitle}`
+    let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
+    let basenameWithoutExtension: string = _path.basename(args.targetFilepath, ".md");
+    let citationStrings: string[] = [
+        `- [[@${citationKey}]]`,
+        `- [@${citationKey}]`,
+        `- @${citationKey}`,
+        `- ${inTextCitation}`,
+        `- "[[${internalLinkPath}]]"`,
+        `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
+        `- [[${basenameWithoutExtension}]]`,
+    ];
+    let quotationStrings: string[] = [
+        `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
+        "",
+        `    > [!quote] Abstract ${inTextCitation}`,
+        "    >",
+        `    > ${abstract ? abstract : '...'}`,
+    ]
+    let refBodyLines: string[] = [
+        "## Citations",
+        "",
+        ... citationStrings,
+        "",
+        "## Quotations",
+        "",
+        ... quotationStrings,
+        "",
+    ];
+
+
 	refProperties["entry-title"] = entryTitle
 	refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 
@@ -225,6 +263,8 @@ function generateSourceFrontmatter(
             args,
             bibEntry,
             `${inTextCitation} ${compositeTitle}`,
+            // quotationStrings,
+            [],
             [value],
         )
         let authorBareLinks = authorLinks.map( (link) => link.bareLink );
@@ -262,42 +302,45 @@ function generateSourceFrontmatter(
 	refProperties[bibToYamlLabelFn("thesis")] = bibEntry.getFieldAsString("thesis")
 	refProperties[bibToYamlLabelFn("howpublished")] = bibEntry.getFieldAsString("howpublished")
 	refProperties[bibToYamlLabelFn("bibtex")] = bibtexStr
-
-
-	let abstract = (bibEntry.getFieldAsString("abstract")?.toString() || "")
-		.trim()
-		.replace(/\n/g, " ")
-		.replace(/\s+/g, " ")
-	// let entryTitle = `(@${citationKey}) ${compositeTitle}`
-
 	refProperties["title"] = `${compositeTitle} ${inTextCitation}`
 	if (abstract) {
 		refProperties["abstract"] = abstract
 	}
-    let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
-    let basenameWithoutExtension: string = _path.basename(args.targetFilepath, ".md");
 	refProperties["aliases"] = [
 			`@${citationKey}`,
 			inTextCitation,
 			compositeTitle,
-			entryTitle,
+			unformattedEntryTitle,
 	]
-    refProperties["citations"] = [
-        `[[@${citationKey}]]`,
-        `[@${citationKey}]`,
-		`@${citationKey}`,
-		inTextCitation,
-		`[[${internalLinkPath}]]`,
-		`[[${internalLinkPath}|${entryTitle}]]`,
-		`[[${basenameWithoutExtension}]]`,
-    ];
+
+
+//     refProperties["citations"] = [
+//         `[[@${citationKey}]]`,
+//         `[@${citationKey}]`,
+// 		`@${citationKey}`,
+// 		inTextCitation,
+// 		`[[${internalLinkPath}]]`,
+// 		`[[${internalLinkPath}|${entryTitle}]]`,
+// 		`[[${basenameWithoutExtension}]]`,
+//     ];
+//     refProperties["quote-template"] =
+// `- [[${internalLinkPath}|${entryTitle}]] #00/resource/quote
+
+//     > [!quote] [[${inTextCitation}]]
+//     >
+//     >  ${abstract}
+// `
+
+
 
     updateFileProperties(
     	this.app,
     	args.targetFilepath,
     	refProperties,
+    	refBodyLines,
     	true,
     )
+
 }
 
 
@@ -372,6 +415,7 @@ function generateAuthorLinks(
 	args: BibTexModalArgs,
     entry: BibEntry,
 	entryTitle: string,
+	bodyLines: string[],
     creatorSets: Authors[],
 ): { bareLink: string; aliasedLink: string; }[] {
     let results: { bareLink: string; aliasedLink: string; }[] = [];
@@ -429,6 +473,7 @@ function generateAuthorLinks(
 						app,
 						targetFilepath,
 						authorProperties,
+						bodyLines,
 						true,
 					)
 					.then( (result) => { } )

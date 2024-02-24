@@ -109,14 +109,15 @@ export async function updateFileProperties(
 	app: App,
 	filePath: string,
 	propertyValueMap: FilePropertyData,
+	newBodyLines: string[],
 	isClearEmpty: boolean = true,
 ) {
     const file = app.vault.getAbstractFileByPath(filePath);
     if (file instanceof TFile) {
-        let content = await app.vault.read(file);
+        let currentContent = await app.vault.read(file);
 		let parsedFrontmatter: FilePropertyData = {};
         const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
-        const frontMatterMatch = content.match(frontmatterRegex);
+        const frontMatterMatch = currentContent.match(frontmatterRegex);
         if (frontMatterMatch) {
             let frontmatter = frontMatterMatch[1];
 			try {
@@ -156,12 +157,19 @@ export async function updateFileProperties(
 			}
         ).trim()}\n---`
 
-        if (frontMatterMatch) {
-			content = content.replace(frontmatterRegex, newFrontmatterStr);
-		} else {
-			content = newFrontmatterStr + "\n" + content
-		}
-        await app.vault.modify(file, content);
+        // if (frontMatterMatch) {
+			// currentContent = currentContent.replace(frontmatterRegex, newFrontmatterStr);
+		// } else {
+			// currentContent = newFrontmatterStr + "\n" + currentContent
+		// }
+
+        let newContentLines: string[] = [
+            newFrontmatterStr,
+            ... newBodyLines,
+            frontMatterMatch ? currentContent.replace(frontmatterRegex, "") : currentContent, // previous body
+        ]
+
+        await app.vault.modify(file, newContentLines.join("\n"));
     } else {
         console.error("File not found");
     }
