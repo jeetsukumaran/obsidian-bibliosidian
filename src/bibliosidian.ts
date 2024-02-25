@@ -230,7 +230,7 @@ function generateSourceFrontmatter(
         `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
         `- [[${basenameWithoutExtension}]]`,
     ];
-    let quotationStrings: string[] = [
+    let quotedAbstractLines: string[] = [
         `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
         "",
         `    > [!quote]+ Abstract [[@${citationKey}]]]`,
@@ -242,9 +242,9 @@ function generateSourceFrontmatter(
         "",
         ... citationStrings,
         "",
-        "## Quotations",
+        "## Abstract",
         "",
-        ... quotationStrings,
+        ... quotedAbstractLines,
         "",
     ];
 
@@ -263,7 +263,7 @@ function generateSourceFrontmatter(
             args,
             bibEntry,
             `${inTextCitation} ${compositeTitle}`,
-            // quotationStrings,
+            // quotedAbstractLines,
             [],
             [value],
         )
