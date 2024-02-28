@@ -235,9 +235,12 @@ function generateSourceFrontmatter(
         "",
         `    > [!quote]+ Abstract [[@${citationKey}]]`,
         "    >",
-        `    > ${abstract ? abstract : '...'}`,
+        `    > > ${abstract ? abstract : '...'}`,
+        "    >",
+        "",
     ]
     let refBodyLines: string[] = [
+        "",
         "## Citations",
         "",
         ... citationStrings,
