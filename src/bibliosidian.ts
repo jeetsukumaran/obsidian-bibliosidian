@@ -231,25 +231,24 @@ function generateSourceFrontmatter(
         `- [[${basenameWithoutExtension}]]`,
         `- — [[@${citationKey}]]`
     ];
-    // let quotedAbstractLines: string[] = [
-    //     `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
-    //     "",
-    //     `    > [!quote]+ Abstract [@${citationKey}]`,
-    //     "    >",
-    //     `    > > ${abstract ? abstract : '...'}`,
-    //     "    >",
-    //     "",
-    // ]
+    let quotedAbstractLines: string[] = [
+        `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
+        "",
+        `    > ${abstract ? abstract : '...'}`,
+        "",
+        `    — [[@${citationKey}]]`,
+        "",
+    ]
     let refBodyLines: string[] = [
         "",
         "## Citations",
         "",
         ... citationStrings,
         "",
-        // "## Abstract",
-        // "",
-        // ... quotedAbstractLines,
-        // "",
+        "## Abstract",
+        "",
+        ... quotedAbstractLines,
+        "",
     ];
 
 
