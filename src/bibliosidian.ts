@@ -229,7 +229,7 @@ function generateSourceFrontmatter(
         `- "[[${internalLinkPath}]]"`,
         `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
         `- [[${basenameWithoutExtension}]]`,
-        `— [[@${citationKey}]]`
+        `- — [[@${citationKey}]]`
     ];
     // let quotedAbstractLines: string[] = [
     //     `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
