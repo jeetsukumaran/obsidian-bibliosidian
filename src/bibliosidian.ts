@@ -171,20 +171,27 @@ function generateSourceFrontmatter(
     //     }
     // });
 
-    let cleanSingleLine = (s: string | undefined): string => {
+    let cleanText = (s: string | undefined): string => {
         if (s) {
-            return s.replace(/\s+/g, " ")
+            return s
+                .trim()
+                .replace(/\n/g, " ")
+                .replace(/\s+/g, " ")
+                .replace(/``/g, '"')
+                .replace(/`/g, "'")
+                .replace(/<i>/g, "*")
+                .replace(/<\/i>/g, "*")
         } else {
             return ""
         }
     }
 
-	let bibTitle = bibEntry.title$ || cleanSingleLine(bibEntry.getFieldAsString("title")?.toString())
+	let bibTitle = bibEntry.title$ || cleanText(bibEntry.getFieldAsString("title")?.toString())
 	let titleParts = [
-		cleanSingleLine(bibTitle),
-		cleanSingleLine(bibEntry.getFieldAsString("subtitle")?.toString()),
+		cleanText(bibTitle),
+		cleanText(bibEntry.getFieldAsString("subtitle")?.toString()),
 	].filter( (p) => p )
-	let compositeTitle = cleanSingleLine(titleParts.join(": "))
+	let compositeTitle = cleanText(titleParts.join(": "))
 	let sourceYear = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
 	let inTextCitationYear = sourceYear
 	let inTextCitationAuthors: string;
@@ -212,12 +219,7 @@ function generateSourceFrontmatter(
 
 	let entryTitle = `${inTextCitation} *${compositeTitle}*`
 	let unformattedEntryTitle = `${inTextCitation}: ${compositeTitle}`
-	let abstract = (bibEntry.getFieldAsString("abstract")?.toString() || "")
-		.trim()
-		.replace(/\n/g, " ")
-		.replace(/\s+/g, " ")
-		.replace(/``/g, '"')
-		.replace(/`/g, "'")
+	let abstract = cleanText( (bibEntry.getFieldAsString("abstract")?.toString() || "") )
 	// let entryTitle = `(@${citationKey}) ${compositeTitle}`
     let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
     let basenameWithoutExtension: string = _path.basename(args.targetFilepath, ".md");
@@ -231,6 +233,7 @@ function generateSourceFrontmatter(
         `- [[${basenameWithoutExtension}]]`,
         `- — [[@${citationKey}]]`
     ];
+    refProperties["citations"] = citationStrings;
     let quotedAbstractLines: string[] = [
         `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
         "",
@@ -240,10 +243,10 @@ function generateSourceFrontmatter(
         "",
     ]
     let refBodyLines: string[] = [
-        "",
-        "## Citations",
-        "",
-        ... citationStrings,
+        // "",
+        // "## Citations",
+        // "",
+        // ... citationStrings,
         "",
         "## Abstract",
         "",
