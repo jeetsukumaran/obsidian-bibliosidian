@@ -224,14 +224,14 @@ function generateSourceFrontmatter(
     let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
     let basenameWithoutExtension: string = _path.basename(args.targetFilepath, ".md");
     let citationStrings: string[] = [
-        `- [[@${citationKey}]]`,
-        `- [@${citationKey}]`,
-        `- @${citationKey}`,
-        `- ${inTextCitation}`,
-        `- "[[${internalLinkPath}]]"`,
-        `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
-        `- [[${basenameWithoutExtension}]]`,
-        `- — [[@${citationKey}]]`
+        `[[@${citationKey}]]`,
+        `[@${citationKey}]`,
+        `@${citationKey}`,
+        `${inTextCitation}`,
+        `"[[${internalLinkPath}]]"`,
+        `[[${internalLinkPath}|${unformattedEntryTitle}]]`,
+        `[[${basenameWithoutExtension}]]`,
+        `— [[@${citationKey}]]`
     ];
     refProperties["citations"] = citationStrings;
     let quotedAbstractLines: string[] = [
