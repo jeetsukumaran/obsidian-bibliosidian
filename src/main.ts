@@ -397,7 +397,7 @@ export default class Bibliosidian extends Plugin {
             return `${displayText} ${footnote}`;
         });
 
-        const footnoteTexts = footnotes.map(fn => `${fn.footnote}: ${fn.original}`);
+        const footnoteTexts = footnotes.map(fn => `${fn.footnote}: [[${fn.original}]]`);
 
         return { updatedText, footnotes: footnoteTexts };
     }
