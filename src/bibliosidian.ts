@@ -204,8 +204,6 @@ function generateSourceFrontmatter(
 	}
 	let inTextCitation: string = `(${inTextCitationAuthors.trim()} ${inTextCitationYear?.toString().trim()})`
 
-	// This stuff is part of a related project: a multihierarchical indexing system
-	// Should/will be abstracted out as part of custom user field creation
 	let fileProperties = new FileProperties(this.app, args.targetFilepath)
 	const updateDate = new Date();
 	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
@@ -471,7 +469,7 @@ function generateAuthorLinks(
 					authorProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 					authorProperties["title"] = authorDisplayName;
 					authorProperties["aliases"] = fileProperties.concatItems( "aliases", [ authorDisplayName, ],);
-					let sourceLink = `[[${args.targetFilepath}|${entryTitle}]]`
+					let sourceLink = `[[${args.targetFilepath.replace(/\.md$/, "")}|${entryTitle}]]`
                     let refPropName = settings.authorBiblioNoteOutlinkPropertyName || "references";
 					authorProperties[refPropName] = fileProperties
 						.concatItems(refPropName, [sourceLink]);
