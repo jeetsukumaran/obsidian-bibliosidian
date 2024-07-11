@@ -231,7 +231,7 @@ function generateSourceFrontmatter(
         `[[${basenameWithoutExtension}]]`,
         `— [[@${citationKey}]]`
     ];
-    refProperties["citations"] = citationStrings;
+    refProperties["cite-as"] = citationStrings;
     let quotedAbstractLines: string[] = [
         `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
         "",
@@ -318,7 +318,7 @@ function generateSourceFrontmatter(
 	]
 
 
-//     refProperties["citations"] = [
+//     refProperties["cite-as"] = [
 //         `[[@${citationKey}]]`,
 //         `[@${citationKey}]`,
 // 		`@${citationKey}`,
