@@ -308,92 +308,24 @@ export default class Bibliosidian extends Plugin {
     }
 
 	updateBiblioNoteLibraryFromBibTex() {
-		let sourceBibTex = `
-@article{agapow2004impact,
-  title = {The impact of species concept on biodiversity studies},
-  author = {Agapow, Paul‐Michael and Bininda‐Emonds, Olaf~R~P and Crandall, Keith~A and Gittleman, John~L and Mace, Georgina~M and Marshall, Jonathon~C and Purvis, Andy},
-  year = {2004},
-  month = jun,
-  journal = {The Quarterly Review of Biology},
-  volume = {79},
-  number = {2},
-  pages = {161--179},
-  publisher = {The University of Chicago Press},
-  issn = {0033-5770},
-  doi = {10.1086/383542},
-  url = {https://www.journals.uchicago.edu/doi/full/10.1086/383542},
-  urldate = {2022-08-02},
-  abstract = {Species are defined using a variety of different operational techniques. While discussion of the various methodologies has previously been restricted mostly to taxonomists, the demarcation of species is also crucial for conservation biology. Unfortunately, different methods of diagnosing species can arrive at different entities. Most prominently, it is widely thought that use of a phylogenetic species concept may lead to recognition of a far greater number of much less inclusive units. As a result, studies of the same group of organisms can produce not only different species identities but also different species range and number of individuals. To assess the impact of different definitions on conservation issues, we collected instances from the literature where a group of organisms was categorized both under phylogenetic and nonphylogenetic concepts. Our results show a marked difference, with surveys based on a phylogenetic species concept showing more species (48\%) and an associated decrease in population size and range. We discuss the serious consequences of this trend for conservation, including an apparent change in the number of endangered species, potential political fallout, and the difficulty of deciding what should be conserved.},
-  file = {/home/jeetsukumaran/site/storage/local/reference/libraries/zotero/storage/VXKNQBM9/agapow2004impact.pdf}
-}
-
-@article{balakrishnan2005species,
-  title = {Species concepts, species boundaries and species identification: a view from the tropics},
-  shorttitle = {Species concepts, species boundaries and species identification},
-  author = {Balakrishnan, Rohini},
-  year = {2005},
-  month = aug,
-  journal = {Systematic Biology},
-  volume = {54},
-  number = {4},
-  pages = {689--693},
-  issn = {1063-5157},
-  doi = {10.1080/10635150590950308},
-  url = {https://doi.org/10.1080/10635150590950308},
-  urldate = {2022-08-02},
-  abstract = {The species has been treated as a fundamental unit in biology (Hull, 1977) and, more recently, in biodiversity conservation (Sites and Crandall, 1997). Almost all studies in biology, whether at the level of molecules, cells, individuals or populations, are typically referenced to the level of the species. In the field of conservation biology, assessments of biodiversity are made at the level of the species: typical criteria include species richness, numbers of endemic species, and the number or presence of endangered species in given areas (Myers et al. 2000). The accurate identification of species is crucial both to research in all areas of biology and to biodiversity conservation. It is therefore surprising that, in the field of systematics, species are currently used mostly as terminal taxa in the reconstruction of phylogenetic trees, whereas the methods by which they are delimited and identified receive scant attention (Wiens and Penkrot, 2002).},
-  file = {/home/jeetsukumaran/site/storage/local/reference/libraries/zotero/storage/SPXGZDU8/balakrishnan2005species.pdf}
-}
-
-@article{kunz2002when,
-  title = {When is a parasite species a species?},
-  author = {Kunz, Werner},
-  year = {2002},
-  month = mar,
-  journal = {Trends in Parasitology},
-  volume = {18},
-  number = {3},
-  pages = {121--124},
-  issn = {1471-4922},
-  doi = {10.1016/S1471-4922(01)02210-3},
-  url = {https://www.sciencedirect.com/science/article/pii/S1471492201022103},
-  urldate = {2022-08-02},
-  abstract = {Regrettably, 140 years after the publication of Darwin's Origin of Species, we face the grotesque situation that we still do not know what is a species whose origin Darwin wanted to explain. A generally applicable species definition is not available. Is there a basic unit of biodiversity above the level of individuals? Do we try to define something that does not exist in reality? The strong potential for the evolution of genetic variability in parasites together with the importance of species diagnosis for applied fields of parasite research make biodiversity research a key role in parasitology. Frequent occurrence of sympatric speciation, clonal reproduction, selfing, sib mating or parthenogenesis imply exceptional conditions for the evolution of gene pool diversities in parasites.},
-  langid = {english},
-  file = {/home/jeetsukumaran/site/storage/local/reference/libraries/zotero/storage/NRPFAEI5/kunz2002when.pdf;/home/jeetsukumaran/site/storage/local/reference/libraries/zotero/storage/J4RWYHPC/kunz2002when.html}
-}
-
-@article{noor2002biological,
-  title = {Is the biological species concept showing its age?},
-  author = {Noor, Mohamed A. F},
-  year = {2002},
-  month = apr,
-  journal = {Trends in Ecology \& Evolution},
-  volume = {17},
-  number = {4},
-  pages = {153--154},
-  issn = {0169-5347},
-  doi = {10.1016/S0169-5347(02)02452-7},
-  url = {https://www.sciencedirect.com/science/article/pii/S0169534702024527},
-  urldate = {2022-08-02},
-  abstract = {A recent paper by Chung-I Wu in the Journal of Evolutionary Biology questions the value of the popular biological species concept (BSC) and offers an alternative ‘genic’ concept based on possessing ‘loci of differential adaptation.’ Wu suggests that recent empirical results from genetic studies of speciation necessitate this revision. Several prominent evolutionary biologists responded in the same issue, many noting excitement over the recent empirical results, few agreeing with an abandonment of the BSC, and none wholeheartedly embracing the new genic concept.},
-  langid = {english},
-  file = {/home/jeetsukumaran/site/storage/local/reference/libraries/zotero/storage/7XLTZLPP/noor2002biological.pdf}
-}
-
-		`
-		generateBiblioNoteLibrary(
-			this.app,
-			sourceBibTex,
-			this.settings,
-			// this.settings.biblioNoteSourcePropertiesPrefix,
-			// this.settings.biblioNoteSubdirectoryRoot,
-			// this.settings.isSubdirectorizeBiblioNotesLexically,
-			// this.settings.authorsParentFolderPath,
-			// this.settings.isSubdirectorizeAuthorsLexically,
-			// this.settings.isCreateAuthorPages,
-		)
-
+		// let sourceBibTex = ""
+		// let processedResults = generateBiblioNoteLibrary(
+		// 	this.app,
+		// 	sourceBibTex,
+		// 	this.settings,
+		// )
+        const modal = new BibTexCaptureModal(this.app, (input: string) => {
+                if (input) {
+                    let sourceBibTex: string = input;
+                    let processedResults = generateBiblioNoteLibrary(
+                        this.app,
+                        sourceBibTex,
+                        this.settings,
+                    );
+                    // Do something with processedResults if needed
+                }
+            });
+            modal.open();
 	}
 
 	updateBiblioNoteFromBibTex(isOpenNote: boolean = true) {
@@ -427,3 +359,47 @@ export default class Bibliosidian extends Plugin {
 	}
 }
 
+
+class BibTexCaptureModal extends Modal {
+    private onSubmit: (input: string) => void;
+	private textArea: HTMLTextAreaElement;
+
+	constructor(app: App, onSubmit: (input: string) => void) {
+		super(app);
+		this.onSubmit = onSubmit;
+	}
+
+	onOpen() {
+		const { contentEl } = this;
+		contentEl.createEl('h2', { text: 'Paste your BibTeX data' });
+
+		this.textArea = contentEl.createEl('textarea', {
+			cls: 'bibtex-modal-textarea'
+		});
+		this.textArea.setAttr('rows', '20');
+		this.textArea.setAttr('cols', '50');
+
+		new Setting(contentEl)
+			.addButton((btn) =>
+				btn
+					.setButtonText('OK')
+					.setCta()
+					.onClick(() => {
+						this.onSubmit(this.textArea.value);
+						this.close();
+					})
+			)
+			.addButton((btn) =>
+				btn
+					.setButtonText('Cancel')
+					.onClick(() => {
+						this.close();
+					})
+			);
+	}
+
+	onClose() {
+		const { contentEl } = this;
+		contentEl.empty();
+	}
+}
