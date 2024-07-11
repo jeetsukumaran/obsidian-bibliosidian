@@ -417,27 +417,26 @@ class BibTexResultsModal extends Modal {
 
 	onOpen() {
 		const { contentEl } = this;
-
 		const successfulFileLinks = this.processedResults
 			.filter(result => result.successful)
-			.map(result => result.fileLink)
+			.map(result => `  - "${result.fileLink}"`)
 			.join('\n');
 
 		const successfulCitations = this.processedResults
 			.filter(result => result.successful)
-			.map(result => result.citation)
+			.map(result => `- ${result.citation}`)
 			.join('\n');
 
 		const unsuccessfulCiteKeys = this.processedResults
 			.filter(result => !result.successful)
-			.map(result => result.citeKey)
+			.map(result => `${result.citeKey}\n`)
 			.join('\n');
 
 		contentEl.createEl('h2', { text: 'Processed BibTeX Results' });
 
 		this.createReadonlyTextArea(contentEl, 'Successful file links:', successfulFileLinks);
 		this.createReadonlyTextArea(contentEl, 'Successful citations:', successfulCitations);
-		this.createReadonlyTextArea(contentEl, 'Unsuccessful citeKeys:', unsuccessfulCiteKeys);
+		this.createReadonlyTextArea(contentEl, 'Unsuccessful citation keys:', unsuccessfulCiteKeys);
 
 		new Setting(contentEl)
 			.addButton((btn) =>
@@ -454,8 +453,8 @@ class BibTexResultsModal extends Modal {
 		container.createEl('h3', { text: label });
 		const textArea = container.createEl('textarea', {
 			cls: 'bibtex-results-textarea',
-			value: value,
 		});
+        textArea.value = value;
 		textArea.setAttr('rows', '10');
 		textArea.setAttr('cols', '50');
         textArea.setAttr('readonly', 'true');
