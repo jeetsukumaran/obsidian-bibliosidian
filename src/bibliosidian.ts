@@ -849,7 +849,7 @@ export function generateBiblioNoteLibrary(
             )
             result.successful = true;
             result.filePath = filePath;
-            result.fileLink = `[[${filePath}]]`;
+            result.fileLink = `[[${filePath.replace(/\.md$/,'')}]]`;
         }
     });
     return processedResults;
