@@ -347,34 +347,21 @@ function generateSourceFrontmatter(
 
 }
 
+function cleanBibFileData(bibFileData: string): string {
+    bibFileData = bibFileData.replace(/month\s*=\s*([a-zA-Z0-9]+)\s*,/g,"month = {$1},");
+    return bibFileData;
+}
 
-function getBibEntry(
-    bibFileData: string,
-    citeKey?: string,
-): {
+
+function postProcessBibEntry(entry: BibEntry | undefined): {
 		bibEntry: BibEntry | undefined,
 		bibtexStr: string,
 		fieldValueMap: { [key: string]: string },
 		indexTitle: string,
-}{
-    bibFileData = bibFileData.replace(/month\s*=\s*([a-zA-Z0-9]+)\s*,/g,"month = {$1},");
-	const bibFile = parseBibFile(bibFileData);
-	let entry: BibEntry | undefined;
-	if (citeKey) {
-		entry = bibFile.getEntry(citeKey);
-	} else {
-		if (bibFile.entries_raw && bibFile.entries_raw.length > 0) {
-		}
-		// Destructuring to get the first key and value
-		let [[key, value]]: [string, BibEntry][] = Object.entries(bibFile.entries$);
-		// // grab first key/val pair through destructuring
-		// let [[ck, value]] = Object.entries(bibFile.entries$)
-		entry = value
-	}
+} {
 	let fieldValueMap:{ [key: string]: string } = {}
 	let bibtexStrParts = []
 	if (entry !== undefined) {
-
 		// let entryFields: EntryFields = bibEntry.fields$?.forEach( [key: string]: value: FieldValue
 		let entryFields: EntryFields = entry.fields
 		if (entryFields) {
@@ -392,17 +379,8 @@ function getBibEntry(
 					}
 				}
 			}
-
-			// Object.entries(entryFields).forEach(([fieldName, fieldValue]: [string, FieldValue]) => {
-			// 	let fieldValueStr = fieldValue ? normalizeFieldValue(fieldValue)?.toString() : ""
-			// 	// fieldValueMap[fieldName] = (fieldValue && fieldValue.toString()) || ""
-			// 	fieldValueMap[fieldName] = (fieldValue && fieldValue.toString()) || ""
-			// 	bibtexStrParts.push(`  ${fieldName} = {${fieldValue}},`)
-			// });
-
 			bibtexStrParts.push("}")
 		}
-
 	}
 	let indexTitle = ""
 	return {
@@ -411,6 +389,32 @@ function getBibEntry(
 		fieldValueMap: fieldValueMap,
 		indexTitle: indexTitle,
 	}
+}
+
+function getBibEntry(
+    bibFileData: string,
+    citeKey?: string,
+): {
+		bibEntry: BibEntry | undefined,
+		bibtexStr: string,
+		fieldValueMap: { [key: string]: string },
+		indexTitle: string,
+}{
+	bibFileData = cleanBibFileData(bibFileData);
+	const bibFile = parseBibFile(bibFileData);
+	let entry: BibEntry | undefined;
+	if (citeKey) {
+		entry = bibFile.getEntry(citeKey);
+	} else {
+		if (bibFile.entries_raw && bibFile.entries_raw.length > 0) {
+		}
+		// Destructuring to get the first key and value
+		let [[key, value]]: [string, BibEntry][] = Object.entries(bibFile.entries$);
+		// // grab first key/val pair through destructuring
+		// let [[ck, value]] = Object.entries(bibFile.entries$)
+		entry = value
+	}
+	return postProcessBibEntry(entry);
 }
 
 function generateAuthorLinks(
@@ -804,13 +808,31 @@ class BibTexModal extends Modal {
 export function generateBiblioNoteLibrary(
 	app: App,
 	bibFileData: string,
-	biblioNoteSourcePropertiesPrefix: string,
-	biblioNoteSubdirectoryRoot: string = "",
-	isSubdirectorizeBiblioNotesLexically: boolean = true,
-	authorsParentFolderPath: string,
-	isSubdirectorizeAuthorsLexically: boolean = true,
-	isCreateAuthorPages: boolean = true,
+    settings: BibliosidianSettings,
 ) {
+    bibFileData = cleanBibFileData(bibFileData);
+	const bibFile = parseBibFile(bibFileData);
+    Object.keys(bibFile.entries$).forEach( (citeKey: string) => {
+        let entry: BibEntry = bibFile.entries$[citeKey];
+        let result = postProcessBibEntry(entry)
+        if (result.bibEntry) {
+            let filePath = computeBibEntryTargetFilePath(
+                result.bibEntry,
+                settings,
+            )
+            generateBiblioNote(
+                app,
+                settings,
+                {
+                    sourceBibTex: result.bibtexStr,
+                    targetFilepath: filePath,
+                    isCreateAuthorPages: settings.isCreateAuthorPages,
+                    isOpenNote: false,
+                },
+                citeKey,
+            )
+        }
+    });
 }
 
 export function createBiblioNote(
