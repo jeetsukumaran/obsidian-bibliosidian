@@ -804,35 +804,55 @@ class BibTexModal extends Modal {
 }
 
 
+export type ProcessedBibTexResult = {
+    successful: boolean,
+    citeKey: string,
+    citation: string,
+    filePath: string,
+    fileLink: string,
+}
 
 export function generateBiblioNoteLibrary(
 	app: App,
 	bibFileData: string,
     settings: BibliosidianSettings,
-) {
+): ProcessedBibTexResult[] {
+    let processedResults: ProcessedBibTexResult[] = [];
     bibFileData = cleanBibFileData(bibFileData);
 	const bibFile = parseBibFile(bibFileData);
     Object.keys(bibFile.entries$).forEach( (citeKey: string) => {
         let entry: BibEntry = bibFile.entries$[citeKey];
-        let result = postProcessBibEntry(entry)
-        if (result.bibEntry) {
+        let result: ProcessedBibTexResult = {
+            successful: false,
+            citeKey: citeKey,
+            citation: `[[@${citeKey}]]`,
+            filePath: "",
+            fileLink: "",
+        };
+        processedResults.push(result);
+        let processedBibTex = postProcessBibEntry(entry);
+        if (processedBibTex.bibEntry) {
             let filePath = computeBibEntryTargetFilePath(
-                result.bibEntry,
+                processedBibTex.bibEntry,
                 settings,
             )
             generateBiblioNote(
                 app,
                 settings,
                 {
-                    sourceBibTex: result.bibtexStr,
+                    sourceBibTex: processedBibTex.bibtexStr,
                     targetFilepath: filePath,
                     isCreateAuthorPages: settings.isCreateAuthorPages,
                     isOpenNote: false,
                 },
                 citeKey,
             )
+            result.successful = true;
+            result.filePath = filePath;
+            result.fileLink = `[[${filePath}]]`;
         }
     });
+    return processedResults;
 }
 
 export function createBiblioNote(

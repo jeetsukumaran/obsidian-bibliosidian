@@ -26,6 +26,7 @@ import {
 import {
 	createBiblioNote,
 	generateBiblioNoteLibrary,
+	ProcessedBibTexResult,
 } from "./bibliosidian";
 
 import {
@@ -322,7 +323,8 @@ export default class Bibliosidian extends Plugin {
                         sourceBibTex,
                         this.settings,
                     );
-                    // Do something with processedResults if needed
+                    const resultsModal = new BibTexResultsModal(this.app, processedResults);
+				    resultsModal.open();
                 }
             });
             modal.open();
@@ -394,6 +396,78 @@ class BibTexCaptureModal extends Modal {
 					.setButtonText('Cancel')
 					.onClick(() => {
 						this.close();
+					})
+			);
+	}
+
+	onClose() {
+		const { contentEl } = this;
+		contentEl.empty();
+	}
+}
+
+
+class BibTexResultsModal extends Modal {
+	private processedResults: ProcessedBibTexResult[];
+
+	constructor(app: App, processedResults: ProcessedBibTexResult[]) {
+		super(app);
+		this.processedResults = processedResults;
+	}
+
+	onOpen() {
+		const { contentEl } = this;
+
+		const successfulFileLinks = this.processedResults
+			.filter(result => result.successful)
+			.map(result => result.fileLink)
+			.join('\n');
+
+		const successfulCitations = this.processedResults
+			.filter(result => result.successful)
+			.map(result => result.citation)
+			.join('\n');
+
+		const unsuccessfulCiteKeys = this.processedResults
+			.filter(result => !result.successful)
+			.map(result => result.citeKey)
+			.join('\n');
+
+		contentEl.createEl('h2', { text: 'Processed BibTeX Results' });
+
+		this.createReadonlyTextArea(contentEl, 'Successful file links:', successfulFileLinks);
+		this.createReadonlyTextArea(contentEl, 'Successful citations:', successfulCitations);
+		this.createReadonlyTextArea(contentEl, 'Unsuccessful citeKeys:', unsuccessfulCiteKeys);
+
+		new Setting(contentEl)
+			.addButton((btn) =>
+				btn
+					.setButtonText('OK')
+					.setCta()
+					.onClick(() => {
+						this.close();
+					})
+			);
+	}
+
+	createReadonlyTextArea(container: HTMLElement, label: string, value: string) {
+		container.createEl('h3', { text: label });
+		const textArea = container.createEl('textarea', {
+			cls: 'bibtex-results-textarea',
+			value: value,
+		});
+		textArea.setAttr('rows', '10');
+		textArea.setAttr('cols', '50');
+        textArea.setAttr('readonly', 'true');
+
+		new Setting(container)
+			.addButton((btn) =>
+				btn
+					.setButtonText('Copy')
+					.onClick(() => {
+						navigator.clipboard.writeText(value).then(() => {
+							new Notice('Copied to clipboard');
+						});
 					})
 			);
 	}
