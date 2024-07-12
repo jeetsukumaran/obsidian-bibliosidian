@@ -242,36 +242,36 @@ export default class Bibliosidian extends Plugin {
 		this.dataService = new DataService();
 
 
-		this.addRibbonIcon("library-square", "Update multiple biblioNotes from a BibTeX bibliography database file", () => {
-			this.updateBiblioNoteLibraryFromBibTex()
-		});
-		this.addRibbonIcon("book-up-2", "Create or update bibliographic note from BibTeX data", () => {
+		this.addRibbonIcon("book-up-2", "Create or update a single bibliographic note from BibTeX data", () => {
 			this.updateBiblioNoteFromBibTex()
 		});
-		this.addRibbonIcon("book-plus", "Add a holding associated with this bibliographic note", () => {
+		this.addRibbonIcon("library-square", "Update multiple bibliographical notes from BibTeX data", () => {
+			this.updateBiblioNoteLibraryFromBibTex()
+		});
+		this.addRibbonIcon("book-plus", "Attach a holding to the current note", () => {
 			this.addHolding()
 		});
 
-
 		this.addCommand({
-			id: 'bibliosidian-update-biblionote-from-bibtex',
-			name: 'Update active file properties from BibTeX',
-			callback: this.updateBiblioNoteFromBibTex,
-		});
-
-		this.addCommand({
-			id: 'bibliosidian-update-biblioNote-library-from-bibtex',
+			id: 'update-biblionote-library-from-bibtex',
 			name: 'Update multiple bibliographical notes from a BibTeX bibliography database file',
-			callback: this.updateBiblioNoteLibraryFromBibTex,
+			callback: () => this.updateBiblioNoteLibraryFromBibTex(),
 		});
+
 		this.addCommand({
-			id: 'bibliosidian-add-holding',
-			name: 'Add a holding associated with this note',
-			callback: this.addHolding,
+			id: 'update-biblionote-from-bibtex',
+			name: 'Create or update a single bibliographic note from BibTeX data',
+			callback: () => this.updateBiblioNoteFromBibTex(),
+		});
+
+		this.addCommand({
+			id: 'add-biblionote-holding',
+			name: 'Attach a holding to the current note',
+			callback: () => this.addHolding(),
 		});
 
         this.addCommand({
-            id: 'generatecitation-list',
+            id: 'generate-biblionote-citation-list',
             name: 'Generate citation list',
             editorCallback: (editor: Editor) => {
                 let activeFile = this.app.workspace.getActiveFile();
