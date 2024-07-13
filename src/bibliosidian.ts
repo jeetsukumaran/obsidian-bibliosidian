@@ -26,6 +26,7 @@ import {
 	EntryFields,
 	FieldValue,
 	parseAuthorName,
+    BibFilePresenter,
 } from "bibtex";
 
 import {
@@ -819,39 +820,43 @@ export function generateBiblioNoteLibrary(
 ): ProcessedBibTexResult[] {
     let processedResults: ProcessedBibTexResult[] = [];
     bibFileData = cleanBibFileData(bibFileData);
-	const bibFile = parseBibFile(bibFileData);
-    Object.keys(bibFile.entries$).forEach( (citeKey: string) => {
-        let entry: BibEntry = bibFile.entries$[citeKey];
-        let result: ProcessedBibTexResult = {
-            successful: false,
-            citeKey: citeKey,
-            citation: `[[@${citeKey}]]`,
-            filePath: "",
-            fileLink: "",
-        };
-        processedResults.push(result);
-        let processedBibTex = postProcessBibEntry(entry);
-        if (processedBibTex.bibEntry) {
-            let filePath = computeBibEntryTargetFilePath(
-                processedBibTex.bibEntry,
-                settings,
-            )
-            generateBiblioNote(
-                app,
-                settings,
-                {
-                    sourceBibTex: processedBibTex.bibtexStr,
-                    targetFilepath: filePath,
-                    isCreateAuthorPages: settings.isCreateAuthorPages,
-                    isOpenNote: false,
-                },
-                citeKey,
-            )
-            result.successful = true;
-            result.filePath = filePath;
-            result.fileLink = `[[${filePath.replace(/\.md$/,'')}]]`;
-        }
-    });
+	try {
+        const bibFile: BibFilePresenter = parseBibFile(bibFileData);
+        Object.keys(bibFile.entries$).forEach( (citeKey: string) => {
+            let entry: BibEntry = bibFile.entries$[citeKey];
+            let result: ProcessedBibTexResult = {
+                successful: false,
+                citeKey: citeKey,
+                citation: `[[@${citeKey}]]`,
+                filePath: "",
+                fileLink: "",
+            };
+            processedResults.push(result);
+            let processedBibTex = postProcessBibEntry(entry);
+            if (processedBibTex.bibEntry) {
+                let filePath = computeBibEntryTargetFilePath(
+                    processedBibTex.bibEntry,
+                    settings,
+                )
+                generateBiblioNote(
+                    app,
+                    settings,
+                    {
+                        sourceBibTex: processedBibTex.bibtexStr,
+                        targetFilepath: filePath,
+                        isCreateAuthorPages: settings.isCreateAuthorPages,
+                        isOpenNote: false,
+                    },
+                    citeKey,
+                )
+                result.successful = true;
+                result.filePath = filePath;
+                result.fileLink = `[[${filePath.replace(/\.md$/,'')}]]`;
+            }
+        });
+	} catch (error) {
+        console.log(error);
+	}
     return processedResults;
 }
 
