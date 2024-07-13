@@ -323,8 +323,12 @@ export default class Bibliosidian extends Plugin {
                         sourceBibTex,
                         this.settings,
                     );
-                    const resultsModal = new BibTexResultsModal(this.app, processedResults);
-				    resultsModal.open();
+                    if (processedResults.length > 0) {
+                        const resultsModal = new BibTexResultsModal(this.app, processedResults);
+                        resultsModal.open();
+                    } else {
+                        new Notice("No results returned by BibTex parser");
+                    }
                 }
             });
             modal.open();

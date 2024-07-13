@@ -27,6 +27,7 @@ import {
 	FieldValue,
 	parseAuthorName,
     BibFilePresenter,
+    parseBibEntriesAndNonEntries,
 } from "bibtex";
 
 import {
@@ -856,6 +857,7 @@ export function generateBiblioNoteLibrary(
         });
 	} catch (error) {
         console.log(error);
+        new Notice(`BibTex parsing error:\n\n${error}`);
 	}
     return processedResults;
 }
