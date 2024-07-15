@@ -224,9 +224,9 @@ function generateSourceFrontmatter(
     let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
     let basenameWithoutExtension: string = _path.basename(args.targetFilepath, ".md");
     let citationStrings: string[] = [
-        `[[@${citationKey}]]`,
         `[@${citationKey}]`,
         `@${citationKey}`,
+        `[[@${citationKey}]]`,
         `${inTextCitation}`,
         `"[[${internalLinkPath}]]"`,
         `[[${internalLinkPath}|${unformattedEntryTitle}]]`,
@@ -239,7 +239,7 @@ function generateSourceFrontmatter(
         "",
         `    > ${abstract ? abstract : '...'}`,
         "",
-        `    — [[@${citationKey}]]`,
+        `    — [@${citationKey}]`,
         "",
     ]
     let refBodyLines: string[] = [
@@ -318,26 +318,6 @@ function generateSourceFrontmatter(
 			compositeTitle,
 			unformattedEntryTitle,
 	]
-
-
-//     refProperties["cite-as"] = [
-//         `[[@${citationKey}]]`,
-//         `[@${citationKey}]`,
-// 		`@${citationKey}`,
-// 		inTextCitation,
-// 		`[[${internalLinkPath}]]`,
-// 		`[[${internalLinkPath}|${entryTitle}]]`,
-// 		`[[${basenameWithoutExtension}]]`,
-//     ];
-//     refProperties["quote-template"] =
-// `- [[${internalLinkPath}|${entryTitle}]] #00/resource/quote
-
-//     > [!quote] [[${inTextCitation}]]
-//     >
-//     >  ${abstract}
-// `
-
-
 
     updateFileProperties(
     	this.app,
@@ -828,7 +808,7 @@ export function generateBiblioNoteLibrary(
             let result: ProcessedBibTexResult = {
                 successful: false,
                 citeKey: citeKey,
-                citation: `[[@${citeKey}]]`,
+                citation: `[@${citeKey}]`,
                 filePath: "",
                 fileLink: "",
             };

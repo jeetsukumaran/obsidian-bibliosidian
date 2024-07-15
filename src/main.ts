@@ -438,9 +438,9 @@ class BibTexResultsModal extends Modal {
 
 		contentEl.createEl('h2', { text: 'Processed BibTeX Results' });
 
-		this.createReadonlyTextArea(contentEl, 'Successful file links:', successfulFileLinks);
-		this.createReadonlyTextArea(contentEl, 'Successful citations:', successfulCitations);
-		this.createReadonlyTextArea(contentEl, 'Unsuccessful citation keys:', unsuccessfulCiteKeys);
+		this.createReadonlyTextArea(contentEl, 'Citations:', successfulCitations);
+		this.createReadonlyTextArea(contentEl, 'File links:', successfulFileLinks);
+		this.createReadonlyTextArea(contentEl, 'Unsuccessfully parsed citation keys:', unsuccessfulCiteKeys);
 
 		new Setting(contentEl)
 			.addButton((btn) =>
