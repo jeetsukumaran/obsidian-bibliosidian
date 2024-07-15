@@ -230,8 +230,8 @@ function generateSourceFrontmatter(
         `${inTextCitation}`,
         `"[[${internalLinkPath}]]"`,
         `[[${internalLinkPath}|${unformattedEntryTitle}]]`,
-        `[[${basenameWithoutExtension}]]`,
-        `— [[@${citationKey}]]`
+        `[[${internalLinkPath}|@${citationKey}]]`,
+        `"- [@${citationKey}]"`
     ];
     refProperties["cite-as"] = citationStrings;
     let quotedAbstractLines: string[] = [
@@ -732,8 +732,11 @@ class BibTexModal extends Modal {
 		let execute = (isQuiet: boolean = true, isCopyLink = false) => {
 			this.args.targetFilepath = this.biblioNotePathTextComponent.value.endsWith(".md") ? this.biblioNotePathTextComponent.value : this.biblioNotePathTextComponent.value + ".md"
 			if (isCopyLink) {
-                let basenameWithoutExtension: string = _path.basename(this.args.targetFilepath, ".md");
-                let clipText = `[[${basenameWithoutExtension}]]`;
+                let citation: string = _path.basename(this.args.targetFilepath, ".md");
+                if (!citation.startsWith("@")) {
+                    citation = "@" + citation;
+                }
+                let clipText = `[${citation}]`;
                 navigator.clipboard.writeText(clipText);
                 // let basenameWithoutExtension: string = ....
                 // let clipText = `[[${basenameWithoutExtension}]]`;
