@@ -235,11 +235,12 @@ function generateSourceFrontmatter(
     ];
     refProperties["cite-as"] = citationStrings;
     let quotedAbstractLines: string[] = [
-        `- [[${internalLinkPath}|${unformattedEntryTitle}]]`,
-        "",
-        `    > ${abstract ? abstract : '...'}`,
-        "",
-        `    — [@${citationKey}]`,
+        "> [!quote] Abstract",
+        ">",
+        `> > ${abstract ? abstract : '...'}`,
+        ">",
+        // `> -- [@${citationKey}] [[${internalLinkPath}|${unformattedEntryTitle}]]`,
+        `> -- [@${citationKey}]: [[${internalLinkPath}|${compositeTitle}]]`,
         "",
     ]
     let refBodyLines: string[] = [
