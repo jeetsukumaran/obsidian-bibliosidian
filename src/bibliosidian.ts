@@ -239,7 +239,6 @@ function generateSourceFrontmatter(
         ">",
         `> > ${abstract ? abstract : '...'}`,
         ">",
-        // `> -- [@${citationKey}] [[${internalLinkPath}|${unformattedEntryTitle}]]`,
         `> -- [@${citationKey}]: [[${internalLinkPath}|${compositeTitle}]]`,
         "",
     ]
