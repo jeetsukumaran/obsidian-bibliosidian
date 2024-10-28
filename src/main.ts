@@ -81,7 +81,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 		}));
 		new Setting(containerEl)
-			.setName("Source BibTex property name")
+			.setName("Source BibTeX property name")
 			.setDesc(` Property on bibliographic note to store source BibTeX data. `)
 			.addText(text => text
 				.setPlaceholder("(YAML frontmatter property name, e.g. 'source-bibtex')")
