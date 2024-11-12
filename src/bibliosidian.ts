@@ -318,6 +318,8 @@ function generateSourceFrontmatter(
 			compositeTitle,
 			unformattedEntryTitle,
 	]
+    // process attachments
+    refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
 
     updateFileProperties(
     	this.app,
