@@ -91,23 +91,8 @@ export class ImportHoldingModal extends Modal {
         if (!this.activeFile) {
             return [];
         }
-
         const fileProperties = new FileProperties(this.app, this.activeFile.path);
-        const sourceFiles = fileProperties.getPropertyValue('source-files');
-
-        if (!sourceFiles) {
-            return [];
-        }
-
-        // Coerce to array of strings
-        if (typeof sourceFiles === 'string') {
-            return [sourceFiles];
-        }
-        if (Array.isArray(sourceFiles)) {
-            return sourceFiles.map(item => String(item)).filter(item => item.length > 0);
-        }
-
-        return [];
+        return fileProperties.readPropertyList("source-files");
     }
 
     async validateSourceFile(path: string): Promise<boolean> {

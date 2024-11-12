@@ -83,6 +83,7 @@ export class FileProperties {
 		}
 	}
 
+
 	concatItems(
 		propertyName: string,
 		newItems: string[],
