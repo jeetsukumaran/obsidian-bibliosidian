@@ -62,6 +62,42 @@ interface Author {
     jrs: string[]
 }
 
+/**
+ * Extracts an array of strings from a BibTeX field value.
+ * Handles both single values and delimiter-separated lists.
+ */
+export function getFieldAsStringArray(
+    entry: BibEntry | undefined,
+    fieldName: string,
+    separator: string = ";"
+): string[] {
+    if (!entry) {
+        return [];
+    }
+
+    const fieldValue = entry.getFieldAsString(fieldName);
+    if (!fieldValue) {
+        return [];
+    }
+
+    // Handle array input
+    // if (Array.isArray(fieldValue)) {
+    //     return fieldValue.flatMap(item => {
+    //         const itemStr = item.toString().trim();
+    //         return itemStr.includes(separator)
+    //             ? itemStr.split(separator).map( (s: string) => s.trim()).filter( (s: string) => s.length > 0)
+    //             : [itemStr];
+    //     });
+    // }
+
+    // Convert to string and split
+    const valueStr = fieldValue.toString();
+    return valueStr
+        .split(separator)
+        .map((s: string) => s.trim())
+        .filter((s: string) => s.length > 0);
+}
+
 function composeAuthorData(author: Author): {
     displayName: string,
     normalizedFileName: string,
@@ -319,7 +355,10 @@ function generateSourceFrontmatter(
 			unformattedEntryTitle,
 	]
     // process attachments
-    refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
+    // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
+    const fa = getFieldAsStringArray(bibEntry, "file");
+    console.log(fa)
+    refProperties[bibToYamlLabelFn("files")] = fa
 
     updateFileProperties(
     	this.app,
