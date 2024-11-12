@@ -33,6 +33,7 @@ import {
 } from "./utility";
 
 const copyFile = promisify(fs.copyFile);
+const fileExists = promisify(fs.access);
 async function copyFileAsync(source: string, destination: string): Promise<void> {
     try {
         await copyFile(source, destination);
@@ -68,12 +69,13 @@ class FileSuggestModal extends FuzzySuggestModal<TFile> {
 interface CustomFile extends File {
     path: string;
 }
+
 export class ImportHoldingModal extends Modal {
     private sourcePath: HTMLTextAreaElement;
-    // private destinationPath: TextAreaComponent;
     private destinationPath: HTMLTextAreaElement;
     private defaultDestinationFolder: string;
     private settings: BibliosidianSettings;
+    private activeFile: TFile | null;
 
     constructor(
         app: App,
@@ -82,119 +84,175 @@ export class ImportHoldingModal extends Modal {
         super(app);
         this.settings = settings;
         this.defaultDestinationFolder = this.settings.holdingsSubdirectoryRoot;
+        this.activeFile = null;
     }
 
-    onOpen() {
-        const {contentEl} = this;
+    async getSourceFilesFromFrontmatter(): Promise<string[]> {
+        if (!this.activeFile) {
+            return [];
+        }
 
-        let activeFile = this.app.workspace.getActiveFile();
-        if (!activeFile) {
+        const fileProperties = new FileProperties(this.app, this.activeFile.path);
+        const sourceFiles = fileProperties.getPropertyValue('source-files');
+
+        if (!sourceFiles) {
+            return [];
+        }
+
+        // Coerce to array of strings
+        if (typeof sourceFiles === 'string') {
+            return [sourceFiles];
+        }
+        if (Array.isArray(sourceFiles)) {
+            return sourceFiles.map(item => String(item)).filter(item => item.length > 0);
+        }
+
+        return [];
+    }
+
+    async validateSourceFile(path: string): Promise<boolean> {
+        try {
+            await fileExists(path);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    async onOpen() {
+        const {contentEl} = this;
+        this.activeFile = this.app.workspace.getActiveFile();
+
+        if (!this.activeFile) {
+            new Notice("No active file selected");
+            this.close();
             return;
         }
 
-		contentEl.createEl("h1", { text: "Import a holding" });
-		contentEl.createEl("h2", { text: "Path to file to be imported" });
+        // Get source files from frontmatter
+        const sourceFiles = await this.getSourceFilesFromFrontmatter();
+        const defaultSourcePath = sourceFiles.length > 0 ? sourceFiles[0] : '';
+
+        contentEl.createEl("h1", { text: "Import a holding" });
+        contentEl.createEl("h2", { text: "Path to file to be imported" });
+
         this.sourcePath = contentEl.createEl("textarea");
+        this.sourcePath.value = defaultSourcePath;
         this.sourcePath.placeholder = "E.g., '/home/user/Downloads/papers/attachment.pdf'";
         this.sourcePath.style.width = "100%";
-        // this.sourcePath.addEventListener('input', (event) => {
-        //     const target = event.target as HTMLTextAreaElement;
-        //     this.sourcePath.value = target.value;
-        // });
 
-		let browseDiv = contentEl.createEl("div", {});
+        let browseDiv = contentEl.createEl("div", {});
         browseDiv.style.width = "100%";
-        // browseDiv.style.textAlign = "right";
+
         let fileInput = browseDiv.createEl("input", {
-            type: "file",
-            attr: {
-                // multiple: ""
-            }
+            type: "file"
         });
-        let sourcePathUpdatedFn = (sourceFilePath: string) => {
-            let hostFilePath = (activeFile as TFile).path;
-            // this.sourcePath.setValue(sourceFilePath);
+
+        let sourcePathUpdatedFn = async (sourceFilePath: string) => {
+            if (!this.activeFile) return;
+
             this.sourcePath.value = sourceFilePath;
+
+            // Validate source file existence
+            const sourceExists = await this.validateSourceFile(sourceFilePath);
+            if (!sourceExists) {
+                new Notice(`Source file does not exist: ${sourceFilePath}`);
+                return;
+            }
+
             const destExtension = _path.extname(sourceFilePath);
             const hostFileNameWithoutExtension = _path.basename(
-                hostFilePath,
-                _path.extname(hostFilePath)
+                this.activeFile.path,
+                _path.extname(this.activeFile.path)
             );
-            let destinationFilename = hostFileNameWithoutExtension + destExtension
+
+            let destinationFilename = hostFileNameWithoutExtension + destExtension;
             if (destinationFilename.startsWith("@")) {
                 destinationFilename = destinationFilename.slice(1);
             }
+
             let parentPath = this.defaultDestinationFolder;
             if (this.settings.isSubdirectorizeBiblioNotesLexically) {
                 let holdingSubDir = destinationFilename[0] === "@" ? destinationFilename[1] : destinationFilename[0];
                 if (holdingSubDir === "@") {
-                    holdingSubDir = hostFilePath[1];
+                    holdingSubDir = this.activeFile.path[1];
                 }
-                parentPath = _path.join(parentPath, holdingSubDir)
+                parentPath = _path.join(parentPath, holdingSubDir);
             }
+
             let newFilePath = _path.join(
                 parentPath,
                 destinationFilename,
             );
             this.destinationPath.value = newFilePath;
         };
-        this.sourcePath.addEventListener('input', (event) => {
+
+        // Set up event listeners
+        this.sourcePath.addEventListener('input', async (event) => {
             const target = event.target as HTMLTextAreaElement;
-            this.sourcePath.value = target.value;
-            sourcePathUpdatedFn(this.sourcePath.value);
+            await sourcePathUpdatedFn(target.value);
         });
-        fileInput.addEventListener('change', (event) => {
+
+        fileInput.addEventListener('change', async (event) => {
             const input = event.target as HTMLInputElement;
             if (input.files && input.files.length > 0) {
                 const file = input.files[0] as CustomFile;
-                let sourceFilePath = file.path;
-                sourcePathUpdatedFn(file.path);
+                await sourcePathUpdatedFn(file.path);
             }
         });
-		contentEl.createEl("br", {});
 
-		contentEl.createEl("h2", { text: "Path to destination" });
+        contentEl.createEl("br", {});
+
+        contentEl.createEl("h2", { text: "Path to destination" });
         this.destinationPath = contentEl.createEl("textarea");
         this.destinationPath.placeholder = "E.g., 'source/holdings'";
         this.destinationPath.style.width = "100%";
-        this.destinationPath.addEventListener('input', (event) => {
-            const target = event.target as HTMLTextAreaElement;
-            this.destinationPath.value = target.value;
-        });
 
-        let runProcess = () => {
-            this.updateHostFileHoldingsData(
-                activeFile?.path || "",
-                this.cleanDestinationPath
-            );
-        };
+        // If we have a default source path, trigger the update function
+        if (defaultSourcePath) {
+            await sourcePathUpdatedFn(defaultSourcePath);
+        }
+
+        // Set up import buttons
         new Setting(contentEl)
-            // .addButton(btn => btn
-            //     .setButtonText('Cancel')
-            //     .onClick(() => this.close()))
             .addButton(btn => btn
                 .setButtonText('Import')
-                .onClick(() => {
-                    this.importFile()
-                        .then(runProcess);
+                .onClick(async () => {
+                    const sourceExists = await this.validateSourceFile(this.sourcePath.value.trim());
+                    if (!sourceExists) {
+                        new Notice(`Source file does not exist: ${this.sourcePath.value.trim()}`);
+                        return;
+                    }
+                    await this.importFile();
+                    this.updateHostFileHoldingsData(
+                        this.activeFile?.path || "",
+                        this.cleanDestinationPath
+                    );
                     this.close();
                 }))
             .addButton(btn => btn
                 .setButtonText('Import and Open')
-                .onClick(() => {
-                    this.importFile()
-                        .then(() => {
-                            runProcess();
-                            let mode: PaneType | boolean = false;
-                            app.workspace.openLinkText(
-                                this.cleanDestinationPath,
-                                '',
-                                mode,
-                            );
-                            this.close();
-                    });
+                .onClick(async () => {
+                    const sourceExists = await this.validateSourceFile(this.sourcePath.value.trim());
+                    if (!sourceExists) {
+                        new Notice(`Source file does not exist: ${this.sourcePath.value.trim()}`);
+                        return;
+                    }
+                    await this.importFile();
+                    this.updateHostFileHoldingsData(
+                        this.activeFile?.path || "",
+                        this.cleanDestinationPath
+                    );
+                    let mode: PaneType | boolean = false;
+                    this.app.workspace.openLinkText(
+                        this.cleanDestinationPath,
+                        '',
+                        mode,
+                    );
+                    this.close();
                 }));
     }
+
 
     updateHostFileHoldingsData(
         hostFilePath: string,
