@@ -125,7 +125,7 @@ function composeAuthorData(author: Author): {
     }
 }
 
-function generateSourceFrontmatter(
+async function generateSourceFrontmatter(
 	app: App,
 	settings: BibliosidianSettings,
 	args: BibTexModalArgs,
@@ -264,11 +264,11 @@ function generateSourceFrontmatter(
 	refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 
     refProperties[bibToYamlLabelFn("citekey")] = citationKey
-    Object.entries(creatorNames).forEach(([key, value]) => {
+    Object.entries(creatorNames).forEach( async ([key, value]) => {
         if (!bibEntry) {
             return;
         }
-        let authorLinks = generateAuthorLinks(
+        let authorLinks = await generateAuthorLinks(
             app,
             settings,
             args,
@@ -408,7 +408,7 @@ function getBibEntry(
 	return postProcessBibEntry(entry);
 }
 
-function generateAuthorLinks(
+async function generateAuthorLinks(
     app: App,
 	settings: BibliosidianSettings,
 	args: BibTexModalArgs,
@@ -416,7 +416,9 @@ function generateAuthorLinks(
 	entryTitle: string,
 	bodyLines: string[],
     creatorSets: Authors[],
-): { bareLink: string; aliasedLink: string; }[] {
+): Promise<{
+    bareLink: string; aliasedLink: string;
+}[]> {
     let results: { bareLink: string; aliasedLink: string; }[] = [];
     if (!entry) {
         return results;
