@@ -165,27 +165,28 @@ export async function updateFileProperties(
     // First update the frontmatter
     await updateFrontMatterLists(app, file, propertyValueMap, false);
 
-    // Then update the content if there are new body lines
+    // Only process body if there are new lines to add
     if (newBodyLines && newBodyLines.length > 0) {
+        // Read the current content (which now has the updated frontmatter)
         let currentContent = await app.vault.read(file);
-        const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+        const frontmatterRegex = /^(---\n[\s\S]*?\n---)/;
         const frontMatterMatch = currentContent.match(frontmatterRegex);
 
+        // Extract the current frontmatter and body
+        const currentFrontmatter = frontMatterMatch ? frontMatterMatch[1] : '';
+        const currentBody = frontMatterMatch
+            ? currentContent.replace(frontmatterRegex, '').trim()
+            : currentContent.trim();
+
+        // Combine everything
         let newContentLines = [
-            frontMatterMatch ? currentContent.replace(frontmatterRegex, "").trim() : currentContent.trim()
-        ];
-
-        if (newContentLines[0] === "") {
-            newContentLines.shift();
-        }
-
-        // Prepend new body lines
-        if (newBodyLines.length > 0) {
-            newContentLines.unshift(...newBodyLines);
-        }
+            currentFrontmatter, // Keep the updated frontmatter
+            ...newBodyLines,    // Add new body lines
+            currentBody         // Add existing body
+        ].filter(line => line.length > 0); // Remove empty lines
 
         // Update the file content
-        await app.vault.modify(file, newContentLines.join("\n").trim());
+        await app.vault.modify(file, newContentLines.join("\n"));
     }
 }
 
