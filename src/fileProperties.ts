@@ -115,29 +115,30 @@ export async function updateFrontMatterLists(
     await app.fileManager.processFrontMatter(file, (frontmatter: { [key: string]: any }) => {
         // Update each property in the map
         Object.entries(propertyValueMap).forEach(([propertyName, newValue]) => {
-            let currentValue = frontmatter[propertyName];
-            let mergedValue = [];
+            // let currentValue = frontmatter[propertyName];
+            // let mergedValue = [];
 
-            // Handle existing value
-            if (currentValue !== null && currentValue !== undefined) {
-                if (Array.isArray(currentValue)) {
-                    mergedValue.push(...currentValue);
-                } else {
-                    mergedValue.push(currentValue);
-                }
-            }
+            // // Handle existing value
+            // if (currentValue !== null && currentValue !== undefined) {
+            //     if (Array.isArray(currentValue)) {
+            //         mergedValue.push(...currentValue);
+            //     } else {
+            //         mergedValue.push(currentValue);
+            //     }
+            // }
 
-            // Handle new value
-            if (newValue !== null && newValue !== undefined) {
-                if (Array.isArray(newValue)) {
-                    mergedValue.push(...newValue);
-                } else {
-                    mergedValue.push(newValue);
-                }
-            }
+            // // Handle new value
+            // if (newValue !== null && newValue !== undefined) {
+            //     if (Array.isArray(newValue)) {
+            //         mergedValue.push(...newValue);
+            //     } else {
+            //         mergedValue.push(newValue);
+            //     }
+            // }
 
-            // Update frontmatter with deduplicated array
-            frontmatter[propertyName] = Array.from(new Set(mergedValue));
+            // // Update frontmatter with deduplicated array
+            // frontmatter[propertyName] = Array.from(new Set(mergedValue));
+            frontmatter[propertyName] = newValue;
         });
 
         if (isAddUpdateNotice) {
