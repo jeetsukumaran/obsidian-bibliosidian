@@ -308,7 +308,7 @@ export default class Bibliosidian extends Plugin {
         modal.open();
     }
 
-    updateBiblioNoteLibraryFromBibTex() {
+    async updateBiblioNoteLibraryFromBibTex() {
         const modal = new BibTexCaptureModal(
             this.app,
             // Added async here to make the function return a Promise<void>
