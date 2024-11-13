@@ -160,54 +160,23 @@ function generateSourceFrontmatter(
         try {
             authors = new Authors(fieldValue);
         } catch(error) {
-            console.log(error);
+            console.log(`Error creating author for value ${fieldValue}: ${error}`);
             continue;
         }
         creatorNames[creatorTypeName] = authors;
         try {
             authors.authors$?.forEach((author: any) => {
                 let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
-                // console.log(lastName);
                 if (lastName) {
                     authorLastNames.push(lastName);
                 }
             });
         } catch (error) {
+            console.log(`Error creating author for value ${fieldValue}: ${error}`);
             console.log(error);
         }
 
     };
-
-    // let creators: Authors[] = [];
-	// let auFieldNames = [
-	    // "author",
-    // 	"editor",
-    // ];
-    // auFieldNames.forEach( (auFieldName) => {
-    //     let fieldValue: FieldValue = bibEntry?.fields[auFieldName] as FieldValue
-    //     if (!fieldValue) {
-    //         return;
-    //     }
-    //     let authors: Authors;
-    //     try {
-    //          authors = new Authors(fieldValue);
-    //     } catch(error) {
-    //         console.log(error);
-    //         return;
-    //     }
-    //     creators.push(authors);
-    //     try {
-    //         authors.authors$?.forEach((author: any) => {
-    //             let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
-    //             console.log(lastName);
-    //             if (lastName) {
-    //                 authorLastNames.push(lastName);
-    //             }
-    //         });
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // });
 
     let cleanText = (s: string | undefined): string => {
         if (s) {
@@ -357,7 +326,6 @@ function generateSourceFrontmatter(
     // process attachments
     // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
     const fa = getFieldAsStringArray(bibEntry, "file");
-    console.log(fa)
     refProperties[bibToYamlLabelFn("files")] = fa
 
     updateFileProperties(
