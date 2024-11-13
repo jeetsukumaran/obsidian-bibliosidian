@@ -466,8 +466,13 @@ function generateAuthorLinks(
 					authorProperties["aliases"] = fileProperties.concatItems( "aliases", [ authorDisplayName, ],);
 					let sourceLink = `[[${args.targetFilepath.replace(/\.md$/, "")}|${entryTitle}]]`
                     let refPropName = settings.authorBiblioNoteOutlinkPropertyName || "references";
-					authorProperties[refPropName] = fileProperties
-						.concatItems(refPropName, [sourceLink]);
+                    authorProperties[refPropName] = fileProperties.concatItems(refPropName, [sourceLink]);
+					// console.log(">>>");
+					// console.log(`sourceLink = ${sourceLink}`);
+					// console.log(`refPropName = ${refPropName}`);
+					// console.log(`fileProperties[refPropName] = ${fileProperties.readPropertyList(refPropName)}`);
+					// console.log(`authorProperties[refPropName] = ${authorProperties[refPropName]}`);
+					// console.log("<<<");
 					updateFileProperties(
 						app,
 						targetFilepath,
@@ -475,10 +480,10 @@ function generateAuthorLinks(
 						bodyLines,
 						true,
 					)
-					.then( (result) => { } )
-					.catch( (error) => { } )
+					.then( (result) => {} )
+					.catch( (error) => {} )
 				})
-				.catch( (error) => {} )
+				.catch( (error) => {console.log(error)} )
             }
             return {
                 bareLink: `[[${authorFilePath}]]`,
@@ -490,7 +495,7 @@ function generateAuthorLinks(
 }
 
 
-function generateBiblioNote(
+async function generateBiblioNote(
 	app: App,
 	settings: BibliosidianSettings,
 	args: BibTexModalArgs,
@@ -499,21 +504,18 @@ function generateBiblioNote(
 	if (!args.targetFilepath || args.targetFilepath.startsWith(".") || args.targetFilepath === ".md") {
 		return
 	}
-	createOrOpenNote(
+	await createOrOpenNote(
 		this.app,
 		args.targetFilepath,
 		args.isOpenNote,
 		false,
 	)
-	.then( (result) => {
-		generateSourceFrontmatter(
-			app,
-			settings,
-			args,
-			citeKey,
-		)
-	})
-	.catch( (error) => {} )
+    await generateSourceFrontmatter(
+        app,
+        settings,
+        args,
+        citeKey,
+    )
 }
 
 function computeBibEntryTargetFilePath(
@@ -806,16 +808,17 @@ export type ProcessedBibTexResult = {
     fileLink: string,
 }
 
-export function generateBiblioNoteLibrary(
-	app: App,
-	bibFileData: string,
+export async function generateBiblioNoteLibrary(
+    app: App,
+    bibFileData: string,
     settings: BibliosidianSettings,
-): ProcessedBibTexResult[] {
+): Promise<ProcessedBibTexResult[]> {
     let processedResults: ProcessedBibTexResult[] = [];
     bibFileData = cleanBibFileData(bibFileData);
-	try {
+    try {
         const bibFile: BibFilePresenter = parseBibFile(bibFileData);
-        Object.keys(bibFile.entries$).forEach( (citeKey: string) => {
+        // Replace forEach with for...of to properly handle async operations
+        for (const citeKey of Object.keys(bibFile.entries$)) {
             let entry: BibEntry = bibFile.entries$[citeKey];
             let result: ProcessedBibTexResult = {
                 successful: false,
@@ -831,7 +834,7 @@ export function generateBiblioNoteLibrary(
                     processedBibTex.bibEntry,
                     settings,
                 )
-                generateBiblioNote(
+                await generateBiblioNote(
                     app,
                     settings,
                     {
@@ -841,46 +844,46 @@ export function generateBiblioNoteLibrary(
                         isOpenNote: false,
                     },
                     citeKey,
-                )
+                );
                 result.successful = true;
                 result.filePath = filePath;
                 result.fileLink = `[[${filePath.replace(/\.md$/,'')}]]`;
             }
-        });
-	} catch (error) {
+        }
+    } catch (error) {
         console.log(error);
         new Notice(`BibTex parsing error:\n\n${error}`);
-	}
+    }
     return processedResults;
 }
 
-export function createBiblioNote(
-	app: App,
-	settings: BibliosidianSettings,
-	defaultBibTex: string,
-	targetFilepath: string,
+export async function createBiblioNote(
+    app: App,
+    settings: BibliosidianSettings,
+    defaultBibTex: string,
+    targetFilepath: string,
     citeKey?: string,
-	isOpenNote: boolean = true,
-) {
-	const bibtexModal = new BibTexModal(
-		app,
-		settings,
-		(updatedArgs: BibTexModalArgs) => {
-			generateBiblioNote(
-				app,
-				settings,
-				updatedArgs,
-				undefined,
-			)
-		},
-		{
-			sourceBibTex: defaultBibTex,
-			targetFilepath: targetFilepath,
-			isCreateAuthorPages: settings.isCreateAuthorPages, // settings gives default, args overrides
-			isOpenNote: isOpenNote,
-		},
-	);
-	bibtexModal.open();
+    isOpenNote: boolean = true,
+): Promise<void> {
+    const bibtexModal = new BibTexModal(
+        app,
+        settings,
+        async (updatedArgs: BibTexModalArgs) => {
+            await generateBiblioNote(
+                app,
+                settings,
+                updatedArgs,
+                undefined,
+            );
+        },
+        {
+            sourceBibTex: defaultBibTex,
+            targetFilepath: targetFilepath,
+            isCreateAuthorPages: settings.isCreateAuthorPages, // settings gives default, args overrides
+            isOpenNote: isOpenNote,
+        },
+    );
+    bibtexModal.open();
 }
 
 

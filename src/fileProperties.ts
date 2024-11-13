@@ -113,6 +113,10 @@ export async function updateFileProperties(
 	newBodyLines: string[],
 	isClearEmpty: boolean = true,
 ) {
+    // console.log("-->");
+    // console.log(filePath);
+    // console.log(propertyValueMap);
+    // console.log("<--");
     const file = app.vault.getAbstractFileByPath(filePath);
     if (file instanceof TFile) {
         let currentContent = await app.vault.read(file);
@@ -168,8 +172,9 @@ export async function updateFileProperties(
             ... newBodyLines,
             frontMatterMatch ? currentContent.replace(frontmatterRegex, "") : currentContent, // previous body
         ]
-
+        // console.log(newFrontmatterStr)
         await app.vault.modify(file, newContentLines.join("\n"));
+        // console.log(this.readPropertyList("entry-bibliography"))
     } else {
         console.error("File not found");
     }

@@ -308,17 +308,14 @@ export default class Bibliosidian extends Plugin {
         modal.open();
     }
 
-	updateBiblioNoteLibraryFromBibTex() {
-		// let sourceBibTex = ""
-		// let processedResults = generateBiblioNoteLibrary(
-		// 	this.app,
-		// 	sourceBibTex,
-		// 	this.settings,
-		// )
-        const modal = new BibTexCaptureModal(this.app, (input: string) => {
+    updateBiblioNoteLibraryFromBibTex() {
+        const modal = new BibTexCaptureModal(
+            this.app,
+            // Added async here to make the function return a Promise<void>
+            async (input: string) => {
                 if (input) {
                     let sourceBibTex: string = input;
-                    let processedResults = generateBiblioNoteLibrary(
+                    let processedResults = await generateBiblioNoteLibrary(
                         this.app,
                         sourceBibTex,
                         this.settings,
@@ -330,9 +327,10 @@ export default class Bibliosidian extends Plugin {
                         new Notice("No results returned by BibTex parser");
                     }
                 }
-            });
-            modal.open();
-	}
+            }
+        );
+        modal.open();
+    }
 
 	updateBiblioNoteFromBibTex(isOpenNote: boolean = true) {
 		let defaultBibTex = ""
@@ -367,47 +365,47 @@ export default class Bibliosidian extends Plugin {
 
 
 class BibTexCaptureModal extends Modal {
-    private onSubmit: (input: string) => void;
-	private textArea: HTMLTextAreaElement;
+    private onSubmit: (input: string) => Promise<void>; // Changed to return Promise
+    private textArea: HTMLTextAreaElement;
 
-	constructor(app: App, onSubmit: (input: string) => void) {
-		super(app);
-		this.onSubmit = onSubmit;
-	}
+    constructor(app: App, onSubmit: (input: string) => Promise<void>) { // Updated constructor parameter
+        super(app);
+        this.onSubmit = onSubmit;
+    }
 
-	onOpen() {
-		const { contentEl } = this;
-		contentEl.createEl('h2', { text: 'Paste your BibTeX data' });
+    onOpen() {
+        const { contentEl } = this;
+        contentEl.createEl('h2', { text: 'Paste your BibTeX data' });
 
-		this.textArea = contentEl.createEl('textarea', {
-			cls: 'bibtex-modal-textarea'
-		});
-		this.textArea.setAttr('rows', '20');
-		this.textArea.setAttr('cols', '50');
+        this.textArea = contentEl.createEl('textarea', {
+            cls: 'bibtex-modal-textarea'
+        });
+        this.textArea.setAttr('rows', '20');
+        this.textArea.setAttr('cols', '50');
 
-		new Setting(contentEl)
-			.addButton((btn) =>
-				btn
-					.setButtonText('OK')
-					.setCta()
-					.onClick(() => {
-						this.onSubmit(this.textArea.value);
-						this.close();
-					})
-			)
-			.addButton((btn) =>
-				btn
-					.setButtonText('Cancel')
-					.onClick(() => {
-						this.close();
-					})
-			);
-	}
+        new Setting(contentEl)
+            .addButton((btn) =>
+                btn
+                    .setButtonText('OK')
+                    .setCta()
+                    .onClick(async () => { // Made onClick async
+                        await this.onSubmit(this.textArea.value);
+                        this.close();
+                    })
+            )
+            .addButton((btn) =>
+                btn
+                    .setButtonText('Cancel')
+                    .onClick(() => {
+                        this.close();
+                    })
+            );
+    }
 
-	onClose() {
-		const { contentEl } = this;
-		contentEl.empty();
-	}
+    onClose() {
+        const { contentEl } = this;
+        contentEl.empty();
+    }
 }
 
 
