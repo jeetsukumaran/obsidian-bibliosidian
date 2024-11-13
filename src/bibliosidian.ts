@@ -490,7 +490,6 @@ async function generateAuthorLinks(
     return results;
 }
 
-
 // async function generateAuthorLinks(
 //     app: App,
 // 	settings: BibliosidianSettings,
