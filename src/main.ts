@@ -96,34 +96,6 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		}));
 
 
-        new Setting(containerEl)
-            .setName("Bibliographic Note Tag Metadata")
-            .setDesc("Enter tags for bibliographic notes, one per line. No leading hash (#).")
-            .addTextArea(text => {
-                text.setPlaceholder("literature\nreference\nliterature/study")
-                    .setValue(this.plugin.settings.biblioNoteTagMetadata?.tags?.join("\n") || "")
-                    .onChange(async (value) => {
-                        this.plugin.settings.biblioNoteTagMetadata = normalizeTagInput(value);
-                        await this.plugin.saveSettings();
-                    });
-                text.inputEl.style.height = "8rem";
-            });
-
-        new Setting(containerEl)
-            .setName("Author Note Tag Metadata")
-            .setDesc("Enter tags for author notes, one per line. No leading hash (#).")
-            .addTextArea(text => {
-                text.setPlaceholder("author\nliterature/author\nimportant-author")
-                    .setValue(this.plugin.settings.authorNoteTagMetadata?.tags?.join("\n") || "")
-                    .onChange(async (value) => {
-                        this.plugin.settings.authorNoteTagMetadata = normalizeTagInput(value);
-                        await this.plugin.saveSettings();
-                    });
-                text.inputEl.style.height = "8rem";
-            });
-
-        containerEl.createEl("h2", { text: "Bibliographic notes" })
-
 		new Setting(containerEl)
 			.setName("Bibliographic notes folder")
 			.setDesc("Path to folder of bibliographic notes.")
@@ -153,6 +125,20 @@ class BibliosidianSettingTab extends PluginSettingTab {
 						this.plugin.settings.isCreateAuthorPages = value;
 						await this.plugin.saveSettings();
 		}));
+
+
+        new Setting(containerEl)
+            .setName("Bibliographic Note Tag Metadata")
+            .setDesc("Enter tags for bibliographic notes, one per line. No leading hash (#).")
+            .addTextArea(text => {
+                text.setPlaceholder("literature\nreference\nliterature/study")
+                    .setValue(this.plugin.settings.biblioNoteTagMetadata?.tags?.join("\n") || "")
+                    .onChange(async (value) => {
+                        this.plugin.settings.biblioNoteTagMetadata = normalizeTagInput(value);
+                        await this.plugin.saveSettings();
+                    });
+                text.inputEl.style.height = "8rem";
+            });
 
 		this.manageAdditionalPropertiesSettings(
 			containerEl,
@@ -190,6 +176,20 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					this.plugin.settings.authorBiblioNoteOutlinkPropertyName = value
 					await this.plugin.saveSettings();
 		}));
+
+        new Setting(containerEl)
+            .setName("Author Note Tag Metadata")
+            .setDesc("Enter tags for author notes, one per line. No leading hash (#).")
+            .addTextArea(text => {
+                text.setPlaceholder("author\nliterature/author\nimportant-author")
+                    .setValue(this.plugin.settings.authorNoteTagMetadata?.tags?.join("\n") || "")
+                    .onChange(async (value) => {
+                        this.plugin.settings.authorNoteTagMetadata = normalizeTagInput(value);
+                        await this.plugin.saveSettings();
+                    });
+                text.inputEl.style.height = "8rem";
+            });
+
 
 		this.manageAdditionalPropertiesSettings(
 			containerEl,
