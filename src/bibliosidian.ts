@@ -232,6 +232,21 @@ async function generateSourceFrontmatter(
 	}
     // refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 
+	// Add additional stuff
+	// could try and merge with existing but right now, the additional m
+	if (settings.biblioNoteTagMetadata) {
+	    if (false) {
+            refProperties = {
+                ... refProperties,
+                ... settings.biblioNoteTagMetadata
+            }
+        } else {
+            for (const propertyKey of Object.keys(settings.biblioNoteTagMetadata)) {
+                let value = settings.biblioNoteTagMetadata[propertyKey];
+                refProperties[propertyKey] = value
+            }
+        }
+	}
 
 	let entryTitle = `${inTextCitation} *${compositeTitle}*`
 	let unformattedEntryTitle = `${inTextCitation}: ${compositeTitle}`
