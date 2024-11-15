@@ -1,3 +1,4 @@
+
 import {
 	App,
 	CachedMetadata,
@@ -35,7 +36,10 @@ import {
 
 import {
     DataService,
+
 } from "./DataService";
+import { normalizeTagInput } from './utility'; // Ensure the path is correct
+
 
 import {
 	BibliosidianSettings,
@@ -91,7 +95,34 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 		}));
 
-		containerEl.createEl("h2", { text: "Bibliographic notes" })
+
+        new Setting(containerEl)
+            .setName("Bibliographic Note Tag Metadata")
+            .setDesc("Enter tags for bibliographic notes, one per line. No leading hash (#).")
+            .addTextArea(text => {
+                text.setPlaceholder("literature\nreference\nliterature/study")
+                    .setValue(this.plugin.settings.biblioNoteTagMetadata?.tags?.join("\n") || "")
+                    .onChange(async (value) => {
+                        this.plugin.settings.biblioNoteTagMetadata = normalizeTagInput(value);
+                        await this.plugin.saveSettings();
+                    });
+                text.inputEl.style.height = "8rem";
+            });
+
+        new Setting(containerEl)
+            .setName("Author Note Tag Metadata")
+            .setDesc("Enter tags for author notes, one per line. No leading hash (#).")
+            .addTextArea(text => {
+                text.setPlaceholder("author\nliterature/author\nimportant-author")
+                    .setValue(this.plugin.settings.authorNoteTagMetadata?.tags?.join("\n") || "")
+                    .onChange(async (value) => {
+                        this.plugin.settings.authorNoteTagMetadata = normalizeTagInput(value);
+                        await this.plugin.saveSettings();
+                    });
+                text.inputEl.style.height = "8rem";
+            });
+
+        containerEl.createEl("h2", { text: "Bibliographic notes" })
 
 		new Setting(containerEl)
 			.setName("Bibliographic notes folder")
@@ -356,6 +387,8 @@ export default class Bibliosidian extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settings.biblioNoteTagMetadata = normalizeTagInput(this.settings.biblioNoteTagMetadata?.tags?.join("\n") || "");
+    this.settings.authorNoteTagMetadata = normalizeTagInput(this.settings.authorNoteTagMetadata?.tags?.join("\n") || "");
 	}
 
 	async saveSettings() {
@@ -478,3 +511,4 @@ class BibTexResultsModal extends Modal {
 		contentEl.empty();
 	}
 }
+

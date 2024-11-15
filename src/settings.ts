@@ -8,6 +8,8 @@ import {
 import * as _path from "path";
 
 export interface BibliosidianSettings {
+    biblioNoteTagMetadata: FilePropertyData;
+    authorNoteTagMetadata: FilePropertyData;
 	mySetting: string;
 	biblioNoteSourcePropertiesPrefix: string;
 	biblioNoteSourceBibTex: string;
@@ -29,6 +31,8 @@ export interface BibliosidianSettings {
 }
 
 export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
+    biblioNoteTagMetadata: {},
+    authorNoteTagMetadata: {},
 	mySetting: 'default',
 	biblioNoteSourcePropertiesPrefix: "source-",
 	biblioNoteSourceBibTex: "entry-bibtex",

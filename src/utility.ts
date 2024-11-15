@@ -1,3 +1,5 @@
+import { FilePropertyData } from './fileProperties'; // Import the correct type
+
 import {
     App,
     TAbstractFile,
@@ -162,3 +164,30 @@ export async function ensureUniquePath(app: App, fullPath: string): Promise<stri
 
 //     return newFilePath;
 // }
+
+/**
+ * Normalize a multi-line string of tags into a dictionary with 'tags' as the key.
+ * Each tag is trimmed and leading '#' is removed if present.
+ * @param input Multi-line string of tags.
+ * @returns Normalized dictionary with 'tags' as key and list of tags as value.
+ */
+// export function normalizeTagInput(input: string): FilePropertyData {
+//     const tags = input.split('\n')
+//         .map(tag => tag.trim().replace(/^#+/, ''))
+//         .filter(tag => tag !== '');
+//     return { tags };
+// }
+
+/**
+ * Normalize a multi-line string of tags into a dictionary with 'tags' as the key.
+ * Each tag is trimmed and leading '#' is removed if present.
+ * @param input Multi-line string of tags.
+ * @returns Normalized dictionary with 'tags' as key and list of tags as value.
+ */
+export function normalizeTagInput(input: string): FilePropertyData {
+    const tags = input.split('\n')
+        .map(tag => tag.trim().replace(/^#+/, ''))
+        .filter(tag => tag !== '');
+    return { tags };
+}
+
