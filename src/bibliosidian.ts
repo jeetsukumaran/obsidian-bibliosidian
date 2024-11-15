@@ -215,38 +215,32 @@ async function generateSourceFrontmatter(
 	const updateDate = new Date();
 	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
 
-	// Add additional stuff
-	// could try and merge with existing but right now, the additional m
-	if (settings.biblioNoteAdditionalMetadata) {
-	    if (false) {
-            refProperties = {
-                ... refProperties,
-                ... settings.biblioNoteAdditionalMetadata
-            }
-        } else {
-            for (const propertyKey of Object.keys(settings.biblioNoteAdditionalMetadata)) {
-                let value = settings.biblioNoteAdditionalMetadata[propertyKey];
-                refProperties[propertyKey] = value
-            }
-        }
-	}
-    // refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 
-	// Add additional stuff
-	// could try and merge with existing but right now, the additional m
-	if (settings.biblioNoteTagMetadata) {
-	    if (false) {
-            refProperties = {
-                ... refProperties,
-                ... settings.biblioNoteTagMetadata
-            }
-        } else {
-            for (const propertyKey of Object.keys(settings.biblioNoteTagMetadata)) {
-                let value = settings.biblioNoteTagMetadata[propertyKey];
-                refProperties[propertyKey] = value
-            }
-        }
-	}
+    composeMetadata(
+        fileProperties,
+        refProperties,
+        settings.biblioNoteTagMetadata,
+        false,
+    )
+    composeMetadata(
+        fileProperties,
+        refProperties,
+        settings.biblioNoteAdditionalMetadata,
+        true,
+    )
+	// if (settings.biblionoteadditionalmetadata) {
+	//     if (false) {
+            // refProperties = {
+                // ... refProperties,
+                // ... settings.biblioNoteAdditionalMetadata
+            // }
+        // } else {
+            // for (const propertyKey of Object.keys(settings.biblioNoteAdditionalMetadata)) {
+                // let value = settings.biblioNoteAdditionalMetadata[propertyKey];
+                // refProperties[propertyKey] = value
+            // }
+        // }
+	// }
 
 	let entryTitle = `${inTextCitation} *${compositeTitle}*`
 	let unformattedEntryTitle = `${inTextCitation}: ${compositeTitle}`
@@ -487,9 +481,21 @@ async function generateAuthorLinks(
 
                 let fileProperties = new FileProperties(app, targetFilepath);
                 let authorProperties: FilePropertyData = {};
-                if (settings.authorsAdditionalMetadata) {
-                    authorProperties = { ...authorProperties, ...settings.authorsAdditionalMetadata };
-                }
+                // if (settings.authorsAdditionalMetadata) {
+                //     authorProperties = { ...authorProperties, ...settings.authorsAdditionalMetadata };
+                // }
+                composeMetadata(
+                    fileProperties,
+                    authorProperties,
+                    settings.authorNoteTagMetadata,
+                    false,
+                )
+                composeMetadata(
+                    fileProperties,
+                    authorProperties,
+                    settings.authorsAdditionalMetadata,
+                    true,
+                )
                 authorProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp]);
                 authorProperties["title"] = authorDisplayName;
                 authorProperties["aliases"] = fileProperties.concatItems("aliases", [authorDisplayName]);
@@ -516,89 +522,36 @@ async function generateAuthorLinks(
     return results;
 }
 
-// async function generateAuthorLinks(
-//     app: App,
-// 	settings: BibliosidianSettings,
-// 	args: BibTexModalArgs,
-//     entry: BibEntry,
-// 	entryTitle: string,
-// 	bodyLines: string[],
-//     creatorSets: Authors[],
-// ): Promise<{
-//     bareLink: string; aliasedLink: string;
-// }[]> {
-//     let results: { bareLink: string; aliasedLink: string; }[] = [];
-//     if (!entry) {
-//         return results;
-//     }
-//     creatorSets.forEach( async (creator: Authors) => {
-//         let authorLastNames: string[] = []
-// 		const updateDate = new Date();
-// 		const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
-//         // const authorField = entry.getField(authorFieldName);
-//         results = await creator.authors$.map(async (author: any) => {
-// 			let lastName = author?.lastNames ? author.lastNames.join(" ") : ""
-// 			if (lastName) {
-// 				authorLastNames.push(lastName)
-// 			}
-//             const {
-//                 displayName: authorDisplayName,
-//                 normalizedFileName: authorFileName,
-//             } = composeAuthorData(author);
-// 			let authorParentFolderPath: string;
-// 			if (settings.isSubdirectorizeAuthorsLexically) {
-// 				authorParentFolderPath = _path.join(settings.authorsParentFolderPath, authorFileName[0])
-// 			} else {
-// 				authorParentFolderPath = settings.authorsParentFolderPath
-// 			}
-//             const authorFilePath = _path.join(authorParentFolderPath, authorFileName);
-//             if (args.isCreateAuthorPages) {
-//                 let targetFilepath = authorFilePath;
-//                 if (!targetFilepath.endsWith(".md")) {
-// 					targetFilepath = targetFilepath + ".md"
-//                 }
-//                 await createOrOpenNote(
-//                     app,
-//                     targetFilepath,
-//                     false,
-//                     false,
-//                 )
-//                 let fileProperties = new FileProperties(this.app, targetFilepath)
-//                 let authorProperties: FilePropertyData = {};
-//                 // Add additional stuff
-//                 // could try and merge with existing but right now, the additional m
-//                 if (settings.authorsAdditionalMetadata) {
-//                     authorProperties = { ... authorProperties, ... settings.authorsAdditionalMetadata }
-//                 }
-//                 authorProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
-//                 authorProperties["title"] = authorDisplayName;
-//                 authorProperties["aliases"] = fileProperties.concatItems( "aliases", [ authorDisplayName, ],);
-//                 let sourceLink = `[[${args.targetFilepath.replace(/\.md$/, "")}|${entryTitle}]]`
-//                 let refPropName = settings.authorBiblioNoteOutlinkPropertyName || "references";
-//                 authorProperties[refPropName] = fileProperties.concatItems(refPropName, [sourceLink]);
-//                 // console.log(">>>");
-//                 // console.log(`sourceLink = ${sourceLink}`);
-//                 // console.log(`refPropName = ${refPropName}`);
-//                 // console.log(`fileProperties[refPropName] = ${fileProperties.readPropertyList(refPropName)}`);
-//                 // console.log(`authorProperties[refPropName] = ${authorProperties[refPropName]}`);
-//                 // console.log("<<<");
-//                 await updateFileProperties(
-//                     app,
-//                     targetFilepath,
-//                     authorProperties,
-//                     bodyLines,
-//                     true,
-//                 )
-//             }
-//             return {
-//                 bareLink: `[[${authorFilePath}]]`,
-//                 aliasedLink: `[[${authorFilePath}|${authorDisplayName}]]`,
-//             };
-//         });
-//     });
-//     return results;
-// }
-
+function composeMetadata(
+    fileProperties: FileProperties,
+    refProperties: FilePropertyData,
+    additionalMetadata: FilePropertyData,
+    isReplace: boolean,
+): FilePropertyData {
+    if (!additionalMetadata) {
+        return refProperties;
+    }
+    // return refProperties;
+    if (isReplace) {
+        refProperties = {
+            ... refProperties,
+            ... additionalMetadata,
+        }
+    } else {
+        for (const propertyKey of Object.keys(additionalMetadata)) {
+            let propertyValue = additionalMetadata[propertyKey];
+            if (Array.isArray(propertyValue)) {
+                refProperties[propertyKey] = fileProperties.concatItems(
+                    propertyKey,
+                    propertyValue,
+                )
+            } else {
+                refProperties[propertyKey] = propertyValue;
+            }
+        }
+    }
+    return refProperties;
+}
 
 async function generateBiblioNote(
 	app: App,
