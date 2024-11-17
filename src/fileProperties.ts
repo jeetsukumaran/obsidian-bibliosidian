@@ -179,11 +179,16 @@ export async function updateFileProperties(
             : currentContent.trim();
 
         // Combine everything
+        // let newContentLines = [
+        //     currentFrontmatter, // Keep the updated frontmatter
+        //     ...newBodyLines,    // Add new body lines
+        //     currentBody         // Add existing body
+        // ].filter(line => line.length > 0); // Remove empty lines
         let newContentLines = [
-            currentFrontmatter, // Keep the updated frontmatter
-            ...newBodyLines,    // Add new body lines
-            currentBody         // Add existing body
-        ].filter(line => line.length > 0); // Remove empty lines
+            ... currentFrontmatter, // Keep the updated frontmatter
+            ... newBodyLines,    // Add new body lines
+            ... currentBody         // Add existing body
+        ]
 
         // Update the file content
         await app.vault.modify(file, newContentLines.join("\n"));
