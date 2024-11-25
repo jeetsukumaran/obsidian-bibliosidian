@@ -284,9 +284,36 @@ async function generateSourceFrontmatter(
 	refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 
     refProperties[bibToYamlLabelFn("citekey")] = citationKey
-    Object.entries(creatorNames).forEach( async ([key, value]) => {
+    // await Object.entries(creatorNames).forEach( async ([key, value]) => {
+    //     if (!bibEntry) {
+    //         return;
+    //     }
+    //     let authorLinks = await generateAuthorLinks(
+    //         app,
+    //         settings,
+    //         args,
+    //         bibEntry,
+    //         `${inTextCitation} ${compositeTitle}`,
+    //         // quotedAbstractLines,
+    //         [],
+    //         [value],
+    //     )
+    //     let authorBareLinks = authorLinks.map( (link) => link.bareLink );
+    //     if (!key.endsWith("s")) {
+    //         key = key + "s" // authors not author
+    //     }
+    //     let refKey: string = bibToYamlLabelFn(key);
+    //     refProperties[refKey] = authorLinks.map( (link) => link.aliasedLink );
+    //     console.log("Here");
+    //     console.log(refKey);
+    //     console.log(refProperties[refKey]);
+    //     // refProperties["entry-parents"].push(... fileProperties.concatItems("entry-parents", authorBareLinks))
+    // })
+    // console.log(`now: ${refProperties["source-authors"]}`);
+
+    for (const [key, value] of Object.entries(creatorNames)) {
         if (!bibEntry) {
-            return;
+            continue;
         }
         let authorLinks = await generateAuthorLinks(
             app,
@@ -294,19 +321,16 @@ async function generateSourceFrontmatter(
             args,
             bibEntry,
             `${inTextCitation} ${compositeTitle}`,
-            // quotedAbstractLines,
             [],
             [value],
-        )
-        let authorBareLinks = authorLinks.map( (link) => link.bareLink );
-        if (!key.endsWith("s")) {
-            key = key + "s" // authors not author
-        }
-        let refKey: string = bibToYamlLabelFn(key);
-        refProperties[refKey] = authorLinks.map( (link) => link.aliasedLink );
-        // refProperties["entry-parents"].push(... fileProperties.concatItems("entry-parents", authorBareLinks))
-    })
-
+        );
+        let authorBareLinks = authorLinks.map((link) => link.bareLink);
+        let refKey: string = bibToYamlLabelFn(key.endsWith("s") ? key : key + "s");
+        refProperties[refKey] = authorLinks.map((link) => link.aliasedLink);
+        console.log("Here");
+        console.log(refKey);
+        console.log(refProperties[refKey]);
+    }
 
     refProperties[bibToYamlLabelFn("date")] = sourceYear
 
@@ -347,7 +371,6 @@ async function generateSourceFrontmatter(
     // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
     const fa = getFieldAsStringArray(bibEntry, "file");
     refProperties[bibToYamlLabelFn("files")] = fa
-
     updateFileProperties(
     	this.app,
     	args.targetFilepath,

@@ -30,6 +30,90 @@ export type FilePropertyData = {
 };
 
 
+export async function updateFileProperties(
+    app: App,
+    filePath: string,
+    propertyValueMap: FilePropertyData,
+    newBodyLines: string[],
+    isClearEmpty: boolean = true,
+) {
+    const file = app.vault.getAbstractFileByPath(filePath);
+    if (!(file instanceof TFile)) {
+        console.error("File not found");
+        return;
+    }
+
+    // Read current content and parse frontmatter
+    let currentContent = await app.vault.read(file);
+    let parsedFrontmatter: FilePropertyData = {};
+    const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+    const frontMatterMatch = currentContent.match(frontmatterRegex);
+
+    if (frontMatterMatch) {
+        try {
+            parsedFrontmatter = parseYaml(frontMatterMatch[1]);
+        } catch (err) {
+            console.error(`Malformed YAML frontmatter in file '${filePath}':`, err);
+            new Notice(`Malformed YAML frontmatter in file '${filePath}': ${err}`);
+            return;
+        }
+    }
+
+    // Deep clone the propertyValueMap to avoid reference issues
+    const newProperties = JSON.parse(JSON.stringify(propertyValueMap));
+
+    // Merge properties, with special handling for arrays
+    for (const [key, newValue] of Object.entries(newProperties)) {
+        if (newValue === null || newValue === undefined) {
+            if (isClearEmpty && key in parsedFrontmatter) {
+                delete parsedFrontmatter[key];
+            }
+            continue;
+        }
+
+        const existingValue = parsedFrontmatter[key];
+
+        if (Array.isArray(newValue)) {
+            if (Array.isArray(existingValue)) {
+                // Both are arrays - merge and deduplicate
+                parsedFrontmatter[key] = Array.from(new Set([...existingValue, ...newValue]));
+            } else if (existingValue) {
+                // Existing is scalar, new is array - combine into array
+                parsedFrontmatter[key] = Array.from(new Set([existingValue, ...newValue]));
+            } else {
+                // No existing value - use new array
+                parsedFrontmatter[key] = [...newValue];
+            }
+        } else if (Array.isArray(existingValue)) {
+            // Existing is array, new is scalar - append to array
+            parsedFrontmatter[key] = Array.from(new Set([...existingValue, newValue]));
+        } else {
+            // Both are scalar values or no existing value
+            parsedFrontmatter[key] = newValue;
+        }
+    }
+
+    // Generate new frontmatter
+    const newFrontmatter = `---\n${stringifyYaml(parsedFrontmatter, {
+        doubleQuotedMinMultiLineLength: 900000,
+        lineWidth: 0,
+    }).trim()}\n---`;
+
+    // Combine content
+    const currentBody = frontMatterMatch
+        ? currentContent.replace(frontmatterRegex, '').trim()
+        : currentContent.trim();
+
+    const newContent = [
+        newFrontmatter,
+        ...newBodyLines,
+        currentBody
+    ].filter(line => line).join('\n');
+
+    // Update file
+    await app.vault.modify(file, newContent);
+}
+
 export class FileProperties {
 	app: App
 	filePath: string;
@@ -113,31 +197,7 @@ export async function updateFrontMatterLists(
     isAddUpdateNotice: boolean = false,
 ) {
     await app.fileManager.processFrontMatter(file, (frontmatter: { [key: string]: any }) => {
-        // Update each property in the map
         Object.entries(propertyValueMap).forEach(([propertyName, newValue]) => {
-            // let currentValue = frontmatter[propertyName];
-            // let mergedValue = [];
-
-            // // Handle existing value
-            // if (currentValue !== null && currentValue !== undefined) {
-            //     if (Array.isArray(currentValue)) {
-            //         mergedValue.push(...currentValue);
-            //     } else {
-            //         mergedValue.push(currentValue);
-            //     }
-            // }
-
-            // // Handle new value
-            // if (newValue !== null && newValue !== undefined) {
-            //     if (Array.isArray(newValue)) {
-            //         mergedValue.push(...newValue);
-            //     } else {
-            //         mergedValue.push(newValue);
-            //     }
-            // }
-
-            // // Update frontmatter with deduplicated array
-            // frontmatter[propertyName] = Array.from(new Set(mergedValue));
             frontmatter[propertyName] = newValue;
         });
 
@@ -148,132 +208,6 @@ export async function updateFrontMatterLists(
         new Notice(`Failed to update front matter: ${error.message}`);
     });
 }
-
-export async function updateFileProperties(
-    app: App,
-    filePath: string,
-    propertyValueMap: FilePropertyData,
-    newBodyLines: string[],
-    isClearEmpty: boolean = true,
-) {
-    const file = app.vault.getAbstractFileByPath(filePath);
-    if (!(file instanceof TFile)) {
-        console.error("File not found");
-        return;
-    }
-
-    // First update the frontmatter
-    await updateFrontMatterLists(app, file, propertyValueMap, false);
-
-    // Only process body if there are new lines to add
-    if (newBodyLines && newBodyLines.length > 0) {
-        // Read the current content (which now has the updated frontmatter)
-        let currentContent = await app.vault.read(file);
-        const frontmatterRegex = /^(---\n[\s\S]*?\n---)/;
-        const frontMatterMatch = currentContent.match(frontmatterRegex);
-
-        // Extract the current frontmatter and body
-        const currentFrontmatter = frontMatterMatch ? frontMatterMatch[1] : '';
-        const currentBody = frontMatterMatch
-            ? currentContent.replace(frontmatterRegex, '').trim()
-            : currentContent.trim();
-
-        // Combine everything
-        // let newContentLines = [
-        //     currentFrontmatter, // Keep the updated frontmatter
-        //     ... newBodyLines,    // Add new body lines
-        //     currentBody         // Add existing body
-        // ].filter(line => line.length > 0); // Remove empty lines
-        let newContentLines = [
-            currentFrontmatter.length > 0 ? currentFrontmatter : null,
-            ...newBodyLines,
-            currentBody.length > 0 ? currentBody : null
-        ].filter((line): line is string => line !== null);
-
-        // Update the file content
-        await app.vault.modify(file, newContentLines.join("\n"));
-    }
-}
-
-// export async function updateFileProperties(
-//     app: App,
-//     filePath: string,
-//     propertyValueMap: FilePropertyData,
-//     newBodyLines: string[],
-//     isClearEmpty: boolean = true,
-// ) {
-//     const file = app.vault.getAbstractFileByPath(filePath);
-//     if (!(file instanceof TFile)) {
-//         console.error("File not found");
-//         return;
-//     }
-
-//     let currentContent = await app.vault.read(file);
-//     let parsedFrontmatter: FilePropertyData = {};
-//     const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
-//     const frontMatterMatch = currentContent.match(frontmatterRegex);
-
-//     if (frontMatterMatch) {
-//         let frontmatter = frontMatterMatch[1];
-//         try {
-//             parsedFrontmatter = { ...parseYaml(frontmatter) };
-//         } catch (err) {
-//             console.log(err);
-//             console.log(frontmatter);
-//             new Notice(`Malformed existing YAML frontmatter in file '${filePath}': ${err}`);
-//             return;
-//         }
-//     }
-
-//     // Handle each property, merging arrays appropriately
-//     Object.entries(propertyValueMap).forEach(([key, value]) => {
-//         if (value === null || value === undefined) {
-//             if (isClearEmpty && parsedFrontmatter[key]) {
-//                 delete parsedFrontmatter[key];
-//             }
-//         } else {
-//             // If both existing and new values are arrays, concatenate them
-//             if (Array.isArray(value) && Array.isArray(parsedFrontmatter[key])) {
-//                 // Create a Set to remove duplicates, then convert back to array
-//                 parsedFrontmatter[key] = Array.from(new Set([
-//                     ...parsedFrontmatter[key],
-//                     ...value
-//                 ]));
-//             } else if (Array.isArray(value) && parsedFrontmatter[key]) {
-//                 // If new value is array but existing is single value, combine them
-//                 parsedFrontmatter[key] = Array.from(new Set([
-//                     parsedFrontmatter[key],
-//                     ...value
-//                 ]));
-//             } else if (Array.isArray(parsedFrontmatter[key]) && !Array.isArray(value)) {
-//                 // If existing value is array but new is single value, append it
-//                 parsedFrontmatter[key] = Array.from(new Set([
-//                     ...parsedFrontmatter[key],
-//                     value
-//                 ]));
-//             } else {
-//                 // For non-array values or when no existing value, just set it
-//                 parsedFrontmatter[key] = value;
-//             }
-//         }
-//     });
-
-//     let newFrontmatterStr: string = `---\n${stringifyYaml(
-//         parsedFrontmatter,
-//         {
-//             doubleQuotedMinMultiLineLength: 900000,
-//             lineWidth: 0,
-//         }
-//     ).trim()}\n---`;
-
-//     let newContentLines: string[] = [
-//         newFrontmatterStr,
-//         ...newBodyLines,
-//         frontMatterMatch ? currentContent.replace(frontmatterRegex, "") : currentContent,
-//     ];
-
-//     await app.vault.modify(file, newContentLines.join("\n"));
-// }
 
 export function createFilePropertyDataTable(containerEl: HTMLElement, filePropertyData: FilePropertyData): HTMLTableElement {
     // Create the table element
