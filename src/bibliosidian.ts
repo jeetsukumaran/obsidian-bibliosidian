@@ -272,9 +272,9 @@ async function generateSourceFrontmatter(
         // "## Citations",
         // "",
         // ... citationStrings,
-        "",
+        "\n",
         "## Abstract",
-        "",
+        "\n",
         ... quotedAbstractLines,
         "",
     ];
