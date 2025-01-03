@@ -108,7 +108,7 @@ export async function updateFileProperties(
         newFrontmatter,
         ...newBodyLines,
         currentBody
-    ].filter(line => line).join('\n');
+    ].join('\n');
 
     // Update file
     await app.vault.modify(file, newContent);
