@@ -477,7 +477,7 @@ class BibTexResultsModal extends Modal {
 
 		this.createReadonlyTextArea(contentEl, 'Reference list:', referenceList);
 		this.createReadonlyTextArea(contentEl, 'Citations:', successfulCitations);
-		this.createReadonlyTextArea(contentEl, 'File links:', successfulFileLinks);
+		// this.createReadonlyTextArea(contentEl, 'File links:', successfulFileLinks);
 		this.createReadonlyTextArea(contentEl, 'Unsuccessfully parsed citation keys:', unsuccessfulCiteKeys);
 
 		new Setting(contentEl)

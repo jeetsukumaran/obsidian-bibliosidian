@@ -904,7 +904,7 @@ export async function generateBiblioNoteLibrary(
             console.log(entry);
             console.log(entry.title$);
             let compositeTitle = resolveTitle(entry);
-            let formattedItem = `- [@${citeKey}]: *${compositeTitle}*`;
+            let formattedItem = `- [@${citeKey}]: *${compositeTitle}*.`;
             let result: ProcessedBibTexResult = {
                 successful: false,
                 citeKey: citeKey,
