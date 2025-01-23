@@ -37,7 +37,6 @@ const fileExists = promisify(fs.access);
 async function copyFileAsync(source: string, destination: string): Promise<void> {
     try {
         await copyFile(source, destination);
-        // console.log(`File copied from ${source} to ${destination}`);
     } catch (error) {
         // console.error('Error occurred:', error);
     }

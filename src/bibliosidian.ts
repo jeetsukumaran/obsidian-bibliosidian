@@ -125,6 +125,31 @@ function composeAuthorData(author: Author): {
     }
 }
 
+function cleanText(s: string | undefined): string {
+    if (s) {
+        return s
+            .trim()
+            .replace(/\n/g, " ")
+            .replace(/\s+/g, " ")
+            .replace(/``/g, '"')
+            .replace(/`/g, "'")
+            .replace(/<i>/g, "*")
+            .replace(/<\/i>/g, "*")
+    } else {
+        return ""
+    }
+}
+
+function resolveTitle(bibEntry: BibEntry): string {
+	let bibTitle = bibEntry.title$ || cleanText(bibEntry.getFieldAsString("title")?.toString());
+	let titleParts = [
+		cleanText(bibTitle),
+		cleanText(bibEntry.getFieldAsString("subtitle")?.toString()),
+	].filter( (p) => p );
+	let compositeTitle = cleanText(titleParts.join(": "));
+	return compositeTitle;
+}
+
 async function generateSourceFrontmatter(
 	app: App,
 	settings: BibliosidianSettings,
@@ -178,27 +203,7 @@ async function generateSourceFrontmatter(
 
     };
 
-    let cleanText = (s: string | undefined): string => {
-        if (s) {
-            return s
-                .trim()
-                .replace(/\n/g, " ")
-                .replace(/\s+/g, " ")
-                .replace(/``/g, '"')
-                .replace(/`/g, "'")
-                .replace(/<i>/g, "*")
-                .replace(/<\/i>/g, "*")
-        } else {
-            return ""
-        }
-    }
-
-	let bibTitle = bibEntry.title$ || cleanText(bibEntry.getFieldAsString("title")?.toString())
-	let titleParts = [
-		cleanText(bibTitle),
-		cleanText(bibEntry.getFieldAsString("subtitle")?.toString()),
-	].filter( (p) => p )
-	let compositeTitle = cleanText(titleParts.join(": "))
+	let compositeTitle = resolveTitle(bibEntry);
 	let sourceYear = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
 	let inTextCitationYear = sourceYear
 	let inTextCitationAuthors: string;
@@ -304,12 +309,8 @@ async function generateSourceFrontmatter(
     //     }
     //     let refKey: string = bibToYamlLabelFn(key);
     //     refProperties[refKey] = authorLinks.map( (link) => link.aliasedLink );
-    //     console.log("Here");
-    //     console.log(refKey);
-    //     console.log(refProperties[refKey]);
     //     // refProperties["entry-parents"].push(... fileProperties.concatItems("entry-parents", authorBareLinks))
     // })
-    // console.log(`now: ${refProperties["source-authors"]}`);
 
     for (const [key, value] of Object.entries(creatorNames)) {
         if (!bibEntry) {
@@ -327,9 +328,6 @@ async function generateSourceFrontmatter(
         let authorBareLinks = authorLinks.map((link) => link.bareLink);
         let refKey: string = bibToYamlLabelFn(key.endsWith("s") ? key : key + "s");
         refProperties[refKey] = authorLinks.map((link) => link.aliasedLink);
-        console.log("Here");
-        console.log(refKey);
-        console.log(refProperties[refKey]);
     }
 
     refProperties[bibToYamlLabelFn("date")] = sourceYear
@@ -885,8 +883,10 @@ export type ProcessedBibTexResult = {
     successful: boolean,
     citeKey: string,
     citation: string,
+    title: string,
     filePath: string,
     fileLink: string,
+    formattedItem: string,
 }
 
 export async function generateBiblioNoteLibrary(
@@ -901,12 +901,18 @@ export async function generateBiblioNoteLibrary(
         // Replace forEach with for...of to properly handle async operations
         for (const citeKey of Object.keys(bibFile.entries$)) {
             let entry: BibEntry = bibFile.entries$[citeKey];
+            console.log(entry);
+            console.log(entry.title$);
+            let compositeTitle = resolveTitle(entry);
+            let formattedItem = `- [@${citeKey}]: *${compositeTitle}*`;
             let result: ProcessedBibTexResult = {
                 successful: false,
                 citeKey: citeKey,
                 citation: `[@${citeKey}]`,
+                title: compositeTitle,
                 filePath: "",
                 fileLink: "",
+                formattedItem: formattedItem,
             };
             processedResults.push(result);
             let processedBibTex = postProcessBibEntry(entry);

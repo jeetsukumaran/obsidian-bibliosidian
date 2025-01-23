@@ -452,6 +452,12 @@ class BibTexResultsModal extends Modal {
 
 	onOpen() {
 		const { contentEl } = this;
+
+		const referenceList = this.processedResults
+			.filter(result => result.successful)
+			.map(result => result.formattedItem)
+			.join('\n');
+
 		const successfulFileLinks = this.processedResults
 			.filter(result => result.successful)
 			.map(result => `  - "${result.fileLink}"`)
@@ -469,6 +475,7 @@ class BibTexResultsModal extends Modal {
 
 		contentEl.createEl('h2', { text: 'Processed BibTeX Results' });
 
+		this.createReadonlyTextArea(contentEl, 'Reference list:', referenceList);
 		this.createReadonlyTextArea(contentEl, 'Citations:', successfulCitations);
 		this.createReadonlyTextArea(contentEl, 'File links:', successfulFileLinks);
 		this.createReadonlyTextArea(contentEl, 'Unsuccessfully parsed citation keys:', unsuccessfulCiteKeys);
