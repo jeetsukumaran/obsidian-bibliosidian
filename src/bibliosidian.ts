@@ -885,8 +885,9 @@ export type ProcessedBibTexResult = {
     citation: string,
     title: string,
     filePath: string,
+    linkFilePath: string,
     fileLink: string,
-    formattedItem: string,
+    // formattedItem: string,
 }
 
 export async function generateBiblioNoteLibrary(
@@ -910,8 +911,9 @@ export async function generateBiblioNoteLibrary(
                 citation: `[@${citeKey}]`,
                 title: compositeTitle,
                 filePath: "",
+                linkFilePath: "",
                 fileLink: "",
-                formattedItem: "",
+                // formattedItem: "",
             };
             processedResults.push(result);
             let processedBibTex = postProcessBibEntry(entry);
@@ -933,9 +935,9 @@ export async function generateBiblioNoteLibrary(
                 );
                 result.successful = true;
                 result.filePath = filePath;
-                let linkFilePath = filePath.replace(/\.md$/,'');
-                result.fileLink = `[[${linkFilePath}]]`;
-                result.formattedItem = `- [@${citeKey}]: *[[${linkFilePath}|${compositeTitle}]]*.`;
+                result.linkFilePath = filePath.replace(/\.md$/,'');
+                result.fileLink = `[[${result.linkFilePath}]]`;
+                // result.formattedItem = `- [@${citeKey}]: *[[${linkFilePath}|${compositeTitle}]]*.`;
                 // result.formattedItem = `- [@${citeKey}]: *${compositeTitle}*.`;
             }
         }

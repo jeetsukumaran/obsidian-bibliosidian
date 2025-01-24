@@ -453,10 +453,20 @@ class BibTexResultsModal extends Modal {
     onOpen() {
         const { contentEl } = this;
 
+        let filteredResults = this.processedResults
+                .filter(result => result.successful);
         let valueGroups = [
-            this.processedResults
-                .filter(result => result.successful)
-                .map(result => result.formattedItem)
+            filteredResults
+                .map(result => `- [@${result.citeKey}]: *[[${result.linkFilePath}|${result.title}]]*.`)
+                .join('\n'),
+            filteredResults
+                .map(result => `- "[[${result.linkFilePath}]]*"`)
+                .join('\n'),
+            filteredResults
+                .map(result => `- [@${result.citeKey}]`)
+                .join('\n'),
+            filteredResults
+                .map(result => `- "[[${result.linkFilePath}|${result.title}]]"`)
                 .join('\n'),
         ];
         let currentGroupIndex = 0;
