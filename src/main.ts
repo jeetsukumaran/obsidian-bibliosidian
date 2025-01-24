@@ -450,68 +450,107 @@ class BibTexResultsModal extends Modal {
 		this.processedResults = processedResults;
 	}
 
-	onOpen() {
-		const { contentEl } = this;
+    onOpen() {
+        const { contentEl } = this;
 
-		const referenceList = this.processedResults
-			.filter(result => result.successful)
-			.map(result => result.formattedItem)
-			.join('\n');
+        const referenceList = this.processedResults
+        .filter(result => result.successful)
+        .map(result => result.formattedItem)
+        .join('\n');
 
-		const successfulFileLinks = this.processedResults
-			.filter(result => result.successful)
-			.map(result => `  - "${result.fileLink}"`)
-			.join('\n');
+        const citationKeyList = this.processedResults
+        .filter(result => result.successful)
+        .map(result => `  - "${result.fileLink}"`)
+        .join('\n');
 
-		const successfulCitations = this.processedResults
-			.filter(result => result.successful)
-			.map(result => `- ${result.citation}`)
-			.join('\n');
+        let valueGroups = [referenceList, citationKeyList];
+        let currentGroupIndex = 0;
 
-		const unsuccessfulCiteKeys = this.processedResults
-			.filter(result => !result.successful)
-			.map(result => `${result.citeKey}\n`)
-			.join('\n');
+        contentEl.createEl('h2', { text: 'Processed BibTeX Results' });
+        let referencesTextArea = this.createReadonlyTextArea(contentEl, 'References', valueGroups[currentGroupIndex]);
 
-		contentEl.createEl('h2', { text: 'Processed BibTeX Results' });
+        new Setting(contentEl)
+            .addButton((btn) =>
+                btn
+                .setButtonText('Compose')
+                .onClick(() => {
+                    // Cycle through valueGroups
+                    currentGroupIndex = (currentGroupIndex + 1) % valueGroups.length;
+                    referencesTextArea.value = valueGroups[currentGroupIndex];
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Copy')
+                .onClick(async () => {
+                    // Copy to clipboard
+                    await navigator.clipboard.writeText(referencesTextArea.value);
+                    new Notice('Copied to clipboard');
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Copy and close')
+                .onClick(async () => {
+                    // Copy to clipboard
+                    await navigator.clipboard.writeText(referencesTextArea.value);
+                    new Notice('Copied to clipboard');
+                    // Close the modal
+                    this.close();
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Close')
+                .setCta()
+                .onClick(() => {
+                    this.close();
+                })
+            );
+    }
 
-		this.createReadonlyTextArea(contentEl, 'Reference list:', referenceList);
-		this.createReadonlyTextArea(contentEl, 'Citations:', successfulCitations);
-		// this.createReadonlyTextArea(contentEl, 'File links:', successfulFileLinks);
-		this.createReadonlyTextArea(contentEl, 'Unsuccessfully parsed citation keys:', unsuccessfulCiteKeys);
-
-		new Setting(contentEl)
-			.addButton((btn) =>
-				btn
-					.setButtonText('OK')
-					.setCta()
-					.onClick(() => {
-						this.close();
-					})
-			);
-	}
-
-	createReadonlyTextArea(container: HTMLElement, label: string, value: string) {
-		container.createEl('h3', { text: label });
-		const textArea = container.createEl('textarea', {
-			cls: 'bibtex-results-textarea',
-		});
+    createReadonlyTextArea(container: HTMLElement, label: string, value: string): HTMLTextAreaElement {
+        // container.createEl('h3', { text: label });
+        // const textArea = container.createEl('textarea', {
+        //     cls: 'bibtex-results-textarea',
+        // });
+        // textArea.value = value;
+        // textArea.setAttr('rows', '10');
+        // textArea.setAttr('cols', '50');
+        // textArea.setAttr('readonly', 'true');
+        container.createEl('h3', { text: label });
+        const textArea = document.createElement('textarea');
+        textArea.classList.add('bibtex-results-textarea');
         textArea.value = value;
-		textArea.setAttr('rows', '10');
-		textArea.setAttr('cols', '50');
-        textArea.setAttr('readonly', 'true');
+        textArea.rows = 10;
+        textArea.cols = 50;
+        textArea.readOnly = true;
+        container.appendChild(textArea);
+        return textArea;
+    }
 
-		new Setting(container)
-			.addButton((btn) =>
-				btn
-					.setButtonText('Copy')
-					.onClick(() => {
-						navigator.clipboard.writeText(value).then(() => {
-							new Notice('Copied to clipboard');
-						});
-					})
-			);
-	}
+
+	// createReadonlyTextArea(container: HTMLElement, label: string, value: string) {
+	// 	container.createEl('h3', { text: label });
+	// 	const textArea = container.createEl('textarea', {
+	// 		cls: 'bibtex-results-textarea',
+	// 	});
+        // textArea.value = value;
+	// 	textArea.setAttr('rows', '10');
+	// 	textArea.setAttr('cols', '50');
+        // textArea.setAttr('readonly', 'true');
+
+	// 	new Setting(container)
+	// 		.addButton((btn) =>
+	// 			btn
+	// 				.setButtonText('Copy')
+	// 				.onClick(() => {
+	// 					navigator.clipboard.writeText(value).then(() => {
+	// 						new Notice('Copied to clipboard');
+	// 					});
+	// 				})
+	// 		);
+	// }
 
 	onClose() {
 		const { contentEl } = this;

@@ -254,14 +254,14 @@ async function generateSourceFrontmatter(
     let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
     let basenameWithoutExtension: string = _path.basename(args.targetFilepath, ".md");
     let citationStrings: string[] = [
-        `[@${citationKey}]`,
+        `[@${citeKey}]: *[[${internalLinkPath}|${compositeTitle}]]*`,
         `@${citationKey}`,
+        `[@${citationKey}]`,
         `[[@${citationKey}]]`,
         `${inTextCitation}`,
         `"[[${internalLinkPath}]]"`,
         `[[${internalLinkPath}|${unformattedEntryTitle}]]`,
         `[[${internalLinkPath}|@${citationKey}]]`,
-        `"- [@${citationKey}]"`
     ];
     refProperties["cite-as"] = citationStrings;
     let quotedAbstractLines: string[] = [
@@ -933,8 +933,10 @@ export async function generateBiblioNoteLibrary(
                 );
                 result.successful = true;
                 result.filePath = filePath;
-                result.fileLink = `[[${filePath.replace(/\.md$/,'')}]]`;
-                result.formattedItem = `- [@${citeKey}]: *[[${result.fileLink}|${compositeTitle}]]*.`;
+                let linkFilePath = filePath.replace(/\.md$/,'');
+                result.fileLink = `[[${linkFilePath}]]`;
+                result.formattedItem = `- [@${citeKey}]: *[[${linkFilePath}|${compositeTitle}]]*.`;
+                // result.formattedItem = `- [@${citeKey}]: *${compositeTitle}*.`;
             }
         }
     } catch (error) {
