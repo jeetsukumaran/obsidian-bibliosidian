@@ -453,17 +453,12 @@ class BibTexResultsModal extends Modal {
     onOpen() {
         const { contentEl } = this;
 
-        const referenceList = this.processedResults
-        .filter(result => result.successful)
-        .map(result => result.formattedItem)
-        .join('\n');
-
-        const citationKeyList = this.processedResults
-        .filter(result => result.successful)
-        .map(result => `  - "${result.fileLink}"`)
-        .join('\n');
-
-        let valueGroups = [referenceList, citationKeyList];
+        let valueGroups = [
+            this.processedResults
+                .filter(result => result.successful)
+                .map(result => result.formattedItem)
+                .join('\n'),
+        ];
         let currentGroupIndex = 0;
 
         contentEl.createEl('h2', { text: 'Processed BibTeX Results' });
@@ -472,9 +467,16 @@ class BibTexResultsModal extends Modal {
         new Setting(contentEl)
             .addButton((btn) =>
                 btn
-                .setButtonText('Compose')
+                .setButtonText('Prev format')
                 .onClick(() => {
-                    // Cycle through valueGroups
+                    currentGroupIndex = currentGroupIndex == 0 ? valueGroups.length - 1 : currentGroupIndex -1;
+                    referencesTextArea.value = valueGroups[currentGroupIndex];
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Next format')
+                .onClick(() => {
                     currentGroupIndex = (currentGroupIndex + 1) % valueGroups.length;
                     referencesTextArea.value = valueGroups[currentGroupIndex];
                 })
