@@ -904,7 +904,6 @@ export async function generateBiblioNoteLibrary(
             console.log(entry);
             console.log(entry.title$);
             let compositeTitle = resolveTitle(entry);
-            let formattedItem = `- [@${citeKey}]: *${compositeTitle}*.`;
             let result: ProcessedBibTexResult = {
                 successful: false,
                 citeKey: citeKey,
@@ -912,7 +911,7 @@ export async function generateBiblioNoteLibrary(
                 title: compositeTitle,
                 filePath: "",
                 fileLink: "",
-                formattedItem: formattedItem,
+                formattedItem: "",
             };
             processedResults.push(result);
             let processedBibTex = postProcessBibEntry(entry);
@@ -935,6 +934,7 @@ export async function generateBiblioNoteLibrary(
                 result.successful = true;
                 result.filePath = filePath;
                 result.fileLink = `[[${filePath.replace(/\.md$/,'')}]]`;
+                result.formattedItem = `- [@${citeKey}]: *[[${result.fileLink}|${compositeTitle}]]*.`;
             }
         }
     } catch (error) {
