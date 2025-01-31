@@ -400,7 +400,7 @@ class BibTexCaptureModal extends Modal {
         contentEl.createEl('h2', { text: 'Paste your BibTeX data' });
 
         this.textArea = contentEl.createEl('textarea', {
-            cls: 'bibtex-modal-textarea'
+            cls: 'bibliosidian-input-textarea'
         });
         // textArea.classList.add('bibtex-results-textarea');
         this.textArea.classList.add('bibliosidian-full-textarea');

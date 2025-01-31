@@ -1,11 +1,6 @@
-/*
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
-
-bibliosidian-full-textarea {
+.bibliosidian-full-textarea {
+  height: 50vh;
+  width: 100%;
+  box-sizing: border-box;
 }
