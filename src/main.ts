@@ -276,10 +276,10 @@ export default class Bibliosidian extends Plugin {
 		// this.addRibbonIcon("book-up-2", "Create or update a single bibliographic note from BibTeX data", () => {
 		// 	this.updateBiblioNoteFromBibTex()
 		// });
-		this.addRibbonIcon("library-square", "Import or update from BibTeX data", () => {
+		this.addRibbonIcon("scroll-text", "Import or update from BibTeX data", () => {
 			this.updateBiblioNoteLibraryFromBibTex()
 		});
-		this.addRibbonIcon("book-plus", "Attach a holding to the current note", () => {
+		this.addRibbonIcon("file-plus-2", "Attach a holding to the current note", () => {
 			this.addHolding()
 		});
 
