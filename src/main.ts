@@ -289,11 +289,6 @@ export default class Bibliosidian extends Plugin {
 			callback: () => this.updateBiblioNoteLibraryFromBibTex(),
 		});
 
-		// this.addCommand({
-		// 	id: 'update-biblionote-from-bibtex',
-		// 	name: 'Create or update a single bibliographic note from BibTeX data',
-		// 	callback: () => this.updateBiblioNoteFromBibTex(),
-		// });
 
 		this.addCommand({
 			id: 'add-biblionote-holding',
@@ -372,12 +367,6 @@ export default class Bibliosidian extends Plugin {
 			"",
 			undefined,
 			isOpenNote,
-			// this.settings.biblioNoteSourcePropertiesPrefix,
-			// this.settings.biblioNoteSubdirectoryRoot,
-			// this.settings.isSubdirectorizeBiblioNotesLexically,
-			// this.settings.authorsParentFolderPath,
-			// this.settings.isSubdirectorizeAuthorsLexically,
-			// this.settings.isCreateAuthorPages,
 		)
 	}
 
@@ -471,13 +460,11 @@ class BibTexResultsModal extends Modal {
         ];
         let currentGroupIndex = 0;
 
-        contentEl.createEl('h2', { text: 'Processed BibTeX Results' });
-        let referencesTextArea = this.createReadonlyTextArea(contentEl, 'References', valueGroups[currentGroupIndex]);
-
+        // contentEl.createEl('h2', { text: `References imported: ${filteredResults.length}` });
         new Setting(contentEl)
             .addButton((btn) =>
                 btn
-                .setButtonText('Prev format')
+                .setButtonText('<< ')
                 .onClick(() => {
                     currentGroupIndex = currentGroupIndex == 0 ? valueGroups.length - 1 : currentGroupIndex -1;
                     referencesTextArea.value = valueGroups[currentGroupIndex];
@@ -485,12 +472,20 @@ class BibTexResultsModal extends Modal {
             )
             .addButton((btn) =>
                 btn
-                .setButtonText('Next format')
+                .setButtonText('Report format >>')
                 .onClick(() => {
                     currentGroupIndex = (currentGroupIndex + 1) % valueGroups.length;
                     referencesTextArea.value = valueGroups[currentGroupIndex];
                 })
             )
+
+        // `References imported: ${filteredResults.length}`
+        let referencesTextArea = this.createReadonlyTextArea(
+            contentEl,
+            valueGroups[currentGroupIndex]
+        );
+
+        new Setting(contentEl)
             .addButton((btn) =>
                 btn
                 .setButtonText('Copy')
@@ -521,16 +516,7 @@ class BibTexResultsModal extends Modal {
             );
     }
 
-    createReadonlyTextArea(container: HTMLElement, label: string, value: string): HTMLTextAreaElement {
-        // container.createEl('h3', { text: label });
-        // const textArea = container.createEl('textarea', {
-        //     cls: 'bibtex-results-textarea',
-        // });
-        // textArea.value = value;
-        // textArea.setAttr('rows', '10');
-        // textArea.setAttr('cols', '50');
-        // textArea.setAttr('readonly', 'true');
-        container.createEl('h3', { text: label });
+    createReadonlyTextArea(container: HTMLElement, value: string): HTMLTextAreaElement {
         const textArea = document.createElement('textarea');
         textArea.classList.add('bibtex-results-textarea');
         textArea.value = value;
@@ -540,29 +526,6 @@ class BibTexResultsModal extends Modal {
         container.appendChild(textArea);
         return textArea;
     }
-
-
-	// createReadonlyTextArea(container: HTMLElement, label: string, value: string) {
-	// 	container.createEl('h3', { text: label });
-	// 	const textArea = container.createEl('textarea', {
-	// 		cls: 'bibtex-results-textarea',
-	// 	});
-        // textArea.value = value;
-	// 	textArea.setAttr('rows', '10');
-	// 	textArea.setAttr('cols', '50');
-        // textArea.setAttr('readonly', 'true');
-
-	// 	new Setting(container)
-	// 		.addButton((btn) =>
-	// 			btn
-	// 				.setButtonText('Copy')
-	// 				.onClick(() => {
-	// 					navigator.clipboard.writeText(value).then(() => {
-	// 						new Notice('Copied to clipboard');
-	// 					});
-	// 				})
-	// 		);
-	// }
 
 	onClose() {
 		const { contentEl } = this;
