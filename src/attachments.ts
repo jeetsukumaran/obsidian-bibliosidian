@@ -91,7 +91,7 @@ export class ImportHoldingModal extends Modal {
             return [];
         }
         const fileProperties = new FileProperties(this.app, this.activeFile.path);
-        return fileProperties.readPropertyList(`${this.settings.biblioNoteSourcePropertiesPrefix}-files`);
+        return fileProperties.readPropertyList(`${this.settings.biblioNoteSourcePropertiesPrefix}files`);
     }
 
     async validateSourceFile(path: string): Promise<boolean> {
