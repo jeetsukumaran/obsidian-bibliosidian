@@ -402,8 +402,8 @@ class BibTexCaptureModal extends Modal {
         this.textArea = contentEl.createEl('textarea', {
             cls: 'bibtex-modal-textarea'
         });
-        this.textArea.setAttr('rows', '20');
-        this.textArea.setAttr('cols', '50');
+        // textArea.classList.add('bibtex-results-textarea');
+        this.textArea.classList.add('bibliosidian-full-textarea');
 
         new Setting(contentEl)
             .addButton((btn) =>
@@ -518,10 +518,8 @@ class BibTexResultsModal extends Modal {
 
     createReadonlyTextArea(container: HTMLElement, value: string): HTMLTextAreaElement {
         const textArea = document.createElement('textarea');
-        textArea.classList.add('bibtex-results-textarea');
+        textArea.classList.add('bibliosidian-full-textarea');
         textArea.value = value;
-        textArea.rows = 10;
-        textArea.cols = 50;
         textArea.readOnly = true;
         container.appendChild(textArea);
         return textArea;
