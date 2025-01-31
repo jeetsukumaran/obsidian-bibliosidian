@@ -273,10 +273,10 @@ export default class Bibliosidian extends Plugin {
 		this.dataService = new DataService();
 
 
-		this.addRibbonIcon("book-up-2", "Create or update a single bibliographic note from BibTeX data", () => {
-			this.updateBiblioNoteFromBibTex()
-		});
-		this.addRibbonIcon("library-square", "Update multiple bibliographical notes from BibTeX data", () => {
+		// this.addRibbonIcon("book-up-2", "Create or update a single bibliographic note from BibTeX data", () => {
+		// 	this.updateBiblioNoteFromBibTex()
+		// });
+		this.addRibbonIcon("library-square", "Import or update from BibTeX data", () => {
 			this.updateBiblioNoteLibraryFromBibTex()
 		});
 		this.addRibbonIcon("book-plus", "Attach a holding to the current note", () => {
@@ -289,11 +289,11 @@ export default class Bibliosidian extends Plugin {
 			callback: () => this.updateBiblioNoteLibraryFromBibTex(),
 		});
 
-		this.addCommand({
-			id: 'update-biblionote-from-bibtex',
-			name: 'Create or update a single bibliographic note from BibTeX data',
-			callback: () => this.updateBiblioNoteFromBibTex(),
-		});
+		// this.addCommand({
+		// 	id: 'update-biblionote-from-bibtex',
+		// 	name: 'Create or update a single bibliographic note from BibTeX data',
+		// 	callback: () => this.updateBiblioNoteFromBibTex(),
+		// });
 
 		this.addCommand({
 			id: 'add-biblionote-holding',
