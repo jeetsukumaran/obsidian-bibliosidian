@@ -460,11 +460,11 @@ class BibTexResultsModal extends Modal {
         ];
         let currentGroupIndex = 0;
 
-        // contentEl.createEl('h2', { text: `References imported: ${filteredResults.length}` });
+        contentEl.createEl('h2', { text: `References imported: ${filteredResults.length}` });
         new Setting(contentEl)
             .addButton((btn) =>
                 btn
-                .setButtonText('<< ')
+                .setButtonText('Prev format')
                 .onClick(() => {
                     currentGroupIndex = currentGroupIndex == 0 ? valueGroups.length - 1 : currentGroupIndex -1;
                     referencesTextArea.value = valueGroups[currentGroupIndex];
@@ -472,7 +472,7 @@ class BibTexResultsModal extends Modal {
             )
             .addButton((btn) =>
                 btn
-                .setButtonText('Report format >>')
+                .setButtonText('Next format')
                 .onClick(() => {
                     currentGroupIndex = (currentGroupIndex + 1) % valueGroups.length;
                     referencesTextArea.value = valueGroups[currentGroupIndex];
