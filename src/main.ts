@@ -14,6 +14,10 @@ import {
 import * as _path from "path";
 
 import {
+    createOrOpenNote,
+} from "./utility";
+
+import {
 	FilePropertyData,
 	parseYaml,
 	stringifyYaml,
@@ -503,6 +507,15 @@ class BibTexResultsModal extends Modal {
                     await navigator.clipboard.writeText(referencesTextArea.value);
                     new Notice('Copied to clipboard');
                     // Close the modal
+                    this.close();
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Close and open first imported reference')
+                .onClick(async () => {
+                    let firstResult = filteredResults[0];
+                    await createOrOpenNote(this.app, firstResult.linkFilePath);
                     this.close();
                 })
             )
