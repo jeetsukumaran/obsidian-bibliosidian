@@ -156,9 +156,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setName("Create author notes automatically")
 			.setDesc("Enable or disable creation or updating of linked author notes when creating or updating bibliographic notes.")
 			.addToggle(toggle => toggle
-					.setValue(this.settings.isCreateAuthorPages)
+					.setValue(this.settings.isCreateAuthorNotes)
 					.onChange(async (value) => {
-						this.settings.isCreateAuthorPages = value;
+						this.settings.isCreateAuthorNotes = value;
 						await this.saveSettings();
 		}));
 

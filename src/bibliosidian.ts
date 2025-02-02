@@ -51,7 +51,7 @@ import * as _path from "path";
 interface BibTexModalArgs {
     sourceBibTex: string;
     targetFilepath: string;
-	isCreateAuthorPages: boolean;
+	isCreateAuthorNotes: boolean;
     isOpenNote: boolean;
 }
 
@@ -488,7 +488,7 @@ async function generateAuthorLinks(
             }
             const authorFilePath = _path.join(authorParentFolderPath, authorFileName);
 
-            if (args.isCreateAuthorPages) {
+            if (args.isCreateAuthorNotes) {
                 let targetFilepath = authorFilePath;
                 if (!targetFilepath.endsWith(".md")) {
                     targetFilepath = targetFilepath + ".md";
@@ -767,9 +767,9 @@ class BibTexModal extends Modal {
         // panelSetting.controlEl.appendChild(document.createTextNode("Update authors"));
         // panelSetting.addToggle( toggle => {
         //     toggle
-        //     .setValue(this.args.isCreateAuthorPages)
+        //     .setValue(this.args.isCreateAuthorNotes)
         //     .onChange(async (value) => {
-        //         this.args.isCreateAuthorPages = value;
+        //         this.args.isCreateAuthorNotes = value;
         //     })
         // });
 
@@ -813,9 +813,9 @@ class BibTexModal extends Modal {
 			// .setDesc("Create or update biblioNote and associated author notes.")
 		updateAuthorsSettings.addToggle( toggle => {
 			toggle
-				.setValue(this.args.isCreateAuthorPages)
+				.setValue(this.args.isCreateAuthorNotes)
 				.onChange(async (value) => {
-					this.args.isCreateAuthorPages = value;
+					this.args.isCreateAuthorNotes = value;
 				})
 		})
 
@@ -928,7 +928,7 @@ export async function generateBiblioNoteLibrary(
                     {
                         sourceBibTex: processedBibTex.bibtexStr,
                         targetFilepath: filePath,
-                        isCreateAuthorPages: settings.isCreateAuthorPages,
+                        isCreateAuthorNotes: settings.isCreateAuthorNotes,
                         isOpenNote: false,
                     },
                     citeKey,
@@ -970,7 +970,7 @@ export async function createBiblioNote(
         {
             sourceBibTex: defaultBibTex,
             targetFilepath: targetFilepath,
-            isCreateAuthorPages: settings.isCreateAuthorPages, // settings gives default, args overrides
+            isCreateAuthorNotes: settings.isCreateAuthorNotes, // settings gives default, args overrides
             isOpenNote: isOpenNote,
         },
     );

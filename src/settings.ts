@@ -22,7 +22,7 @@ export interface BibliosidianSettings {
 	authorBiblioNoteOutlinkPropertyName: string;
     authorNoteTagMetadata: FilePropertyData;
 	authorNoteAdditionalMetadata: FilePropertyData;
-	isCreateAuthorPages: boolean;
+	isCreateAuthorNotes: boolean;
 
 	holdingsParentFolder: string;
     holdingsPropertyName: string;
@@ -56,7 +56,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
     authorBiblioNoteOutlinkPropertyName: "author-references",
     authorNoteTagMetadata: {},
 	authorNoteAdditionalMetadata: {},
-	isCreateAuthorPages: true,
+	isCreateAuthorNotes: true,
 
 	holdingsParentFolder: _path.join("sources", "holdings"),
     holdingsPropertyName: "reference-holdings",
