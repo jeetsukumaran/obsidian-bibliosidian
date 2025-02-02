@@ -109,7 +109,7 @@ export async function createUniqueNote(
     await ensureDirectoryExists(app, directoryPath);
     fileBaseNameRoot = fileBaseNameRoot.replace(/.md$/,"");
     do {
-        const fileName = `${fileBaseNameRoot}${counter ? ` ${counter}` : ''}`;
+        const fileName = `${fileBaseNameRoot}${counter ? `_${counter}` : ''}`;
         newNotePath = path.join(directoryPath, fileName);
         counter++;
     } while (await app.vault.adapter.exists(newNotePath));
