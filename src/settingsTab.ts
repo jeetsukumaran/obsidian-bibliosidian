@@ -134,9 +134,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName("Tag metadata")
-            .setDesc("Enter tags to be added, one per line. No leading hash (#).")
+            .setDesc("Enter tags to be added, separated by newlines, spaces, commas, or semicolons.")
             .addTextArea(text => {
-                text.setPlaceholder("source/reference")
+                text.setPlaceholder("#source/reference")
                     .setValue(this.settings.biblioNoteTagMetadata?.join("\n") || "")
                     .onChange(async (value) => {
                         this.settings.biblioNoteTagMetadata = splitStringArray(value);
@@ -195,7 +195,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName("Tag metadata")
-            .setDesc("Enter tags to be added, one per line. No leading hash (#).")
+            .setDesc("Enter tags to be added, separated by newlines, spaces, commas, or semicolons.")
             .addTextArea(text => {
                 text.setPlaceholder("source/author")
                     .setValue(this.settings.authorNoteTagMetadata?.join("\n") || "")
@@ -257,7 +257,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
             new Setting(containerEl)
                 .setName("Tag metadata")
-                .setDesc("Enter tags to be added, one per line. No leading hash (#).")
+                .setDesc("Enter tags to be added, separated by newlines, spaces, commas, or semicolons.")
                 .addTextArea(text => {text
                     .setPlaceholder("source/extract")
                     .setValue(noteConfig.tagMetadata?.join("\n") || "")
