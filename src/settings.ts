@@ -12,19 +12,19 @@ export interface BibliosidianSettings {
 
 	biblioNoteSourcePropertiesPrefix: string;
 	biblioNoteSourceBibTex: string;
-	biblioNoteSubdirectoryRoot: string;
+	biblioNoteParentFolder: string;
 	isSubdirectorizeBiblioNotesLexically: boolean
     biblioNoteTagMetadata: FilePropertyData;
 	biblioNoteAdditionalMetadata: FilePropertyData;
 
-	authorsParentFolderPath: string;
-	isSubdirectorizeAuthorsLexically: boolean;
+	authorNoteParentFolderPath: string;
+	isSubdirectorizeAuthorNotesLexically: boolean;
 	authorBiblioNoteOutlinkPropertyName: string;
     authorNoteTagMetadata: FilePropertyData;
-	authorsAdditionalMetadata: FilePropertyData;
+	authorNoteAdditionalMetadata: FilePropertyData;
 	isCreateAuthorPages: boolean;
 
-	holdingsSubdirectoryRoot: string;
+	holdingsParentFolder: string;
     holdingsPropertyName: string;
 
 	readingNoteParentFolderPath: string;
@@ -46,19 +46,19 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 
 	biblioNoteSourcePropertiesPrefix: "reference-",
 	biblioNoteSourceBibTex: "reference-bibtex",
-	biblioNoteSubdirectoryRoot: _path.join("sources", "references"),
+	biblioNoteParentFolder: _path.join("sources", "references"),
 	isSubdirectorizeBiblioNotesLexically: true,
     biblioNoteTagMetadata: {},
 	biblioNoteAdditionalMetadata: {},
 
-	authorsParentFolderPath: _path.join("sources", "authors"),
-	isSubdirectorizeAuthorsLexically: true,
+	authorNoteParentFolderPath: _path.join("sources", "authors"),
+	isSubdirectorizeAuthorNotesLexically: true,
     authorBiblioNoteOutlinkPropertyName: "author-references",
     authorNoteTagMetadata: {},
-	authorsAdditionalMetadata: {},
+	authorNoteAdditionalMetadata: {},
 	isCreateAuthorPages: true,
 
-	holdingsSubdirectoryRoot: _path.join("sources", "holdings"),
+	holdingsParentFolder: _path.join("sources", "holdings"),
     holdingsPropertyName: "reference-holdings",
 
 	readingNoteParentFolderPath: _path.join("sources", "readingNote"),

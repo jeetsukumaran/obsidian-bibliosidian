@@ -82,7 +82,7 @@ export class ImportHoldingModal extends Modal {
     ) {
         super(app);
         this.settings = settings;
-        this.defaultDestinationFolder = this.settings.holdingsSubdirectoryRoot;
+        this.defaultDestinationFolder = this.settings.holdingsParentFolder;
         this.activeFile = null;
     }
 

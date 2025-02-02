@@ -481,10 +481,10 @@ async function generateAuthorLinks(
             } = composeAuthorData(author);
 
             let authorParentFolderPath: string;
-            if (settings.isSubdirectorizeAuthorsLexically) {
-                authorParentFolderPath = _path.join(settings.authorsParentFolderPath, authorFileName[0]);
+            if (settings.isSubdirectorizeAuthorNotesLexically) {
+                authorParentFolderPath = _path.join(settings.authorNoteParentFolderPath, authorFileName[0]);
             } else {
-                authorParentFolderPath = settings.authorsParentFolderPath;
+                authorParentFolderPath = settings.authorNoteParentFolderPath;
             }
             const authorFilePath = _path.join(authorParentFolderPath, authorFileName);
 
@@ -502,8 +502,8 @@ async function generateAuthorLinks(
 
                 let fileProperties = new FileProperties(app, targetFilepath);
                 let authorProperties: FilePropertyData = {};
-                // if (settings.authorsAdditionalMetadata) {
-                //     authorProperties = { ...authorProperties, ...settings.authorsAdditionalMetadata };
+                // if (settings.authorNoteAdditionalMetadata) {
+                //     authorProperties = { ...authorProperties, ...settings.authorNoteAdditionalMetadata };
                 // }
                 composeMetadata(
                     fileProperties,
@@ -514,7 +514,7 @@ async function generateAuthorLinks(
                 composeMetadata(
                     fileProperties,
                     authorProperties,
-                    settings.authorsAdditionalMetadata,
+                    settings.authorNoteAdditionalMetadata,
                     true,
                 )
                 authorProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp]);
@@ -603,7 +603,7 @@ function computeBibEntryTargetFilePath(
 ): string {
 	let citationKey = bibEntry._id
 	let citekeyMarkedUp = `@${citationKey}`
-	let parentPath = settings.biblioNoteSubdirectoryRoot
+	let parentPath = settings.biblioNoteParentFolder
 	if (settings.isSubdirectorizeBiblioNotesLexically) {
 		parentPath = _path.join(parentPath, replaceProblematicChars(citationKey[0]))
 	}

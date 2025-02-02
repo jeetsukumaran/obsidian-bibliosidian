@@ -105,9 +105,9 @@ class BibliosidianSettingTab extends PluginSettingTab {
 			.setDesc("Path to folder of bibliographic notes.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/references')")
-				.setValue(this.plugin.settings.biblioNoteSubdirectoryRoot)
+				.setValue(this.plugin.settings.biblioNoteParentFolder)
 				.onChange(async (value) => {
-					this.plugin.settings.biblioNoteSubdirectoryRoot = value;
+					this.plugin.settings.biblioNoteParentFolder = value;
 					await this.plugin.saveSettings();
 		}));
 		new Setting(containerEl)
@@ -156,18 +156,18 @@ class BibliosidianSettingTab extends PluginSettingTab {
 			.setDesc("Path to folder of author notes.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/authors')")
-				.setValue(this.plugin.settings.authorsParentFolderPath)
+				.setValue(this.plugin.settings.authorNoteParentFolderPath)
 				.onChange(async (value) => {
-					this.plugin.settings.authorsParentFolderPath = value;
+					this.plugin.settings.authorNoteParentFolderPath = value;
 					await this.plugin.saveSettings();
 		}));
 		new Setting(containerEl)
 			.setName("Organize authors into subdirectories")
 			.setDesc("Enable or disable lexical organization of authors into subdirectories.")
 			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.isSubdirectorizeAuthorsLexically)
+				.setValue(this.plugin.settings.isSubdirectorizeAuthorNotesLexically)
 				.onChange(async (value) => {
-					this.plugin.settings.isSubdirectorizeAuthorsLexically = value;
+					this.plugin.settings.isSubdirectorizeAuthorNotesLexically = value;
 					await this.plugin.saveSettings();
         }));
 		new Setting(containerEl)
@@ -182,7 +182,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		}));
 
         new Setting(containerEl)
-            .setName("Author Note Tag Metadata")
+            .setName("Author note tag metadata")
             .setDesc("Enter tags for author notes, one per line. No leading hash (#).")
             .addTextArea(text => {
                 text.setPlaceholder("author\nliterature/author\nimportant-author")
@@ -197,7 +197,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 		this.manageAdditionalPropertiesSettings(
 			containerEl,
-			"authorsAdditionalMetadata",
+			"authorNoteAdditionalMetadata",
 		)
 
 		containerEl.createEl("h2", { text: "Holdings" })
@@ -207,9 +207,9 @@ class BibliosidianSettingTab extends PluginSettingTab {
 			.setDesc("Path to parent or root folder of holdings (attachments). Leave blank to store alongside bibliographic file.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/references')")
-				.setValue(this.plugin.settings.holdingsSubdirectoryRoot)
+				.setValue(this.plugin.settings.holdingsParentFolder)
 				.onChange(async (value) => {
-					this.plugin.settings.holdingsSubdirectoryRoot = value;
+					this.plugin.settings.holdingsParentFolder = value;
 					await this.plugin.saveSettings();
 		}));
 		new Setting(containerEl)
@@ -239,9 +239,9 @@ class BibliosidianSettingTab extends PluginSettingTab {
 			.setName("Organize authors into subdirectories")
 			.setDesc("Enable or disable lexical organization of authors into subdirectories.")
 			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.isSubdirectorizeAuthorsLexically)
+				.setValue(this.plugin.settings.isSubdirectorizeAuthorNotesLexically)
 				.onChange(async (value) => {
-					this.plugin.settings.isSubdirectorizeAuthorsLexically = value;
+					this.plugin.settings.isSubdirectorizeAuthorNotesLexically = value;
 					await this.plugin.saveSettings();
         }));
 		new Setting(containerEl)
@@ -256,7 +256,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 		}));
 
         new Setting(containerEl)
-            .setName("Author Note Tag Metadata")
+            .setName("Author note tag metadata")
             .setDesc("Enter tags for author notes, one per line. No leading hash (#).")
             .addTextArea(text => {
                 text.setPlaceholder("author\nliterature/author\nimportant-author")
@@ -271,7 +271,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 		this.manageAdditionalPropertiesSettings(
 			containerEl,
-			"authorsAdditionalMetadata",
+			"authorNoteAdditionalMetadata",
 		)
 
 	}
@@ -279,7 +279,7 @@ class BibliosidianSettingTab extends PluginSettingTab {
 
 	manageAdditionalPropertiesSettings(
 		containerEl: HTMLElement,
-		settingsPropertyName: "biblioNoteAdditionalMetadata" | "authorsAdditionalMetadata" | "readingNoteAdditionalMetadata",
+		settingsPropertyName: "biblioNoteAdditionalMetadata" | "authorNoteAdditionalMetadata" | "readingNoteAdditionalMetadata",
 		settingsPropertyDisplayName: string = "Additional front matter properties (YAML)",
 		settingsPropertyParameterInitialDescription: string = "Other front matter metadata properties to be updated specified in YAML.",
 		settingsPropertyParameterPlaceholder: string = "(E.g., 'reference-case: Project 1', 'reading-priority: medium')",
