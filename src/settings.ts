@@ -12,7 +12,7 @@ export type AssociatedNoteSettings = {
     parentFolderPath: string;
 	isSubdirectorizeLexically: boolean;
 	returnLinkPropertyName: string;
-    tagMetadata: FilePropertyData;
+    tagMetadata: [];
 	frontmatterMetadata: FilePropertyData;
 	isAutoCreate: boolean;
 }
@@ -81,7 +81,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
             parentFolderPath: "sources/extracts",
             isSubdirectorizeLexically: true,
             returnLinkPropertyName: "source-references",
-            tagMetadata: {},
+            tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,
         },
@@ -90,7 +90,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
             parentFolderPath: "sources/readings",
             isSubdirectorizeLexically: true,
             returnLinkPropertyName: "source-references",
-            tagMetadata: {},
+            tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,
         },
