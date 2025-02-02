@@ -48,6 +48,7 @@ import {
 
 
 import {
+    AssociatedNoteSettings,
 	BibliosidianSettings,
     DEFAULT_SETTINGS,
 } from "./settings";
@@ -90,7 +91,7 @@ export default class Bibliosidian extends Plugin {
 		this.addCommand({
 			id: 'open-reading-note',
 			name: 'Open reading note linked to the current note',
-			callback: () => this.openReadingNote(),
+			callback: () => this.openAssociatedNote(this.settings.associatedNotes[2]),
 		});
 
 		this.addCommand({
@@ -127,7 +128,7 @@ export default class Bibliosidian extends Plugin {
 		));
 	}
 
-    async openReadingNote() {
+    async openAssociatedNote(noteConfig:AssociatedNoteSettings) {
         // let isSubdirectorizeReadingNotesLexically = "reading.";
         // let noteParentFolderPath = "reading.";
         // let noteTitlePrefix = "reading.";

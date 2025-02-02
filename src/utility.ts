@@ -200,23 +200,23 @@ export function ensureStringArray(input: any): string[] {
 }
 
 export function composeNoteLocation(
-    sourceFileTitle: string,
-    targetFilePrefix: string,
-    targetFileParentFolder: string,
+    sourceFilePath: string,
+    namePrefix: string,
+    namePostfix: string,
+    parentFolderPath: string,
     isSubdirectorizeLexically: boolean,
 ): { [key:string]: string,} {
-    // const sourceFileNormalizedName = sourceFileTitle.replace(/^@/,"").replace(/.md$/, "");
-    const sourceFileNormalizedName = sourceFileTitle
+    const sourceFileNormalizedName = path.basename(sourceFilePath
                                     .replace(/^@/,"")
-                                    .replace(/.md$/, "");
-    let newFileParentDir;
+                                    .replace(/.md$/, ""));
+    // parentFolderPath = parentFolderPath || path.dirname(sourceFilePath);
+    parentFolderPath = (parentFolderPath || ".").replace(/\/$/,"");
+    let newFileParentDir: string = parentFolderPath;
     if (isSubdirectorizeLexically) {
         const firstLetter = sourceFileNormalizedName.charAt(0).toLowerCase();
-        newFileParentDir = `${targetFileParentFolder}/${firstLetter}/`;
-    } else {
-        newFileParentDir = targetFileParentFolder + "/";
+        newFileParentDir = `${newFileParentDir}/${firstLetter}/`;
     }
-    const newFileBasename = `${targetFilePrefix}${sourceFileNormalizedName}.md`;
+    const newFileBasename = `${namePrefix}${sourceFileNormalizedName}${namePostfix}.md`;
     const newFilePath = `${newFileParentDir}/${newFileBasename}`;
     return {
         newFileParentDir: newFileParentDir,

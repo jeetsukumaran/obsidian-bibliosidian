@@ -201,7 +201,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             .setName("Tag metadata")
             .setDesc("Enter tags to be added, separated by newlines, spaces, commas, or semicolons.")
             .addTextArea(text => {
-                text.setPlaceholder("source/author")
+                text.setPlaceholder("#source/author")
                     .setValue(this.settings.authorNoteTagMetadata?.join("\n") || "")
                     .onChange(async (value) => {
                         this.settings.authorNoteTagMetadata = splitStringArray(value);
@@ -245,6 +245,26 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             			await this.saveSettings();
             }));
             new Setting(containerEl)
+            	.setName("Name composition: prefix")
+            	.setDesc("String to prefix in front of base file name to disambiguate it from reference.")
+            	.addText(text => text
+            		.setPlaceholder(`(E.g. '${className.toLowerCase()}_')`)
+            		.setValue(noteConfig.namePrefix)
+            		.onChange(async (value) => {
+            			noteConfig.namePrefix = value;
+            			await this.saveSettings();
+            }));
+            new Setting(containerEl)
+            	.setName("Name composition: postfix")
+            	.setDesc("String to append to back of base file name to disambiguate it from reference.")
+            	.addText(text => text
+            		.setPlaceholder(`(E.g. '_${className.toLowerCase()}')`)
+            		.setValue(noteConfig.namePostfix)
+            		.onChange(async (value) => {
+            			noteConfig.namePostfix = value;
+            			await this.saveSettings();
+            }));
+            new Setting(containerEl)
             	.setName("Organize into subdirectories based on source names")
             	.setDesc("Enable or disable lexical organization of notes into subdirectories.")
             	.addToggle(toggle => toggle
@@ -268,7 +288,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
                 .setName("Tag metadata")
                 .setDesc("Enter tags to be added, separated by newlines, spaces, commas, or semicolons.")
                 .addTextArea(text => {text
-                    .setPlaceholder("source/extract")
+            		.setPlaceholder(`(E.g. '#source/${className.toLowerCase()}')`)
                     .setValue(noteConfig.tagMetadata?.join("\n") || "")
                     .onChange(async (value) => {
                         noteConfig.tagMetadata = splitStringArray(value);

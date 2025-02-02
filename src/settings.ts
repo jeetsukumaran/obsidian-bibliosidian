@@ -12,6 +12,8 @@ export type AssociatedNoteSettings = {
     description: string;
     parentFolderPath: string;
 	isSubdirectorizeLexically: boolean;
+	namePrefix: string;
+	namePostfix: string;
 	returnLinkPropertyName: string;
     tagMetadata: string[];
 	frontmatterMetadata: FilePropertyData;
@@ -81,6 +83,8 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
             className: "Extract",
             description: "Extracts, quotes, snippets, verbatim transcriptions, tables, figures or diagrams etc. from sources.",
             parentFolderPath: "sources/extracts",
+            namePrefix: "",
+            namePostfix: "_extract",
             isSubdirectorizeLexically: true,
             returnLinkPropertyName: "source-references",
             tagMetadata: [],
@@ -91,6 +95,8 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
             className: "Outline",
             description: "Outlines, table of contents, guides to the organization of contents of sources.",
             parentFolderPath: "sources/outlines",
+            namePrefix: "",
+            namePostfix: "_outline",
             isSubdirectorizeLexically: true,
             returnLinkPropertyName: "source-references",
             tagMetadata: [],
@@ -101,6 +107,8 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
             className: "Reading",
             description: "Notes on your readings, analyses, or processing of sources.",
             parentFolderPath: "sources/readings",
+            namePrefix: "",
+            namePostfix: "_reading",
             isSubdirectorizeLexically: true,
             returnLinkPropertyName: "source-references",
             tagMetadata: [],
