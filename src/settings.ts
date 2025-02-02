@@ -9,6 +9,7 @@ import * as _path from "path";
 
 export type AssociatedNoteSettings = {
     className: string;
+    parentFolderPath: string;
 	isSubdirectorizeLexically: boolean;
 	returnLinkPropertyName: string;
     tagMetadata: FilePropertyData;
@@ -77,6 +78,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
     associatedNotes: [
         {
             className: "extract",
+            parentFolderPath: "sources/extracts",
             isSubdirectorizeLexically: true,
             returnLinkPropertyName: "source-references",
             tagMetadata: {},
@@ -85,6 +87,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
         },
         {
             className: "reading",
+            parentFolderPath: "sources/readings",
             isSubdirectorizeLexically: true,
             returnLinkPropertyName: "source-references",
             tagMetadata: {},
