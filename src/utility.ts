@@ -47,6 +47,12 @@ export async function createOrOpenNote(
     return notePath;
 }
 
+export async function ensureDirectoryExists(app: App, directoryPath: string): Promise<void> {
+    if (!await app.vault.adapter.exists(directoryPath)) {
+        await app.vault.createFolder(directoryPath);
+    }
+}
+
 // export async function ensureParentDirectoryExists(app: App, filePath: string): Promise<void> {
 //     const parentDirPath = filePath.substring(0, filePath.lastIndexOf('/'));
 
@@ -59,15 +65,15 @@ export async function createOrOpenNote(
 //     }
 // }
 
-export async function ensureDirectoryExists(app: App, dirPath: string): Promise<void> {
-    // Check if the parent directory exists
+// export async function ensureDirectoryExists(app: App, dirPath: string): Promise<void> {
+//     // Check if the parent directory exists
 
-    let dirNode = app.vault.getAbstractFileByPath(dirPath) as TFolder;
-    if (!dirNode) {
-        // Create the parent directory if it doesn't exist
-        await app.vault.createFolder(dirPath);
-    }
-}
+//     let dirNode = app.vault.getAbstractFileByPath(dirPath) as TFolder;
+//     if (!dirNode) {
+//         // Create the parent directory if it doesn't exist
+//         await app.vault.createFolder(dirPath);
+//     }
+// }
 
 // export async function createDirectory(app: App, dirPath: string): Promise<TFolder> {
 //     const pathParts = dirPath.split('/').filter(part => part.length);
@@ -90,6 +96,7 @@ export async function ensureDirectoryExists(app: App, dirPath: string): Promise<
 
 export async function createUniqueNote(
     app: App,
+    fileBaseNameRoot: string,
     directoryPath: string,
     content: string,
     mode: PaneType | undefined,
@@ -99,8 +106,10 @@ export async function createUniqueNote(
     let counter = 0;
     let newNotePath;
 
+    await ensureDirectoryExists(app, directoryPath);
+    fileBaseNameRoot = fileBaseNameRoot.replace(/.md$/,"");
     do {
-        const fileName = `Untitled${counter ? ` ${counter}` : ''}.md`;
+        const fileName = `${fileBaseNameRoot}${counter ? ` ${counter}` : ''}`;
         newNotePath = path.join(directoryPath, fileName);
         counter++;
     } while (await app.vault.adapter.exists(newNotePath));

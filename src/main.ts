@@ -143,12 +143,20 @@ export default class Bibliosidian extends Plugin {
         );
         // console.log(noteLocation);
 
+
+        const newNotePath = await createUniqueNote(
+            this.app,
+            noteLocation.newFileBasename,
+            noteLocation.newFileParentDir,
+            "",
+            undefined,
+        )
         let propertyValueMap: FilePropertyData = {
             "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
         }
         updateFrontMatter(
             this.app,
-            activeFile.path,
+            newNotePath,
             propertyValueMap,
         );
         // let isSubdirectorizeReadingNotesLexically = "reading.";
