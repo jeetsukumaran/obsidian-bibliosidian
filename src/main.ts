@@ -14,7 +14,10 @@ import {
 import * as _path from "path";
 
 import {
+    normalizeTagInput,
     createOrOpenNote,
+    composeNoteLocation,
+    createUniqueNote,
 } from "./utility";
 
 import {
@@ -42,7 +45,6 @@ import {
     DataService,
 
 } from "./DataService";
-import { normalizeTagInput } from './utility'; // Ensure the path is correct
 
 
 import {
@@ -85,6 +87,11 @@ export default class Bibliosidian extends Plugin {
 			callback: () => this.updateBiblioNoteLibraryFromBibTex(),
 		});
 
+		this.addCommand({
+			id: 'open-reading-note',
+			name: 'Open reading note linked to the current note',
+			callback: () => this.openReadingNote(),
+		});
 
 		this.addCommand({
 			id: 'add-biblionote-holding',
@@ -120,6 +127,27 @@ export default class Bibliosidian extends Plugin {
 		));
 	}
 
+    async openReadingNote() {
+        // let isSubdirectorizeReadingNotesLexically = "reading.";
+        // let noteParentFolderPath = "reading.";
+        // let noteTitlePrefix = "reading.";
+        // let activeFile = this.app.workspace.getActiveFile();
+        // if (!activeFile) {
+        //     return;
+        // }
+        // const noteLocation = composeNoteLocation(
+        //     activeFile.path,
+        //     "reading.",
+        //     this.settings.readingNoteParentFolderPath || "",
+        //     this.settings.isSubdirectorizeReadingNotesLexically,
+        // );
+        // const newNote = await createOrOpenNote(
+        //     this.app,
+        //     readingNoteLocation.newFileParentDir,
+        //     "",
+        //     undefined,
+        // )
+    }
 
     async addHolding() {
         // const files = app.vault.getFiles(); // Get all files in the vault

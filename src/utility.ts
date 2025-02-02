@@ -16,8 +16,8 @@ export async function createOrOpenNote(
     mode: PaneType | boolean = false,
 ): Promise<string> {
 
-    const path = require('path');
-    let notePath = path.join(filePath);
+    // const path = require('path');
+    let notePath = filePath;
     if (!notePath.endsWith(".md")) {
     	notePath = notePath + ".md"
     }
@@ -91,7 +91,7 @@ export async function ensureDirectoryExists(app: App, dirPath: string): Promise<
 export async function createUniqueNote(
     app: App,
     directoryPath: string,
-    frontmatter: string,
+    content: string,
     mode: PaneType | undefined,
 ): Promise<string> {
 
@@ -106,7 +106,7 @@ export async function createUniqueNote(
     } while (await app.vault.adapter.exists(newNotePath));
 
     try {
-        await app.vault.create(newNotePath, frontmatter);
+        await app.vault.create(newNotePath, content);
         app.workspace.openLinkText(newNotePath, '', mode);
     } catch (error) {
         console.error('Error creating or opening the new note:', error);
@@ -189,5 +189,31 @@ export function normalizeTagInput(input: string): FilePropertyData {
         .map(tag => tag.trim().replace(/^#+/, ''))
         .filter(tag => tag !== '');
     return { tags };
+}
+
+export function composeNoteLocation(
+    sourceFileTitle: string,
+    targetFilePrefix: string,
+    targetFileParentFolder: string,
+    isSubdirectorizeLexically: boolean,
+): { [key:string]: string,} {
+    // const sourceFileNormalizedName = sourceFileTitle.replace(/^@/,"").replace(/.md$/, "");
+    const sourceFileNormalizedName = sourceFileTitle
+                                    .replace(/^@/,"")
+                                    .replace(/.md$/, "");
+    let newFileParentDir;
+    if (isSubdirectorizeLexically) {
+        const firstLetter = sourceFileNormalizedName.charAt(0).toLowerCase();
+        newFileParentDir = `${targetFileParentFolder}/${firstLetter}/`;
+    } else {
+        newFileParentDir = targetFileParentFolder + "/";
+    }
+    const newFileBasename = `${targetFilePrefix}${sourceFileNormalizedName}.md`;
+    const newFilePath = `${newFileParentDir}/${newFileBasename}`;
+    return {
+        newFileParentDir: newFileParentDir,
+        newFileBasename: newFileBasename,
+        newFilePath: newFilePath,
+    };
 }
 
