@@ -206,9 +206,9 @@ export function composeNoteLocation(
     namePostfix: string,
     isSubdirectorizeLexically: boolean,
 ): { [key:string]: string,} {
-    const sourceFileNormalizedName = path.basename(sourceFilePath
+    const sourceFileNormalizedName = path.basename(sourceFilePath)
                                     .replace(/^@/,"")
-                                    .replace(/.md$/, ""));
+                                    .replace(/.md$/, "");
     // parentFolderPath = parentFolderPath || path.dirname(sourceFilePath);
     parentFolderPath = (parentFolderPath || ".").replace(/\/$/,"");
     let newFileParentDir: string = parentFolderPath;
