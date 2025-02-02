@@ -216,6 +216,11 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 		this.settings.associatedNotes.forEach( (noteConfig: AssociatedNoteSettings) => {
 		    const className = noteConfig.className || "";
 		    containerEl.createEl("h3", { text: `${className} notes` })
+            if (noteConfig.description) {
+                containerEl.createEl("p", {
+                    text: noteConfig.description,
+                });
+            }
             new Setting(containerEl)
             	.setName("Create automatically")
             	.setDesc("Enable or disable automatic creation when importing or updating bibliographic notes.")
