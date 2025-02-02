@@ -273,6 +273,67 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			"readingNoteAdditionalMetadata",
 		)
 
+		containerEl.createEl("h2", { text: "Extract notes" })
+
+		new Setting(containerEl)
+			.setName("Create extract notes automatically")
+			.setDesc("Enable or disable creation or updating of linked extract notes when creating or updating bibliographic notes.")
+			.addToggle(toggle => toggle
+					.setValue(this.settings.isCreateExtractNotes)
+					.onChange(async (value) => {
+						this.settings.isCreateExtractNotes = value;
+						await this.saveSettings();
+		}));
+
+		new Setting(containerEl)
+			.setName("Extract notes folder")
+			.setDesc("Path to folder of extract notes.")
+			.addText(text => text
+				.setPlaceholder("(E.g. 'sources/extracts')")
+				.setValue(this.settings.extractNoteParentFolderPath)
+				.onChange(async (value) => {
+					this.settings.extractNoteParentFolderPath = value;
+					await this.saveSettings();
+		}));
+		new Setting(containerEl)
+			.setName("Organize extract notes into subdirectories based on names")
+			.setDesc("Enable or disable lexical organization of extract notes into subdirectories.")
+			.addToggle(toggle => toggle
+				.setValue(this.settings.isSubdirectorizeExtractNotesLexically)
+				.onChange(async (value) => {
+					this.settings.isSubdirectorizeExtractNotesLexically = value;
+					await this.saveSettings();
+        }));
+		new Setting(containerEl)
+			.setName("Bibliographic note backlink property name:")
+			.setDesc("Front matter metadata property on extract note linking to associated bibliographic note.")
+			.addText(text => text
+				.setPlaceholder("(E.g. 'extract-references')")
+				.setValue(this.settings.extractNoteBiblioNoteOutlinkPropertyName)
+				.onChange(async (value) => {
+					this.settings.extractNoteBiblioNoteOutlinkPropertyName = value
+					await this.saveSettings();
+		}));
+
+        new Setting(containerEl)
+            .setName("Tag metadata")
+            .setDesc("Enter tags to be added, one per line. No leading hash (#).")
+            .addTextArea(text => {
+                text.setPlaceholder("literature/extract")
+                    .setValue(this.settings.extractNoteTagMetadata?.tags?.join("\n") || "")
+                    .onChange(async (value) => {
+                        this.settings.extractNoteTagMetadata = normalizeTagInput(value);
+                        await this.saveSettings();
+                    });
+                // text.inputEl.style.height = "8rem";
+            });
+
+
+		this.manageAdditionalPropertiesSettings(
+			containerEl,
+			"extractNoteAdditionalMetadata",
+		)
+
 
 
 		containerEl.createEl("h2", { text: "Holdings" })
@@ -354,7 +415,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
 	manageAdditionalPropertiesSettings(
 		containerEl: HTMLElement,
-		settingsPropertyName: "biblioNoteAdditionalMetadata" | "authorNoteAdditionalMetadata" | "readingNoteAdditionalMetadata",
+		settingsPropertyName: "biblioNoteAdditionalMetadata" | "authorNoteAdditionalMetadata" | "readingNoteAdditionalMetadata" | "extractNoteAdditionalMetadata",
 		settingsPropertyDisplayName: string = "Additional front matter properties (YAML)",
 		settingsPropertyParameterInitialDescription: string = "Other front matter metadata properties to be updated specified in YAML.",
 		settingsPropertyParameterPlaceholder: string = "(E.g., 'reference-case: Project 1', 'reading-priority: medium')",

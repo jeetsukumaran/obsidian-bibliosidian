@@ -24,8 +24,12 @@ export interface BibliosidianSettings {
 	authorNoteAdditionalMetadata: FilePropertyData;
 	isCreateAuthorNotes: boolean;
 
-	holdingsParentFolder: string;
-    holdingsPropertyName: string;
+	extractNoteParentFolderPath: string;
+	isSubdirectorizeExtractNotesLexically: boolean;
+	extractNoteBiblioNoteOutlinkPropertyName: string;
+    extractNoteTagMetadata: FilePropertyData;
+	extractNoteAdditionalMetadata: FilePropertyData;
+	isCreateExtractNotes: boolean;
 
 	readingNoteParentFolderPath: string;
 	isSubdirectorizeReadingNotesLexically: boolean;
@@ -33,6 +37,9 @@ export interface BibliosidianSettings {
     readingNoteTagMetadata: FilePropertyData;
 	readingNoteAdditionalMetadata: FilePropertyData;
 	isCreateReadingNotes: boolean;
+
+	holdingsParentFolder: string;
+    holdingsPropertyName: string;
 
     citationOutlinkPropertyNames: string[];
     citationInlinkPropertyNames: string[];
@@ -58,15 +65,22 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	authorNoteAdditionalMetadata: {},
 	isCreateAuthorNotes: true,
 
-	holdingsParentFolder: _path.join("sources", "holdings"),
-    holdingsPropertyName: "reference-holdings",
+	extractNoteParentFolderPath: _path.join("sources", "extracts"),
+	isSubdirectorizeExtractNotesLexically: true,
+    extractNoteBiblioNoteOutlinkPropertyName: "author-references",
+    extractNoteTagMetadata: {},
+	extractNoteAdditionalMetadata: {},
+	isCreateExtractNotes: true,
 
-	readingNoteParentFolderPath: _path.join("sources", "readingNote"),
+	readingNoteParentFolderPath: _path.join("sources", "readings"),
 	isSubdirectorizeReadingNotesLexically: true,
     readingNoteBiblioNoteOutlinkPropertyName: "author-references",
     readingNoteTagMetadata: {},
 	readingNoteAdditionalMetadata: {},
 	isCreateReadingNotes: true,
+
+	holdingsParentFolder: _path.join("sources", "holdings"),
+    holdingsPropertyName: "reference-holdings",
 
     citationOutlinkPropertyNames: [
         "references",
