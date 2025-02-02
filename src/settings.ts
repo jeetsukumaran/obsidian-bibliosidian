@@ -30,9 +30,9 @@ export interface BibliosidianSettings {
 	readingNoteParentFolderPath: string;
 	isSubdirectorizeReadingNotesLexically: boolean;
 	readingNoteBiblioNoteOutlinkPropertyName: string;
-    readingNoteNoteTagMetadata: FilePropertyData;
+    readingNoteTagMetadata: FilePropertyData;
 	readingNoteAdditionalMetadata: FilePropertyData;
-	isCreateReadingNotePages: boolean;
+	isCreateReadingNotes: boolean;
 
     citationOutlinkPropertyNames: string[];
     citationInlinkPropertyNames: string[];
@@ -64,9 +64,9 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	readingNoteParentFolderPath: _path.join("sources", "readingNote"),
 	isSubdirectorizeReadingNotesLexically: true,
     readingNoteBiblioNoteOutlinkPropertyName: "author-references",
-    readingNoteNoteTagMetadata: {},
+    readingNoteTagMetadata: {},
 	readingNoteAdditionalMetadata: {},
-	isCreateReadingNotePages: true,
+	isCreateReadingNotes: true,
 
     citationOutlinkPropertyNames: [
         "references",
