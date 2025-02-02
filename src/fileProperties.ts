@@ -242,7 +242,7 @@ export async function updateFrontMatter(
         return;
     }
     await app.fileManager.processFrontMatter(file, (frontmatter: { [key: string]: any }) => {
-        console.log(propertyValueMap);
+        // console.log(propertyValueMap);
         let mergedProperties = mergeProperties(frontmatter, propertyValueMap, isClearEmpty);
         console.log(mergedProperties);
         Object.entries(mergedProperties).forEach(([propertyName, newValue]) => {
