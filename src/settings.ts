@@ -7,8 +7,16 @@ import {
 
 import * as _path from "path";
 
-export interface BibliosidianSettings {
+export type AssociatedNoteSettings = {
+    className: string;
+	isSubdirectorizeLexically: boolean;
+	returnLinkPropertyName: string;
+    tagMetadata: FilePropertyData;
+	frontmatterMetadata: FilePropertyData;
+	isAutoCreate: boolean;
+}
 
+export interface BibliosidianSettings {
 
 	biblioNoteSourcePropertiesPrefix: string;
 	biblioNoteSourceBibTex: string;
@@ -24,19 +32,20 @@ export interface BibliosidianSettings {
 	authorNoteAdditionalMetadata: FilePropertyData;
 	isCreateAuthorNotes: boolean;
 
-	extractNoteParentFolderPath: string;
-	isSubdirectorizeExtractNotesLexically: boolean;
-	extractNoteBiblioNoteOutlinkPropertyName: string;
-    extractNoteTagMetadata: FilePropertyData;
-	extractNoteAdditionalMetadata: FilePropertyData;
-	isCreateExtractNotes: boolean;
+	associatedNotes: AssociatedNoteSettings[];
+	// extractNoteParentFolderPath: string;
+	// isSubdirectorizeExtractNotesLexically: boolean;
+	// extractNoteBiblioNoteOutlinkPropertyName: string;
+    // extractNoteTagMetadata: FilePropertyData;
+	// extractNoteAdditionalMetadata: FilePropertyData;
+	// isCreateExtractNotes: boolean;
 
-	readingNoteParentFolderPath: string;
-	isSubdirectorizeReadingNotesLexically: boolean;
-	readingNoteBiblioNoteOutlinkPropertyName: string;
-    readingNoteTagMetadata: FilePropertyData;
-	readingNoteAdditionalMetadata: FilePropertyData;
-	isCreateReadingNotes: boolean;
+	// readingNoteParentFolderPath: string;
+	// isSubdirectorizeReadingNotesLexically: boolean;
+	// readingNoteBiblioNoteOutlinkPropertyName: string;
+    // readingNoteTagMetadata: FilePropertyData;
+	// readingNoteAdditionalMetadata: FilePropertyData;
+	// isCreateReadingNotes: boolean;
 
 	holdingsParentFolder: string;
     holdingsPropertyName: string;
@@ -65,19 +74,24 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	authorNoteAdditionalMetadata: {},
 	isCreateAuthorNotes: true,
 
-	extractNoteParentFolderPath: _path.join("sources", "extracts"),
-	isSubdirectorizeExtractNotesLexically: true,
-    extractNoteBiblioNoteOutlinkPropertyName: "source-references",
-    extractNoteTagMetadata: {},
-	extractNoteAdditionalMetadata: {},
-	isCreateExtractNotes: true,
-
-	readingNoteParentFolderPath: _path.join("sources", "readings"),
-	isSubdirectorizeReadingNotesLexically: true,
-    readingNoteBiblioNoteOutlinkPropertyName: "source-references",
-    readingNoteTagMetadata: {},
-	readingNoteAdditionalMetadata: {},
-	isCreateReadingNotes: true,
+    associatedNotes: [
+        {
+            className: "extract",
+            isSubdirectorizeLexically: true,
+            returnLinkPropertyName: "source-references",
+            tagMetadata: {},
+            frontmatterMetadata: {},
+            isAutoCreate: false,
+        },
+        {
+            className: "reading",
+            isSubdirectorizeLexically: true,
+            returnLinkPropertyName: "source-references",
+            tagMetadata: {},
+            frontmatterMetadata: {},
+            isAutoCreate: false,
+        },
+    ],
 
 	holdingsParentFolder: _path.join("sources", "holdings"),
     holdingsPropertyName: "reference-holdings",
