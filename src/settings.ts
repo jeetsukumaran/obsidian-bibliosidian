@@ -77,7 +77,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 
     associatedNotes: [
         {
-            className: "extract",
+            className: "Extract",
             parentFolderPath: "sources/extracts",
             isSubdirectorizeLexically: true,
             returnLinkPropertyName: "source-references",
@@ -86,7 +86,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
             isAutoCreate: false,
         },
         {
-            className: "reading",
+            className: "Reading",
             parentFolderPath: "sources/readings",
             isSubdirectorizeLexically: true,
             returnLinkPropertyName: "source-references",
