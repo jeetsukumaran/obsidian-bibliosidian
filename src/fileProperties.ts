@@ -190,16 +190,60 @@ export class FileProperties {
 	}
 }
 
+export function mergeProperties(
+    originalProperties: FilePropertyData,
+    newProperties: FilePropertyData,
+    isClearEmpty: boolean = true,
+) {
+    // Merge properties, with special handling for arrays
+    for (const [key, newValue] of Object.entries(newProperties)) {
+        if (newValue === null || newValue === undefined) {
+            if (isClearEmpty && key in originalProperties) {
+                delete originalProperties[key];
+            }
+            continue;
+        }
+
+        const existingValue = originalProperties[key];
+
+        if (Array.isArray(newValue)) {
+            if (Array.isArray(existingValue)) {
+                // Both are arrays - merge and deduplicate
+                originalProperties[key] = Array.from(new Set([...existingValue, ...newValue]));
+            } else if (existingValue) {
+                // Existing is scalar, new is array - combine into array
+                originalProperties[key] = Array.from(new Set([existingValue, ...newValue]));
+            } else {
+                // No existing value - use new array
+                originalProperties[key] = [...newValue];
+            }
+        } else if (Array.isArray(existingValue)) {
+            // Existing is array, new is scalar - append to array
+            originalProperties[key] = Array.from(new Set([...existingValue, newValue]));
+        } else {
+            // Both are scalar values or no existing value
+            originalProperties[key] = newValue;
+        }
+    }
+}
+
 export async function updateFrontMatter(
     app: App,
-    file: TFile,
+    filePath: string,
     propertyValueMap: FilePropertyData,
+    isClearEmpty: boolean = true,
     isAddUpdateNotice: boolean = false,
 ) {
+    const file = app.vault.getAbstractFileByPath(filePath);
+    if (!(file instanceof TFile)) {
+        console.error("File not found");
+        return;
+    }
     await app.fileManager.processFrontMatter(file, (frontmatter: { [key: string]: any }) => {
-        Object.entries(propertyValueMap).forEach(([propertyName, newValue]) => {
-            frontmatter[propertyName] = newValue;
-        });
+        mergeProperties(frontmatter, propertyValueMap, isClearEmpty);
+        // Object.entries(propertyValueMap).forEach(([propertyName, newValue]) => {
+        //     frontmatter[propertyName] = newValue;
+        // });
 
         if (isAddUpdateNotice) {
             new Notice('Front matter updated.');
@@ -209,24 +253,25 @@ export async function updateFrontMatter(
     });
 }
 
-export async function updateFrontMatterLists(
-    app: App,
-    file: TFile,
-    propertyValueMap: FilePropertyData,
-    isAddUpdateNotice: boolean = false,
-) {
-    await app.fileManager.processFrontMatter(file, (frontmatter: { [key: string]: any }) => {
-        Object.entries(propertyValueMap).forEach(([propertyName, newValue]) => {
-            frontmatter[propertyName] = newValue;
-        });
+// export async function updateFrontMatter(
+//     app: App,
+//     file: TFile,
+//     propertyValueMap: FilePropertyData,
+//     isReplaceExisting: boolean = false,
+//     isAddUpdateNotice: boolean = false,
+// ) {
+//     await app.fileManager.processFrontMatter(file, (frontmatter: { [key: string]: any }) => {
+//         Object.entries(propertyValueMap).forEach(([propertyName, newValue]) => {
+//             frontmatter[propertyName] = newValue;
+//         });
 
-        if (isAddUpdateNotice) {
-            new Notice('Front matter updated.');
-        }
-    }).catch((error) => {
-        new Notice(`Failed to update front matter: ${error.message}`);
-    });
-}
+//         if (isAddUpdateNotice) {
+//             new Notice('Front matter updated.');
+//         }
+//     }).catch((error) => {
+//         new Notice(`Failed to update front matter: ${error.message}`);
+//     });
+// }
 
 export function createFilePropertyDataTable(containerEl: HTMLElement, filePropertyData: FilePropertyData): HTMLTableElement {
     // Create the table element

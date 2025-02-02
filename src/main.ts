@@ -148,8 +148,8 @@ export default class Bibliosidian extends Plugin {
         }
         updateFrontMatter(
             this.app,
-            activeFile,
-            propertyValueMap
+            activeFile.path,
+            propertyValueMap,
         );
         // let isSubdirectorizeReadingNotesLexically = "reading.";
         // let noteParentFolderPath = "reading.";
