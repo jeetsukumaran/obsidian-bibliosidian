@@ -53,18 +53,21 @@ import {
 export class BibliosidianSettingsTab extends PluginSettingTab {
 	plugin: Plugin;
 	settings: BibliosidianSettings;
+	saveSettingsCallback: (settings: BibliosidianSettings) => Promise<void>;
 
 	constructor(
         plugin: Plugin,
         settings: BibliosidianSettings,
+        saveSettingsCallback: (settings: BibliosidianSettings) => Promise<void>,
 	) {
 		super(plugin.app, plugin);
 		this.plugin = plugin;
 		this.settings = settings;
+		this.saveSettingsCallback = saveSettingsCallback;
 	}
 
 	async saveSettings() {
-	    await this.plugin.saveSettings();
+	    await this.saveSettingsCallback(this.settings)
 	}
 
 	display(): void {
@@ -72,9 +75,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl("h1", { text: "Bibliosidian settings" })
-
-		containerEl.createEl("h2", { text: "Namespaces" })
+		containerEl.createEl("h3", { text: "Namespaces" })
 
 		new Setting(containerEl)
 			.setName("Source bibliographic data property name prefix")
@@ -150,7 +151,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			"biblioNoteAdditionalMetadata",
 		)
 
-		containerEl.createEl("h2", { text: "Authors" })
+		containerEl.createEl("h3", { text: "Authors" })
 
 		new Setting(containerEl)
 			.setName("Authors folder")
@@ -201,7 +202,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			"authorNoteAdditionalMetadata",
 		)
 
-		containerEl.createEl("h2", { text: "Holdings" })
+		containerEl.createEl("h3", { text: "Holdings" })
 
 		new Setting(containerEl)
 			.setName("Holdings folder")
@@ -224,7 +225,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 					await this.saveSettings();
 		}));
 
-		containerEl.createEl("h2", { text: "Readings" })
+		containerEl.createEl("h3", { text: "Readings" })
 
 		new Setting(containerEl)
 			.setName("Reading folder")

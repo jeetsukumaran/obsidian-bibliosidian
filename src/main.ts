@@ -113,7 +113,11 @@ export default class Bibliosidian extends Plugin {
             },
         });
 
-		this.addSettingTab(new BibliosidianSettingsTab(this, this.settings));
+		this.addSettingTab(new BibliosidianSettingsTab(
+            this,
+            this.settings,
+            this.saveSettings,
+		));
 	}
 
 
