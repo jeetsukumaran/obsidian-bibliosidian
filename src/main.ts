@@ -129,7 +129,10 @@ export default class Bibliosidian extends Plugin {
         ));
 }
 
-    async openAssociatedNote(noteConfig:AssociatedNoteSettings) {
+    async openAssociatedNote(
+        noteConfig:AssociatedNoteSettings,
+        isForceNew: boolean = false,
+    ) {
         let activeFile = this.app.workspace.getActiveFile();
         if (!activeFile) {
             return;
@@ -141,43 +144,28 @@ export default class Bibliosidian extends Plugin {
             noteConfig.namePostfix,
             noteConfig.isSubdirectorizeLexically,
         );
-        // console.log(noteLocation);
-
-
-        // const newNotePath = await createUniqueNote(
-        //     this.app,
-        //     noteLocation.newFileBasename,
-        //     noteLocation.newFileParentDir,
-        //     "",
-        //     undefined,
-        // )
-        const newNotePath = await createOrOpenNote(
-            this.app,
-            noteLocation.newFilePath,
-        )
-        let propertyValueMap: FilePropertyData = {
-            "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
+        let newNotePath = "";
+        if (isForceNew) {
+            newNotePath = await createUniqueNote(
+                this.app,
+                noteLocation.newFileBasename,
+                noteLocation.newFileParentDir,
+                "",
+                undefined,
+            )
+        } else {
+            newNotePath = await createOrOpenNote(
+                this.app,
+                noteLocation.newFilePath,
+            )
         }
-        updateFrontMatter(
+        let propertyValueMap: FilePropertyData =         updateFrontMatter(
             this.app,
             newNotePath,
-            propertyValueMap,
+            {
+                "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
+            } ,
         );
-        // let isSubdirectorizeReadingNotesLexically = "reading.";
-        // let noteParentFolderPath = "reading.";
-        // let noteTitlePrefix = "reading.";
-        // const noteLocation = composeNoteLocation(
-        //     activeFile.path,
-        //     "reading.",
-        //     this.settings.readingNoteParentFolderPath || "",
-        //     this.settings.isSubdirectorizeReadingNotesLexically,
-        // );
-        // const newNote = await createOrOpenNote(
-        //     this.app,
-        //     readingNoteLocation.newFileParentDir,
-        //     "",
-        //     undefined,
-        // )
     }
 
     async addHolding() {
