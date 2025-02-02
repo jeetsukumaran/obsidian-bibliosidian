@@ -53,12 +53,14 @@ import {
 export class BibliosidianSettingsTab extends PluginSettingTab {
 	plugin: Plugin;
 	settings: BibliosidianSettings;
-	saveSettingsCallback: (settings: BibliosidianSettings) => Promise<void>;
+	// saveSettingsCallback: (settings: BibliosidianSettings) => Promise<void>;
+	saveSettingsCallback: () => Promise<void>;
 
 	constructor(
         plugin: Plugin,
         settings: BibliosidianSettings,
-        saveSettingsCallback: (settings: BibliosidianSettings) => Promise<void>,
+        // saveSettingsCallback: (settings: BibliosidianSettings) => Promise<void>,
+        saveSettingsCallback: () => Promise<void>,
 	) {
 		super(plugin.app, plugin);
 		this.plugin = plugin;
@@ -67,7 +69,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 	}
 
 	async saveSettings() {
-	    await this.saveSettingsCallback(this.settings)
+	    await this.saveSettingsCallback()
 	}
 
 	display(): void {
