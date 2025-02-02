@@ -25,6 +25,7 @@ import {
 	parseYaml,
 	stringifyYaml,
 	createFilePropertyDataTable,
+	updateFrontMatter,
 } from "./fileProperties";
 
 import {
@@ -141,6 +142,15 @@ export default class Bibliosidian extends Plugin {
             noteConfig.isSubdirectorizeLexically,
         );
         console.log(noteLocation);
+
+        let propertyValueMap: FilePropertyData = {
+            "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
+        }
+        updateFrontMatter(
+            this.app,
+            activeFile,
+            propertyValueMap
+        );
         // let isSubdirectorizeReadingNotesLexically = "reading.";
         // let noteParentFolderPath = "reading.";
         // let noteTitlePrefix = "reading.";

@@ -190,6 +190,25 @@ export class FileProperties {
 	}
 }
 
+export async function updateFrontMatter(
+    app: App,
+    file: TFile,
+    propertyValueMap: FilePropertyData,
+    isAddUpdateNotice: boolean = false,
+) {
+    await app.fileManager.processFrontMatter(file, (frontmatter: { [key: string]: any }) => {
+        Object.entries(propertyValueMap).forEach(([propertyName, newValue]) => {
+            frontmatter[propertyName] = newValue;
+        });
+
+        if (isAddUpdateNotice) {
+            new Notice('Front matter updated.');
+        }
+    }).catch((error) => {
+        new Notice(`Failed to update front matter: ${error.message}`);
+    });
+}
+
 export async function updateFrontMatterLists(
     app: App,
     file: TFile,
