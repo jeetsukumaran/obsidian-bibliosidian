@@ -122,12 +122,12 @@ export default class Bibliosidian extends Plugin {
             },
         });
 
-		this.addSettingTab(new BibliosidianSettingsTab(
+        this.addSettingTab(new BibliosidianSettingsTab(
             this,
             this.settings,
-            this.saveSettings,
-		));
-	}
+            async () => await this.saveData(this.settings)
+        ));
+}
 
     async openAssociatedNote(noteConfig:AssociatedNoteSettings) {
         let activeFile = this.app.workspace.getActiveFile();
@@ -235,9 +235,6 @@ export default class Bibliosidian extends Plugin {
         this.settings.authorNoteTagMetadata = ensureStringArray(this.settings.authorNoteTagMetadata);
 	}
 
-	async saveSettings() {
-		await this.saveData(this.settings);
-	}
 }
 
 
