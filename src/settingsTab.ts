@@ -117,7 +117,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 		}));
 
 		new Setting(containerEl)
-			.setName("Bibliographic data front matter metadata property name prefix")
+			.setName("Front matter metadata property name prefix")
 			.setDesc(
                 "This will be prefixed to the normalized bibliographic (YAML frontmatter properties)"
                 + " data fields. For example, if set to 'reference-',"
@@ -132,8 +132,8 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
 
         new Setting(containerEl)
-            .setName("Bibliographic note tag metadata")
-            .setDesc("Enter tags for bibliographic notes, one per line. No leading hash (#).")
+            .setName("Tag metadata")
+            .setDesc("Enter tags to be added, one per line. No leading hash (#).")
             .addTextArea(text => {
                 text.setPlaceholder("literature\nreference\nliterature/study")
                     .setValue(this.settings.biblioNoteTagMetadata?.tags?.join("\n") || "")
@@ -141,7 +141,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
                         this.settings.biblioNoteTagMetadata = normalizeTagInput(value);
                         await this.saveSettings();
                     });
-                text.inputEl.style.height = "8rem";
+                // text.inputEl.style.height = "8rem";
             });
 
 		this.manageAdditionalPropertiesSettings(
@@ -149,7 +149,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			"biblioNoteAdditionalMetadata",
 		)
 
-		containerEl.createEl("h2", { text: "Authors" })
+		containerEl.createEl("h2", { text: "Author notes" })
 
 
 		new Setting(containerEl)
@@ -163,7 +163,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 		}));
 
 		new Setting(containerEl)
-			.setName("Authors folder")
+			.setName("Author notes folder")
 			.setDesc("Path to folder of author notes.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/authors')")
@@ -173,8 +173,8 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 					await this.saveSettings();
 		}));
 		new Setting(containerEl)
-			.setName("Organize authors into subdirectories")
-			.setDesc("Enable or disable lexical organization of authors into subdirectories.")
+			.setName("Organize author notes into subdirectories based on names")
+			.setDesc("Enable or disable lexical organization of author notes into subdirectories.")
 			.addToggle(toggle => toggle
 				.setValue(this.settings.isSubdirectorizeAuthorNotesLexically)
 				.onChange(async (value) => {
@@ -182,10 +182,10 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 					await this.saveSettings();
         }));
 		new Setting(containerEl)
-			.setName("Bibliographic note link property name:")
-			.setDesc("Name of property on author note linking to associated bibliographic notes.")
+			.setName("Bibliographic note backlink property name:")
+			.setDesc("Front matter metadata property on author note linking to associated bibliographic note.")
 			.addText(text => text
-				.setPlaceholder("(E.g. 'references', 'works', 'bibliographies')")
+				.setPlaceholder("(E.g. 'author-references')")
 				.setValue(this.settings.authorBiblioNoteOutlinkPropertyName)
 				.onChange(async (value) => {
 					this.settings.authorBiblioNoteOutlinkPropertyName = value
@@ -193,16 +193,16 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 		}));
 
         new Setting(containerEl)
-            .setName("Author note tag metadata")
-            .setDesc("Enter tags for author notes, one per line. No leading hash (#).")
+            .setName("Tag metadata")
+            .setDesc("Enter tags to be added, one per line. No leading hash (#).")
             .addTextArea(text => {
-                text.setPlaceholder("author\nliterature/author\nimportant-author")
+                text.setPlaceholder("literature/author")
                     .setValue(this.settings.authorNoteTagMetadata?.tags?.join("\n") || "")
                     .onChange(async (value) => {
                         this.settings.authorNoteTagMetadata = normalizeTagInput(value);
                         await this.saveSettings();
                     });
-                text.inputEl.style.height = "8rem";
+                // text.inputEl.style.height = "8rem";
             });
 
 
@@ -276,7 +276,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
                         this.settings.authorNoteTagMetadata = normalizeTagInput(value);
                         await this.saveSettings();
                     });
-                text.inputEl.style.height = "8rem";
+                // text.inputEl.style.height = "8rem";
             });
 
 
@@ -308,7 +308,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.addTextArea(text => {
 				text.setPlaceholder(settingsPropertyParameterPlaceholder)
 				.setValue(currentAdditionalPropertiesString);
-				text.inputEl.style.height = "8rem"
+				// text.inputEl.style.height = "8rem"
 				text.inputEl.addEventListener("blur", async () => {
 					try {
 						let refProperties: FilePropertyData = parseYaml(text.getValue());
