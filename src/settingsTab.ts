@@ -81,9 +81,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
 		containerEl.createEl("h2", { text: "Bibliographical notes" })
 
-        // containerEl.createEl("p", {
-        //     text: "A bibliographical note is the main reference linking to the source. It contains standardized metadata such as authors, title, publication year, and source details."
-        // });
+        containerEl.createEl("p", {
+            text: "Primary reference notes for the sources, with fundamental bibliographical data.",
+        });
 
 		new Setting(containerEl)
 			.setName("Bibliographical notes folder")
@@ -151,6 +151,10 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 		)
 
 		containerEl.createEl("h2", { text: "Author notes" })
+
+        containerEl.createEl("p", {
+            text: "Author data tracked by links to references."
+        });
 
 
 		new Setting(containerEl)
