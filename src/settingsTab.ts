@@ -211,68 +211,6 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			"authorNoteAdditionalMetadata",
 		)
 
-
-		containerEl.createEl("h2", { text: "Reading notes" })
-
-		new Setting(containerEl)
-			.setName("Create reading notes automatically")
-			.setDesc("Enable or disable creation or updating of linked reading notes when creating or updating bibliographic notes.")
-			.addToggle(toggle => toggle
-					.setValue(this.settings.isCreateReadingNotes)
-					.onChange(async (value) => {
-						this.settings.isCreateReadingNotes = value;
-						await this.saveSettings();
-		}));
-
-		new Setting(containerEl)
-			.setName("Reading notes folder")
-			.setDesc("Path to folder of reading notes.")
-			.addText(text => text
-				.setPlaceholder("(E.g. 'sources/readings')")
-				.setValue(this.settings.readingNoteParentFolderPath)
-				.onChange(async (value) => {
-					this.settings.readingNoteParentFolderPath = value;
-					await this.saveSettings();
-		}));
-		new Setting(containerEl)
-			.setName("Organize reading notes into subdirectories based on names")
-			.setDesc("Enable or disable lexical organization of reading notes into subdirectories.")
-			.addToggle(toggle => toggle
-				.setValue(this.settings.isSubdirectorizeReadingNotesLexically)
-				.onChange(async (value) => {
-					this.settings.isSubdirectorizeReadingNotesLexically = value;
-					await this.saveSettings();
-        }));
-		new Setting(containerEl)
-			.setName("Bibliographic note backlink property name:")
-			.setDesc("Front matter metadata property on reading note linking to associated bibliographic note.")
-			.addText(text => text
-				.setPlaceholder("(E.g. 'reading-references')")
-				.setValue(this.settings.readingNoteBiblioNoteOutlinkPropertyName)
-				.onChange(async (value) => {
-					this.settings.readingNoteBiblioNoteOutlinkPropertyName = value
-					await this.saveSettings();
-		}));
-
-        new Setting(containerEl)
-            .setName("Tag metadata")
-            .setDesc("Enter tags to be added, one per line. No leading hash (#).")
-            .addTextArea(text => {
-                text.setPlaceholder("literature/reading")
-                    .setValue(this.settings.readingNoteTagMetadata?.tags?.join("\n") || "")
-                    .onChange(async (value) => {
-                        this.settings.readingNoteTagMetadata = normalizeTagInput(value);
-                        await this.saveSettings();
-                    });
-                // text.inputEl.style.height = "8rem";
-            });
-
-
-		this.manageAdditionalPropertiesSettings(
-			containerEl,
-			"readingNoteAdditionalMetadata",
-		)
-
 		containerEl.createEl("h2", { text: "Extract notes" })
 
 		new Setting(containerEl)
@@ -334,6 +272,69 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			"extractNoteAdditionalMetadata",
 		)
 
+
+
+
+		containerEl.createEl("h2", { text: "Reading notes" })
+
+		new Setting(containerEl)
+			.setName("Create reading notes automatically")
+			.setDesc("Enable or disable creation or updating of linked reading notes when creating or updating bibliographic notes.")
+			.addToggle(toggle => toggle
+					.setValue(this.settings.isCreateReadingNotes)
+					.onChange(async (value) => {
+						this.settings.isCreateReadingNotes = value;
+						await this.saveSettings();
+		}));
+
+		new Setting(containerEl)
+			.setName("Reading notes folder")
+			.setDesc("Path to folder of reading notes.")
+			.addText(text => text
+				.setPlaceholder("(E.g. 'sources/readings')")
+				.setValue(this.settings.readingNoteParentFolderPath)
+				.onChange(async (value) => {
+					this.settings.readingNoteParentFolderPath = value;
+					await this.saveSettings();
+		}));
+		new Setting(containerEl)
+			.setName("Organize reading notes into subdirectories based on names")
+			.setDesc("Enable or disable lexical organization of reading notes into subdirectories.")
+			.addToggle(toggle => toggle
+				.setValue(this.settings.isSubdirectorizeReadingNotesLexically)
+				.onChange(async (value) => {
+					this.settings.isSubdirectorizeReadingNotesLexically = value;
+					await this.saveSettings();
+        }));
+		new Setting(containerEl)
+			.setName("Bibliographic note backlink property name:")
+			.setDesc("Front matter metadata property on reading note linking to associated bibliographic note.")
+			.addText(text => text
+				.setPlaceholder("(E.g. 'reading-references')")
+				.setValue(this.settings.readingNoteBiblioNoteOutlinkPropertyName)
+				.onChange(async (value) => {
+					this.settings.readingNoteBiblioNoteOutlinkPropertyName = value
+					await this.saveSettings();
+		}));
+
+        new Setting(containerEl)
+            .setName("Tag metadata")
+            .setDesc("Enter tags to be added, one per line. No leading hash (#).")
+            .addTextArea(text => {
+                text.setPlaceholder("literature/reading")
+                    .setValue(this.settings.readingNoteTagMetadata?.tags?.join("\n") || "")
+                    .onChange(async (value) => {
+                        this.settings.readingNoteTagMetadata = normalizeTagInput(value);
+                        await this.saveSettings();
+                    });
+                // text.inputEl.style.height = "8rem";
+            });
+
+
+		this.manageAdditionalPropertiesSettings(
+			containerEl,
+			"readingNoteAdditionalMetadata",
+		)
 
 
 		containerEl.createEl("h2", { text: "Holdings" })
