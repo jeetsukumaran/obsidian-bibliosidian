@@ -77,17 +77,21 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl("h3", { text: "Namespaces" })
+		containerEl.createEl("h2", { text: "Bibliographical notes" })
+
+        // containerEl.createEl("p", {
+        //     text: "A bibliographical note is the main reference linking to the source. It contains standardized metadata such as authors, title, publication year, and source details."
+        // });
 
 		new Setting(containerEl)
 			.setName("Source bibliographic data property name prefix")
 			.setDesc(
                 "This will be prefixed to the normalized bibliographic (YAML frontmatter properties)"
-                + " data fields. For example, if set to 'source-',"
-                + " the frontmatter YAML field will be 'source-authors' instead of just 'authors'. "
+                + " data fields. For example, if set to 'reference-',"
+                + " the frontmatter YAML field will be 'reference-authors' instead of just 'authors'. "
 			)
 			.addText(text => text
-				.setPlaceholder("(e.g., 'source-')")
+				.setPlaceholder("(e.g., 'reference-')")
 				.setValue(this.settings.biblioNoteSourcePropertiesPrefix)
 				.onChange(async (value) => {
 					this.settings.biblioNoteSourcePropertiesPrefix = value;
@@ -96,7 +100,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setName("Source BibTeX property name")
 			.setDesc(` Property on bibliographic note to store source BibTeX data. `)
 			.addText(text => text
-				.setPlaceholder("(YAML frontmatter property name, e.g. 'source-bibtex')")
+				.setPlaceholder("(YAML frontmatter property name, e.g. 'reference-bibtex')")
 				.setValue(this.settings.biblioNoteSourceBibTex)
 				.onChange(async (value) => {
 					this.settings.biblioNoteSourceBibTex = value;
@@ -105,7 +109,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
 
 		new Setting(containerEl)
-			.setName("Bibliographic notes folder")
+			.setName("Bibliographical notes folder")
 			.setDesc("Path to folder of bibliographic notes.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/references')")
@@ -124,19 +128,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 					await this.saveSettings();
         }));
 
-		new Setting(containerEl)
-			.setName("Create author notes automatically")
-			.setDesc("Enable or disable creation or updating of linked author notes when creating or updating bibliographic notes.")
-			.addToggle(toggle => toggle
-					.setValue(this.settings.isCreateAuthorPages)
-					.onChange(async (value) => {
-						this.settings.isCreateAuthorPages = value;
-						await this.saveSettings();
-		}));
-
 
         new Setting(containerEl)
-            .setName("Bibliographic Note Tag Metadata")
+            .setName("Bibliographic note tag metadata")
             .setDesc("Enter tags for bibliographic notes, one per line. No leading hash (#).")
             .addTextArea(text => {
                 text.setPlaceholder("literature\nreference\nliterature/study")
@@ -153,7 +147,18 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			"biblioNoteAdditionalMetadata",
 		)
 
-		containerEl.createEl("h3", { text: "Authors" })
+		containerEl.createEl("h2", { text: "Authors" })
+
+
+		new Setting(containerEl)
+			.setName("Create author notes automatically")
+			.setDesc("Enable or disable creation or updating of linked author notes when creating or updating bibliographic notes.")
+			.addToggle(toggle => toggle
+					.setValue(this.settings.isCreateAuthorPages)
+					.onChange(async (value) => {
+						this.settings.isCreateAuthorPages = value;
+						await this.saveSettings();
+		}));
 
 		new Setting(containerEl)
 			.setName("Authors folder")
@@ -204,7 +209,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			"authorNoteAdditionalMetadata",
 		)
 
-		containerEl.createEl("h3", { text: "Holdings" })
+		containerEl.createEl("h2", { text: "Holdings" })
 
 		new Setting(containerEl)
 			.setName("Holdings folder")
@@ -227,7 +232,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 					await this.saveSettings();
 		}));
 
-		containerEl.createEl("h3", { text: "Readings" })
+		containerEl.createEl("h2", { text: "Readings" })
 
 		new Setting(containerEl)
 			.setName("Reading folder")
