@@ -483,7 +483,6 @@ class BibTexResultsModal extends Modal {
                 })
             )
 
-        // `References imported: ${filteredResults.length}`
         let referencesTextArea = this.createReadonlyTextArea(
             contentEl,
             valueGroups[currentGroupIndex]
