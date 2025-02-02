@@ -106,7 +106,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
         {
             className: "Reading",
             description: "Notes on your readings, analyses, or processing of sources.",
-            parentFolderPath: "sources/readings",
+            parentFolderPath: "journals/readings",
             namePrefix: "",
             namePostfix: "_reading",
             isSubdirectorizeLexically: true,
