@@ -8,23 +8,32 @@ import {
 import * as _path from "path";
 
 export interface BibliosidianSettings {
-    biblioNoteTagMetadata: FilePropertyData;
-    authorNoteTagMetadata: FilePropertyData;
-	mySetting: string;
+
+
 	biblioNoteSourcePropertiesPrefix: string;
 	biblioNoteSourceBibTex: string;
 	biblioNoteSubdirectoryRoot: string;
 	isSubdirectorizeBiblioNotesLexically: boolean
+    biblioNoteTagMetadata: FilePropertyData;
 	biblioNoteAdditionalMetadata: FilePropertyData;
+
 	authorsParentFolderPath: string;
 	isSubdirectorizeAuthorsLexically: boolean;
 	authorBiblioNoteOutlinkPropertyName: string;
+    authorNoteTagMetadata: FilePropertyData;
 	authorsAdditionalMetadata: FilePropertyData;
 	isCreateAuthorPages: boolean;
+
 	holdingsSubdirectoryRoot: string;
     holdingsPropertyName: string;
-	readingsSubdirectoryRoot: string;
-    readingsPropertyName: string;
+
+	readingNoteParentFolderPath: string;
+	isSubdirectorizeReadingNotesLexically: boolean;
+	readingNoteBiblioNoteOutlinkPropertyName: string;
+    readingNoteNoteTagMetadata: FilePropertyData;
+	readingNoteAdditionalMetadata: FilePropertyData;
+	isCreateReadingNotePages: boolean;
+
     citationOutlinkPropertyNames: string[];
     citationInlinkPropertyNames: string[];
     citationKeyPropertyNames: string[];
@@ -33,23 +42,32 @@ export interface BibliosidianSettings {
 }
 
 export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
-    biblioNoteTagMetadata: {},
-    authorNoteTagMetadata: {},
-	mySetting: 'default',
-	biblioNoteSourcePropertiesPrefix: "source-",
-	biblioNoteSourceBibTex: "entry-bibtex",
+
+
+	biblioNoteSourcePropertiesPrefix: "reference-",
+	biblioNoteSourceBibTex: "reference-bibtex",
 	biblioNoteSubdirectoryRoot: _path.join("sources", "references"),
 	isSubdirectorizeBiblioNotesLexically: true,
+    biblioNoteTagMetadata: {},
 	biblioNoteAdditionalMetadata: {},
+
 	authorsParentFolderPath: _path.join("sources", "authors"),
 	isSubdirectorizeAuthorsLexically: true,
-	isCreateAuthorPages: true,
-	authorsAdditionalMetadata: {},
-	holdingsSubdirectoryRoot: _path.join("sources", "holdings"),
-    holdingsPropertyName: "source-holdings",
-	readingsSubdirectoryRoot: _path.join("sources", "holdings"),
-    readingsPropertyName: "source-holdings",
     authorBiblioNoteOutlinkPropertyName: "author-references",
+    authorNoteTagMetadata: {},
+	authorsAdditionalMetadata: {},
+	isCreateAuthorPages: true,
+
+	holdingsSubdirectoryRoot: _path.join("sources", "holdings"),
+    holdingsPropertyName: "reference-holdings",
+
+	readingNoteParentFolderPath: _path.join("sources", "readingNote"),
+	isSubdirectorizeReadingNotesLexically: true,
+    readingNoteBiblioNoteOutlinkPropertyName: "author-references",
+    readingNoteNoteTagMetadata: {},
+	readingNoteAdditionalMetadata: {},
+	isCreateReadingNotePages: true,
+
     citationOutlinkPropertyNames: [
         "references",
         "bibliography",

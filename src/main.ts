@@ -223,15 +223,66 @@ class BibliosidianSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 		}));
 
+		containerEl.createEl("h2", { text: "Readings" })
+
+		new Setting(containerEl)
+			.setName("Reading folder")
+			.setDesc("Path to folder of author notes.")
+			.addText(text => text
+				.setPlaceholder("(E.g. 'journals/reading')")
+				.setValue(this.plugin.settings.readingNoteParentFolderPath)
+				.onChange(async (value) => {
+					this.plugin.settings.readingNoteParentFolderPath = value;
+					await this.plugin.saveSettings();
+		}));
+		new Setting(containerEl)
+			.setName("Organize authors into subdirectories")
+			.setDesc("Enable or disable lexical organization of authors into subdirectories.")
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.isSubdirectorizeAuthorsLexically)
+				.onChange(async (value) => {
+					this.plugin.settings.isSubdirectorizeAuthorsLexically = value;
+					await this.plugin.saveSettings();
+        }));
+		new Setting(containerEl)
+			.setName("Bibliographic note link property name:")
+			.setDesc("Name of property on author note linking to associated bibliographic notes.")
+			.addText(text => text
+				.setPlaceholder("(E.g. 'references', 'works', 'bibliographies')")
+				.setValue(this.plugin.settings.authorBiblioNoteOutlinkPropertyName)
+				.onChange(async (value) => {
+					this.plugin.settings.authorBiblioNoteOutlinkPropertyName = value
+					await this.plugin.saveSettings();
+		}));
+
+        new Setting(containerEl)
+            .setName("Author Note Tag Metadata")
+            .setDesc("Enter tags for author notes, one per line. No leading hash (#).")
+            .addTextArea(text => {
+                text.setPlaceholder("author\nliterature/author\nimportant-author")
+                    .setValue(this.plugin.settings.authorNoteTagMetadata?.tags?.join("\n") || "")
+                    .onChange(async (value) => {
+                        this.plugin.settings.authorNoteTagMetadata = normalizeTagInput(value);
+                        await this.plugin.saveSettings();
+                    });
+                text.inputEl.style.height = "8rem";
+            });
+
+
+		this.manageAdditionalPropertiesSettings(
+			containerEl,
+			"authorsAdditionalMetadata",
+		)
+
 	}
 
 
 	manageAdditionalPropertiesSettings(
 		containerEl: HTMLElement,
-		settingsPropertyName: "biblioNoteAdditionalMetadata" | "authorsAdditionalMetadata",
-		settingsPropertyDisplayName: string = "Additional properties (YAML)",
-		settingsPropertyParameterInitialDescription: string = "Other metadata properties to be updated specified in YAML.",
-		settingsPropertyParameterPlaceholder: string = "(E.g., 'type: literature)",
+		settingsPropertyName: "biblioNoteAdditionalMetadata" | "authorsAdditionalMetadata" | "readingNoteAdditionalMetadata",
+		settingsPropertyDisplayName: string = "Additional front matter properties (YAML)",
+		settingsPropertyParameterInitialDescription: string = "Other front matter metadata properties to be updated specified in YAML.",
+		settingsPropertyParameterPlaceholder: string = "(E.g., 'reference-case: Project 1', 'reading-priority: medium')",
 	) {
 			let currentAdditionalPropertiesString: string = "";
 			if (this.plugin.settings[settingsPropertyName]) {
