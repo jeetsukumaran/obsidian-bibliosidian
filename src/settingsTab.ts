@@ -135,7 +135,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             .setName("Tag metadata")
             .setDesc("Enter tags to be added, one per line. No leading hash (#).")
             .addTextArea(text => {
-                text.setPlaceholder("literature/reference")
+                text.setPlaceholder("source/reference")
                     .setValue(this.settings.biblioNoteTagMetadata?.tags?.join("\n") || "")
                     .onChange(async (value) => {
                         this.settings.biblioNoteTagMetadata = normalizeTagInput(value);
@@ -196,7 +196,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             .setName("Tag metadata")
             .setDesc("Enter tags to be added, one per line. No leading hash (#).")
             .addTextArea(text => {
-                text.setPlaceholder("literature/author")
+                text.setPlaceholder("source/author")
                     .setValue(this.settings.authorNoteTagMetadata?.tags?.join("\n") || "")
                     .onChange(async (value) => {
                         this.settings.authorNoteTagMetadata = normalizeTagInput(value);
@@ -257,7 +257,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             .setName("Tag metadata")
             .setDesc("Enter tags to be added, one per line. No leading hash (#).")
             .addTextArea(text => {
-                text.setPlaceholder("literature/extract")
+                text.setPlaceholder("source/extract")
                     .setValue(this.settings.extractNoteTagMetadata?.tags?.join("\n") || "")
                     .onChange(async (value) => {
                         this.settings.extractNoteTagMetadata = normalizeTagInput(value);
@@ -321,7 +321,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             .setName("Tag metadata")
             .setDesc("Enter tags to be added, one per line. No leading hash (#).")
             .addTextArea(text => {
-                text.setPlaceholder("literature/reading")
+                text.setPlaceholder("source/reading")
                     .setValue(this.settings.readingNoteTagMetadata?.tags?.join("\n") || "")
                     .onChange(async (value) => {
                         this.settings.readingNoteTagMetadata = normalizeTagInput(value);
@@ -396,7 +396,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             // .setName("Author note tag metadata")
             // .setDesc("Enter tags for author notes, one per line. No leading hash (#).")
             // .addTextArea(text => {
-                // text.setPlaceholder("author\nliterature/author\nimportant-author")
+                // text.setPlaceholder("author\nsource/author\nimportant-author")
                     // .setValue(this.settings.authorNoteTagMetadata?.tags?.join("\n") || "")
                     // .onChange(async (value) => {
                         // this.settings.authorNoteTagMetadata = normalizeTagInput(value);
