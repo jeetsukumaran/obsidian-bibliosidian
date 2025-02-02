@@ -225,3 +225,22 @@ export function composeNoteLocation(
     };
 }
 
+
+/**
+ * Validates and normalizes Obsidian tags.
+ *
+ * @param tags - Array of tag strings to be validated and normalized.
+ * @param prefixHash - If true, ensures the tags have a leading '#'; otherwise, removes it.
+ * @returns A list of valid, normalized tag strings.
+ */
+export function normalizeObsidianTags(tags: string[], prefixHash: boolean): string[] {
+    const tagPattern = /^#?([a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+)*)$/;
+
+    return tags
+        .map(tag => tag.trim()) // Remove leading/trailing spaces
+        .filter(tag => tagPattern.test(tag)) // Validate format
+        .map(tag => {
+            let normalizedTag = tag.replace(/^#/, ""); // Remove leading #
+            return prefixHash ? `#${normalizedTag}` : normalizedTag;
+        });
+}
