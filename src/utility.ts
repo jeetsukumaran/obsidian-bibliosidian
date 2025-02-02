@@ -6,6 +6,7 @@ import {
     TFile,
     TFolder,
     PaneType,
+    Notice,
 } from 'obsidian';
 import * as path from 'path';
 
@@ -17,7 +18,8 @@ export async function createOrOpenNote(
 ): Promise<string> {
 
     // const path = require('path');
-    let notePath = filePath;
+    let notePath = filePath || "";
+    console.log(notePath);
     if (!notePath.endsWith(".md")) {
     	notePath = notePath + ".md"
     }
@@ -52,47 +54,6 @@ export async function ensureDirectoryExists(app: App, directoryPath: string): Pr
         await app.vault.createFolder(directoryPath);
     }
 }
-
-// export async function ensureParentDirectoryExists(app: App, filePath: string): Promise<void> {
-//     const parentDirPath = filePath.substring(0, filePath.lastIndexOf('/'));
-
-//     // Check if the parent directory exists
-//     let parentDir = app.vault.getAbstractFileByPath(parentDirPath) as TFolder;
-
-//     if (!parentDir) {
-//         // Create the parent directory if it doesn't exist
-//         await createDirectory(app, parentDirPath);
-//     }
-// }
-
-// export async function ensureDirectoryExists(app: App, dirPath: string): Promise<void> {
-//     // Check if the parent directory exists
-
-//     let dirNode = app.vault.getAbstractFileByPath(dirPath) as TFolder;
-//     if (!dirNode) {
-//         // Create the parent directory if it doesn't exist
-//         await app.vault.createFolder(dirPath);
-//     }
-// }
-
-// export async function createDirectory(app: App, dirPath: string): Promise<TFolder> {
-//     const pathParts = dirPath.split('/').filter(part => part.length);
-
-//     let currentPath = '';
-//     let currentDir: TAbstractFile | null = null;
-
-//     for (const part of pathParts) {
-//         currentPath += '/' + part;
-//         currentDir = app.vault.getAbstractFileByPath(currentPath);
-
-//         if (!currentDir) {
-//             // Create the directory if it doesn't exist
-//             currentDir = await app.vault.createFolder(currentPath);
-//         }
-//     }
-
-//     return currentDir as TFolder;
-// }
 
 export async function createUniqueNote(
     app: App,
@@ -223,7 +184,7 @@ export function composeNoteLocation(
     let newFileParentDir: string = parentFolderPath;
     if (isSubdirectorizeLexically) {
         const firstLetter = sourceFileNormalizedName.charAt(0).toLowerCase();
-        newFileParentDir = `${newFileParentDir}/${firstLetter}/`;
+        newFileParentDir = `${newFileParentDir}/${firstLetter}`;
     }
     const newFileBasename = `${namePrefix}${sourceFileNormalizedName}${namePostfix}.md`;
     const newFilePath = `${newFileParentDir}/${newFileBasename}`;

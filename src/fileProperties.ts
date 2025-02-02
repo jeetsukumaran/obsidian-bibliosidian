@@ -196,35 +196,37 @@ export function mergeProperties(
     isClearEmpty: boolean = true,
 ) {
     // Merge properties, with special handling for arrays
+    let mergedProperties = { ... originalProperties };
     for (const [key, newValue] of Object.entries(newProperties)) {
         if (newValue === null || newValue === undefined) {
-            if (isClearEmpty && key in originalProperties) {
-                delete originalProperties[key];
+            if (isClearEmpty && key in mergedProperties) {
+                delete mergedProperties[key];
             }
             continue;
         }
 
-        const existingValue = originalProperties[key];
+        const existingValue = mergedProperties[key];
 
         if (Array.isArray(newValue)) {
             if (Array.isArray(existingValue)) {
                 // Both are arrays - merge and deduplicate
-                originalProperties[key] = Array.from(new Set([...existingValue, ...newValue]));
+                mergedProperties[key] = Array.from(new Set([...existingValue, ...newValue]));
             } else if (existingValue) {
                 // Existing is scalar, new is array - combine into array
-                originalProperties[key] = Array.from(new Set([existingValue, ...newValue]));
+                mergedProperties[key] = Array.from(new Set([existingValue, ...newValue]));
             } else {
                 // No existing value - use new array
-                originalProperties[key] = [...newValue];
+                mergedProperties[key] = [...newValue];
             }
         } else if (Array.isArray(existingValue)) {
             // Existing is array, new is scalar - append to array
-            originalProperties[key] = Array.from(new Set([...existingValue, newValue]));
+            mergedProperties[key] = Array.from(new Set([...existingValue, newValue]));
         } else {
             // Both are scalar values or no existing value
-            originalProperties[key] = newValue;
+            mergedProperties[key] = newValue;
         }
     }
+    return mergedProperties;
 }
 
 export async function updateFrontMatter(
@@ -236,14 +238,16 @@ export async function updateFrontMatter(
 ) {
     const file = app.vault.getAbstractFileByPath(filePath);
     if (!(file instanceof TFile)) {
-        console.error("File not found");
+        console.error("File not found to update front matter: " + filePath);
         return;
     }
     await app.fileManager.processFrontMatter(file, (frontmatter: { [key: string]: any }) => {
-        mergeProperties(frontmatter, propertyValueMap, isClearEmpty);
-        // Object.entries(propertyValueMap).forEach(([propertyName, newValue]) => {
-        //     frontmatter[propertyName] = newValue;
-        // });
+        console.log(propertyValueMap);
+        let mergedProperties = mergeProperties(frontmatter, propertyValueMap, isClearEmpty);
+        console.log(mergedProperties);
+        Object.entries(mergedProperties).forEach(([propertyName, newValue]) => {
+            frontmatter[propertyName] = newValue;
+        });
 
         if (isAddUpdateNotice) {
             new Notice('Front matter updated.');

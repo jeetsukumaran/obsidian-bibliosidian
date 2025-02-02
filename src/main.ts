@@ -144,12 +144,16 @@ export default class Bibliosidian extends Plugin {
         // console.log(noteLocation);
 
 
-        const newNotePath = await createUniqueNote(
+        // const newNotePath = await createUniqueNote(
+        //     this.app,
+        //     noteLocation.newFileBasename,
+        //     noteLocation.newFileParentDir,
+        //     "",
+        //     undefined,
+        // )
+        const newNotePath = await createOrOpenNote(
             this.app,
-            noteLocation.newFileBasename,
-            noteLocation.newFileParentDir,
-            "",
-            undefined,
+            noteLocation.newFilePath,
         )
         let propertyValueMap: FilePropertyData = {
             "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
