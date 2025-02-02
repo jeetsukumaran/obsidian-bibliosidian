@@ -77,36 +77,12 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
+
 		containerEl.createEl("h2", { text: "Bibliographical notes" })
 
         // containerEl.createEl("p", {
         //     text: "A bibliographical note is the main reference linking to the source. It contains standardized metadata such as authors, title, publication year, and source details."
         // });
-
-		new Setting(containerEl)
-			.setName("Source bibliographic data property name prefix")
-			.setDesc(
-                "This will be prefixed to the normalized bibliographic (YAML frontmatter properties)"
-                + " data fields. For example, if set to 'reference-',"
-                + " the frontmatter YAML field will be 'reference-authors' instead of just 'authors'. "
-			)
-			.addText(text => text
-				.setPlaceholder("(e.g., 'reference-')")
-				.setValue(this.settings.biblioNoteSourcePropertiesPrefix)
-				.onChange(async (value) => {
-					this.settings.biblioNoteSourcePropertiesPrefix = value;
-		}));
-		new Setting(containerEl)
-			.setName("Source BibTeX property name")
-			.setDesc(` Property on bibliographic note to store source BibTeX data. `)
-			.addText(text => text
-				.setPlaceholder("(YAML frontmatter property name, e.g. 'reference-bibtex')")
-				.setValue(this.settings.biblioNoteSourceBibTex)
-				.onChange(async (value) => {
-					this.settings.biblioNoteSourceBibTex = value;
-					await this.saveSettings();
-		}));
-
 
 		new Setting(containerEl)
 			.setName("Bibliographical notes folder")
@@ -118,6 +94,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 					this.settings.biblioNoteParentFolder = value;
 					await this.saveSettings();
 		}));
+
 		new Setting(containerEl)
 			.setName("Organize bibliographic notes into subdirectories based on citation key")
 			.setDesc("Enable or disable lexical organization of bibliographic notes into subdirectories.")
@@ -127,6 +104,31 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 					this.settings.isSubdirectorizeBiblioNotesLexically = value;
 					await this.saveSettings();
         }));
+
+		new Setting(containerEl)
+			.setName("Source BibTeX property name")
+			.setDesc(`Front matter metadata property in bibliographic note to store source BibTeX data. `)
+			.addText(text => text
+				.setPlaceholder("(YAML frontmatter property name, e.g. 'reference-bibtex')")
+				.setValue(this.settings.biblioNoteSourceBibTex)
+				.onChange(async (value) => {
+					this.settings.biblioNoteSourceBibTex = value;
+					await this.saveSettings();
+		}));
+
+		new Setting(containerEl)
+			.setName("Bibliographic data front matter metadata property name prefix")
+			.setDesc(
+                "This will be prefixed to the normalized bibliographic (YAML frontmatter properties)"
+                + " data fields. For example, if set to 'reference-',"
+                + " the frontmatter YAML field will be 'reference-authors' instead of just 'authors'. "
+			)
+			.addText(text => text
+				.setPlaceholder("(e.g., 'reference-')")
+				.setValue(this.settings.biblioNoteSourcePropertiesPrefix)
+				.onChange(async (value) => {
+					this.settings.biblioNoteSourcePropertiesPrefix = value;
+		}));
 
 
         new Setting(containerEl)
