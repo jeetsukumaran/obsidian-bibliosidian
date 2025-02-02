@@ -201,9 +201,9 @@ export function ensureStringArray(input: any): string[] {
 
 export function composeNoteLocation(
     sourceFilePath: string,
+    parentFolderPath: string,
     namePrefix: string,
     namePostfix: string,
-    parentFolderPath: string,
     isSubdirectorizeLexically: boolean,
 ): { [key:string]: string,} {
     const sourceFileNormalizedName = path.basename(sourceFilePath

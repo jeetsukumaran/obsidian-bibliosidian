@@ -129,13 +129,21 @@ export default class Bibliosidian extends Plugin {
 	}
 
     async openAssociatedNote(noteConfig:AssociatedNoteSettings) {
+        let activeFile = this.app.workspace.getActiveFile();
+        if (!activeFile) {
+            return;
+        }
+        const noteLocation = composeNoteLocation(
+            activeFile.path,
+            noteConfig.parentFolderPath,
+            noteConfig.namePrefix,
+            noteConfig.namePostfix,
+            noteConfig.isSubdirectorizeLexically,
+        );
+        console.log(noteLocation);
         // let isSubdirectorizeReadingNotesLexically = "reading.";
         // let noteParentFolderPath = "reading.";
         // let noteTitlePrefix = "reading.";
-        // let activeFile = this.app.workspace.getActiveFile();
-        // if (!activeFile) {
-        //     return;
-        // }
         // const noteLocation = composeNoteLocation(
         //     activeFile.path,
         //     "reading.",
