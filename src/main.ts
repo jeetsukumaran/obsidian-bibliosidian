@@ -14,7 +14,7 @@ import {
 import * as _path from "path";
 
 import {
-    normalizeTagInput,
+    ensureStringArray,
     createOrOpenNote,
     composeNoteLocation,
     createUniqueNote,
@@ -204,8 +204,8 @@ export default class Bibliosidian extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-    this.settings.biblioNoteTagMetadata = normalizeTagInput(this.settings.biblioNoteTagMetadata?.tags?.join("\n") || "");
-    this.settings.authorNoteTagMetadata = normalizeTagInput(this.settings.authorNoteTagMetadata?.tags?.join("\n") || "");
+        this.settings.biblioNoteTagMetadata = ensureStringArray(this.settings.biblioNoteTagMetadata);
+        this.settings.authorNoteTagMetadata = ensureStringArray(this.settings.authorNoteTagMetadata);
 	}
 
 	async saveSettings() {

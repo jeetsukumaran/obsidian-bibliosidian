@@ -42,7 +42,7 @@ import {
     DataService,
 
 } from "./DataService";
-import { normalizeTagInput } from './utility'; // Ensure the path is correct
+import { splitStringArray } from './utility'; // Ensure the path is correct
 
 
 import {
@@ -137,9 +137,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             .setDesc("Enter tags to be added, one per line. No leading hash (#).")
             .addTextArea(text => {
                 text.setPlaceholder("source/reference")
-                    .setValue(this.settings.biblioNoteTagMetadata?.tags?.join("\n") || "")
+                    .setValue(this.settings.biblioNoteTagMetadata?.join("\n") || "")
                     .onChange(async (value) => {
-                        this.settings.biblioNoteTagMetadata = normalizeTagInput(value);
+                        this.settings.biblioNoteTagMetadata = splitStringArray(value);
                         await this.saveSettings();
                     });
                 // text.inputEl.style.height = "8rem";
@@ -198,9 +198,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             .setDesc("Enter tags to be added, one per line. No leading hash (#).")
             .addTextArea(text => {
                 text.setPlaceholder("source/author")
-                    .setValue(this.settings.authorNoteTagMetadata?.tags?.join("\n") || "")
+                    .setValue(this.settings.authorNoteTagMetadata?.join("\n") || "")
                     .onChange(async (value) => {
-                        this.settings.authorNoteTagMetadata = normalizeTagInput(value);
+                        this.settings.authorNoteTagMetadata = splitStringArray(value);
                         await this.saveSettings();
                     });
                 // text.inputEl.style.height = "8rem";
@@ -262,7 +262,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
                     .setPlaceholder("source/extract")
                     .setValue(noteConfig.tagMetadata?.join("\n") || "")
                     .onChange(async (value) => {
-                        noteConfig.tagMetadata = normalizeTagInput(value);
+                        noteConfig.tagMetadata = splitStringArray(value);
                         await this.saveSettings();
                      });
             // text.inputEl.style.height = "8rem";

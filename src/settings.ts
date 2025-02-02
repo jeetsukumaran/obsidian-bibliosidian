@@ -12,7 +12,7 @@ export type AssociatedNoteSettings = {
     parentFolderPath: string;
 	isSubdirectorizeLexically: boolean;
 	returnLinkPropertyName: string;
-    tagMetadata: [];
+    tagMetadata: string[];
 	frontmatterMetadata: FilePropertyData;
 	isAutoCreate: boolean;
 }
@@ -23,13 +23,13 @@ export interface BibliosidianSettings {
 	biblioNoteSourceBibTex: string;
 	biblioNoteParentFolder: string;
 	isSubdirectorizeBiblioNotesLexically: boolean
-    biblioNoteTagMetadata: FilePropertyData;
+    biblioNoteTagMetadata: string[];
 	biblioNoteAdditionalMetadata: FilePropertyData;
 
 	authorNoteParentFolderPath: string;
 	isSubdirectorizeAuthorNotesLexically: boolean;
 	authorBiblioNoteOutlinkPropertyName: string;
-    authorNoteTagMetadata: FilePropertyData;
+    authorNoteTagMetadata: string[];
 	authorNoteAdditionalMetadata: FilePropertyData;
 	isCreateAuthorNotes: boolean;
 
@@ -65,13 +65,13 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
 	biblioNoteSourceBibTex: "reference-bibtex",
 	biblioNoteParentFolder: _path.join("sources", "references"),
 	isSubdirectorizeBiblioNotesLexically: true,
-    biblioNoteTagMetadata: {},
+    biblioNoteTagMetadata: [],
 	biblioNoteAdditionalMetadata: {},
 
 	authorNoteParentFolderPath: _path.join("sources", "authors"),
 	isSubdirectorizeAuthorNotesLexically: true,
     authorBiblioNoteOutlinkPropertyName: "source-references",
-    authorNoteTagMetadata: {},
+    authorNoteTagMetadata: [],
 	authorNoteAdditionalMetadata: {},
 	isCreateAuthorNotes: true,
 

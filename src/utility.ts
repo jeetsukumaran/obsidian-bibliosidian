@@ -178,17 +178,25 @@ export async function ensureUniquePath(app: App, fullPath: string): Promise<stri
 //     return { tags };
 // }
 
-/**
- * Normalize a multi-line string of tags into a dictionary with 'tags' as the key.
- * Each tag is trimmed and leading '#' is removed if present.
- * @param input Multi-line string of tags.
- * @returns Normalized dictionary with 'tags' as key and list of tags as value.
- */
-export function normalizeTagInput(input: string): FilePropertyData {
-    const tags = input.split('\n')
-        .map(tag => tag.trim().replace(/^#+/, ''))
-        .filter(tag => tag !== '');
-    return { tags };
+export function splitStringArray(input: string): string[] {
+    if (!input) {
+        return [];
+    }
+    const vals: string[] = input
+                            .split(/\\s,;/)
+                            .map( (s) => s.trim() );
+    return vals;
+}
+
+export function ensureStringArray(input: any): string[] {
+    if (!input) {
+        return [];
+    }
+    if (Array.isArray(input)) {
+        return input.map( (i) => i.toString() );
+    } else {
+        return [ input.toString() ];
+    }
 }
 
 export function composeNoteLocation(
