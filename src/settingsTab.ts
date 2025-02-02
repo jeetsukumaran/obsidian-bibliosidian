@@ -135,7 +135,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             .setName("Tag metadata")
             .setDesc("Enter tags to be added, one per line. No leading hash (#).")
             .addTextArea(text => {
-                text.setPlaceholder("literature\nreference\nliterature/study")
+                text.setPlaceholder("literature/reference")
                     .setValue(this.settings.biblioNoteTagMetadata?.tags?.join("\n") || "")
                     .onChange(async (value) => {
                         this.settings.biblioNoteTagMetadata = normalizeTagInput(value);
@@ -215,7 +215,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Create extract notes automatically")
-			.setDesc("Enable or disable creation or updating of linked extract notes when creating or updating bibliographic notes.")
+			.setDesc("Enable or disable automatic creation linked extract notes when creating or updating bibliographic notes.")
 			.addToggle(toggle => toggle
 					.setValue(this.settings.isCreateExtractNotes)
 					.onChange(async (value) => {
@@ -234,7 +234,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 					await this.saveSettings();
 		}));
 		new Setting(containerEl)
-			.setName("Organize extract notes into subdirectories based on names")
+			.setName("Organize extract notes into subdirectories based on source names")
 			.setDesc("Enable or disable lexical organization of extract notes into subdirectories.")
 			.addToggle(toggle => toggle
 				.setValue(this.settings.isSubdirectorizeExtractNotesLexically)
@@ -298,7 +298,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 					await this.saveSettings();
 		}));
 		new Setting(containerEl)
-			.setName("Organize reading notes into subdirectories based on names")
+			.setName("Organize reading notes into subdirectories based on source names")
 			.setDesc("Enable or disable lexical organization of reading notes into subdirectories.")
 			.addToggle(toggle => toggle
 				.setValue(this.settings.isSubdirectorizeReadingNotesLexically)
