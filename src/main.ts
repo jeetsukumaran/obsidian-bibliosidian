@@ -137,6 +137,9 @@ export default class Bibliosidian extends Plugin {
         if (!activeFile) {
             return;
         }
+
+        let refFileTitle = "hello";
+
         const noteLocation = composeNoteLocation(
             activeFile.path,
             noteConfig.parentFolderPath,
@@ -144,6 +147,7 @@ export default class Bibliosidian extends Plugin {
             noteConfig.namePostfix,
             noteConfig.isSubdirectorizeLexically,
         );
+
         let newNotePath = "";
         if (isForceNew) {
             newNotePath = await createUniqueNote(
@@ -159,11 +163,12 @@ export default class Bibliosidian extends Plugin {
                 noteLocation.newFilePath,
             )
         }
-        let propertyValueMap: FilePropertyData =         updateFrontMatter(
+        updateFrontMatter(
             this.app,
             newNotePath,
             {
                 "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
+                [noteConfig.returnLinkPropertyName]: [ `[[${activeFile.path}|${refFileTitle}]]`, ],
             } ,
         );
     }
