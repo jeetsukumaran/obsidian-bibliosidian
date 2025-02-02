@@ -141,7 +141,7 @@ export default class Bibliosidian extends Plugin {
             noteConfig.namePostfix,
             noteConfig.isSubdirectorizeLexically,
         );
-        console.log(noteLocation);
+        // console.log(noteLocation);
 
         let propertyValueMap: FilePropertyData = {
             "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
