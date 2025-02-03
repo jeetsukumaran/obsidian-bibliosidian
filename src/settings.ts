@@ -21,33 +21,51 @@ export type NoteConfiguration = {
 	isAutoCreate: boolean;
 }
 
-export interface BibliosidianConfigurationData {
+const BIBLIO_NOTE_KEY = "bibliographic"
+const AUTHOR_NOTE_KEY = "author"
+const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
+    BIBLIO_NOTE_KEY: {
+        className: "Bibliographic",
+        description: "Primary reference notes to index sources and fundamental bibliographic data.",
+        parentFolderPath: "sources/references",
+        namePrefix: "@",
+        namePostfix: "",
+        isSubdirectorizeLexically: true,
+        frontmatterPropertyNamePrefix: "source-",
+        parentLinksPropertyName: "",
+        childLinksPropertyName: "children",
+        tagMetadata: [
+            // "#source/reference",
+        ],
+        frontmatterMetadata: {
+        },
+        isAutoCreate: false,
+    },
+    AUTHOR_NOTE_KEY: {
+        className: "Author",
+        description: "Notes to index and link authors across references.",
+        parentFolderPath: "sources/references",
+        namePrefix: "",
+        namePostfix: "",
+        isSubdirectorizeLexically: true,
+        frontmatterPropertyNamePrefix: "source-",
+        parentLinksPropertyName: "",
+        childLinksPropertyName: "children",
+        tagMetadata: [
+            // "#source/reference",
+        ],
+        frontmatterMetadata: {
+        },
+        isAutoCreate: false,
+    },
+};
+
+export interface BibliosidianSettings {
     schemaVersion: string;
-    coreNotes: NoteConfiguration[];
-	associatedNotes: NoteConfiguration[];
-}
-
-export class BibliosidianSettings {
-
-	biblioNoteSourcePropertiesPrefix: string;
-	biblioNoteSourceBibTex: string;
-	biblioNoteParentFolder: string;
-	isSubdirectorizeBiblioNotesLexically: boolean
-    biblioNoteTagMetadata: string[];
-	biblioNoteAdditionalMetadata: FilePropertyData;
-
-	authorNoteParentFolderPath: string;
-	isSubdirectorizeAuthorNotesLexically: boolean;
-	authorBiblioNoteOutlinkPropertyName: string;
-    authorNoteTagMetadata: string[];
-	authorNoteAdditionalMetadata: FilePropertyData;
-	isCreateAuthorNotes: boolean;
-
-	associatedNotes: NoteConfiguration[];
-
+    coreNoteConfigurations: { [key: string]: NoteConfiguration };
+	associatedNoteConfigurations: { [key: string]: NoteConfiguration };
 	holdingsParentFolder: string;
     holdingsPropertyName: string;
-
     citationOutlinkPropertyNames: string[];
     citationInlinkPropertyNames: string[];
     citationKeyPropertyNames: string[];
@@ -56,117 +74,79 @@ export class BibliosidianSettings {
 }
 
 export class BibliosidianConfiguration {
-    readonly settingsData: BibliosidianSettings;
+    settings: BibliosidianSettings;
 
-    constructor(settingsData: BibliosidianSettings) {
-        this.settingsData = settingsData;
+    constructor(settings: BibliosidianSettings) {
+        this.settings = settings;
+        this.validateSettings();
     }
 
-    get biblioNoteSourcePropertiesPrefix(): string {
-        return this.settingsData.biblioNoteSourcePropertiesPrefix ?? "";
+    validateSettings() {
+        if (!this.settings.coreNoteConfigurations) {
+            this.settings.coreNoteConfigurations = {}
+        }
+        if (!this.settings.coreNoteConfigurations[BIBLIO_NOTE_KEY]) {
+            this.settings.coreNoteConfigurations[BIBLIO_NOTE_KEY] = { ... CORE_NOTE_CONFIGURATIONS[BIBLIO_NOTE_KEY] };
+        }
     }
 
-    get biblioNoteSourceBibTex(): string {
-        return this.settingsData.biblioNoteSourceBibTex ?? "";
+    get biblioNoteConfiguration(): NoteConfiguration {
+        return this.getCoreNoteConfiguration(BIBLIO_NOTE_KEY);
     }
 
-    get biblioNoteParentFolder(): string {
-        return this.settingsData.biblioNoteParentFolder ?? "";
+    get authorNoteConfiguration(): NoteConfiguration {
+        return this.getCoreNoteConfiguration(AUTHOR_NOTE_KEY);
     }
 
-    get isSubdirectorizeBiblioNotesLexically(): boolean {
-        return this.settingsData.isSubdirectorizeBiblioNotesLexically ?? false;
+    getCoreNoteConfiguration(key: string): NoteConfiguration {
+        if (!this.settings.coreNoteConfigurations[key]) {
+            this.settings.coreNoteConfigurations[key] = { ... CORE_NOTE_CONFIGURATIONS[key] };
+        }
+        return this.settings.coreNoteConfigurations[key]
     }
 
-    get biblioNoteTagMetadata(): string[] {
-        return this.settingsData.biblioNoteTagMetadata ?? [];
-    }
-
-    get biblioNoteAdditionalMetadata(): FilePropertyData {
-        return this.settingsData.biblioNoteAdditionalMetadata;
-    }
-
-    get authorNoteParentFolderPath(): string {
-        return this.settingsData.authorNoteParentFolderPath ?? "";
-    }
-
-    get isSubdirectorizeAuthorNotesLexically(): boolean {
-        return this.settingsData.isSubdirectorizeAuthorNotesLexically ?? false;
-    }
-
-    get authorBiblioNoteOutlinkPropertyName(): string {
-        return this.settingsData.authorBiblioNoteOutlinkPropertyName ?? "";
-    }
-
-    get authorNoteTagMetadata(): string[] {
-        return this.settingsData.authorNoteTagMetadata ?? [];
-    }
-
-    get authorNoteAdditionalMetadata(): FilePropertyData {
-        return this.settingsData.authorNoteAdditionalMetadata;
-    }
-
-    get isCreateAuthorNotes(): boolean {
-        return this.settingsData.isCreateAuthorNotes ?? false;
-    }
-
-    get associatedNotes(): NoteConfiguration[] {
-        return this.settingsData.associatedNotes ?? [];
+    getAssociatedNoteConfiguration(key: string): NoteConfiguration {
+        return this.settings.associatedNoteConfigurations[key]
     }
 
     get holdingsParentFolder(): string {
-        return this.settingsData.holdingsParentFolder ?? "";
+        return this.settings.holdingsParentFolder ?? "";
     }
 
     get holdingsPropertyName(): string {
-        return this.settingsData.holdingsPropertyName ?? "";
+        return this.settings.holdingsPropertyName ?? "";
     }
 
     get citationOutlinkPropertyNames(): string[] {
-        return this.settingsData.citationOutlinkPropertyNames ?? [];
+        return this.settings.citationOutlinkPropertyNames ?? [];
     }
 
     get citationInlinkPropertyNames(): string[] {
-        return this.settingsData.citationInlinkPropertyNames ?? [];
+        return this.settings.citationInlinkPropertyNames ?? [];
     }
 
     get citationKeyPropertyNames(): string[] {
-        return this.settingsData.citationKeyPropertyNames ?? [];
+        return this.settings.citationKeyPropertyNames ?? [];
     }
 
     get citationKeyPrefix(): string {
-        return this.settingsData.citationKeyPrefix ?? "";
+        return this.settings.citationKeyPrefix ?? "";
     }
 
     get citationKeyPostfix(): string {
-        return this.settingsData.citationKeyPostfix ?? "";
+        return this.settings.citationKeyPostfix ?? "";
     }
 }
 
+export const DEFAULT_SETTINGS: BibliosidianSettings = {
 
-
-export function composePropertyKey(settings: BibliosidianSettings, propertyName: string): string {
-    return `${settings.biblioNoteSourcePropertiesPrefix}${propertyName}`;
-}
-
-export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
-
-	biblioNoteSourcePropertiesPrefix: "reference-",
-	biblioNoteSourceBibTex: "reference-bibtex",
-	biblioNoteParentFolder: _path.join("sources", "references"),
-	isSubdirectorizeBiblioNotesLexically: true,
-    biblioNoteTagMetadata: [],
-	biblioNoteAdditionalMetadata: {},
-
-	authorNoteParentFolderPath: _path.join("sources", "authors"),
-	isSubdirectorizeAuthorNotesLexically: true,
-    authorBiblioNoteOutlinkPropertyName: "source-references",
-    authorNoteTagMetadata: [],
-	authorNoteAdditionalMetadata: {},
-	isCreateAuthorNotes: true,
-
-    associatedNotes: [
-        {
+    schemaVersion: "1.0.0",
+    coreNoteConfigurations: {
+        ... CORE_NOTE_CONFIGURATIONS[BIBLIO_NOTE_KEY],
+        ... CORE_NOTE_CONFIGURATIONS[AUTHOR_NOTE_KEY],
+    },
+    associatedNoteConfigurations: {
+        "extract": {
             className: "Extract",
             description: "Extracts, quotes, snippets, verbatim transcriptions, tables, figures or diagrams etc. from sources.",
             parentFolderPath: "sources/extracts",
@@ -178,7 +158,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
             frontmatterMetadata: {},
             isAutoCreate: false,
         },
-        {
+        "outline": {
             className: "Outline",
             description: "Outlines, table of contents, guides to the organization of contents of sources.",
             parentFolderPath: "sources/outlines",
@@ -190,7 +170,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
             frontmatterMetadata: {},
             isAutoCreate: false,
         },
-        {
+        "reading": {
             className: "Reading",
             description: "Notes on your readings, analyses, or processing of sources.",
             parentFolderPath: "journals/readings",
@@ -202,7 +182,7 @@ export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
             frontmatterMetadata: {},
             isAutoCreate: false,
         },
-    ],
+    },
 
 	holdingsParentFolder: _path.join("sources", "holdings"),
     holdingsPropertyName: "reference-holdings",
