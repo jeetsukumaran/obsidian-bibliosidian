@@ -33,7 +33,7 @@ export async function openAssociatedNote(
         app: App,
         noteConfig: AssociatedNoteSettings,
         isForceNew: boolean = false,
-        titlePropertyNames: string[] = ["link-title", "title"],
+        titlePropertyNames: string[] = ["shorttitle", "title"],
     ) {
     let activeFile = app.workspace.getActiveFile();
     if (!activeFile) {
@@ -68,12 +68,14 @@ export async function openAssociatedNote(
             noteLocation.newFilePath,
         )
     }
+    let newNoteTitle = `${refFileTitle} (${noteConfig.className})`;
     updateFrontMatter(
         app,
         newNotePath,
         {
             "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
             [noteConfig.returnLinkPropertyName]: [ `[[${activeFile.path}|${refFileTitle}]]`, ],
+            "title": newNoteTitle,
         } ,
     );
 }
