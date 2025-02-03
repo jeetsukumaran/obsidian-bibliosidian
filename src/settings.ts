@@ -8,7 +8,7 @@ import {
 
 import * as _path from "path";
 
-export type AssociatedNoteSettings = {
+export type NoteConfiguration = {
     className: string;
     description: string;
     parentFolderPath: string;
@@ -21,7 +21,9 @@ export type AssociatedNoteSettings = {
 	isAutoCreate: boolean;
 }
 
-export interface BibliosidianSettings {
+export class BibliosidianSettings {
+
+    bibliosidianPropertyNamespace: string;
 
 	biblioNoteSourcePropertiesPrefix: string;
 	biblioNoteSourceBibTex: string;
@@ -37,20 +39,7 @@ export interface BibliosidianSettings {
 	authorNoteAdditionalMetadata: FilePropertyData;
 	isCreateAuthorNotes: boolean;
 
-	associatedNotes: AssociatedNoteSettings[];
-	// extractNoteParentFolderPath: string;
-	// isSubdirectorizeExtractNotesLexically: boolean;
-	// extractNoteBiblioNoteOutlinkPropertyName: string;
-    // extractNoteTagMetadata: FilePropertyData;
-	// extractNoteAdditionalMetadata: FilePropertyData;
-	// isCreateExtractNotes: boolean;
-
-	// readingNoteParentFolderPath: string;
-	// isSubdirectorizeReadingNotesLexically: boolean;
-	// readingNoteBiblioNoteOutlinkPropertyName: string;
-    // readingNoteTagMetadata: FilePropertyData;
-	// readingNoteAdditionalMetadata: FilePropertyData;
-	// isCreateReadingNotes: boolean;
+	associatedNotes: NoteConfiguration[];
 
 	holdingsParentFolder: string;
     holdingsPropertyName: string;
@@ -60,10 +49,13 @@ export interface BibliosidianSettings {
     citationKeyPropertyNames: string[];
     citationKeyPrefix: string;
     citationKeyPostfix: string;
+
+    composePropertyKey(propertyName: string) {
+        return `${this.biblioNoteSourcePropertiesPrefix}${propertyName}`;
+    }
 }
 
 export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {
-
 
 	biblioNoteSourcePropertiesPrefix: "reference-",
 	biblioNoteSourceBibTex: "reference-bibtex",

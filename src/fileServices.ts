@@ -13,7 +13,7 @@ import {
 import * as _path from "path";
 
 import {
-    AssociatedNoteSettings,
+    NoteConfiguration,
 } from "./settings";
 
 import {
@@ -31,7 +31,7 @@ import {
 
 export async function openAssociatedNote(
         app: App,
-        noteConfig: AssociatedNoteSettings,
+        noteConfig: NoteConfiguration,
         isForceNew: boolean = false,
         titlePropertyNames: string[] = ["shorttitle", "title"],
     ) {

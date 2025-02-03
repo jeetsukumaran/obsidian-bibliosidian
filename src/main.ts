@@ -52,7 +52,7 @@ import {
 
 
 import {
-    AssociatedNoteSettings,
+    NoteConfiguration,
 	BibliosidianSettings,
     DEFAULT_SETTINGS,
 } from "./settings";

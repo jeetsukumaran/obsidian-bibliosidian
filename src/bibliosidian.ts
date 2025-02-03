@@ -156,7 +156,7 @@ async function generateSourceFrontmatter(
     citeKey?: string,
 ) {
 
-	let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${settings.biblioNoteSourcePropertiesPrefix}${bibStr}`
+	// let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${settings.biblioNoteSourcePropertiesPrefix}${bibStr}`
 
     let { bibEntry, bibtexStr, fieldValueMap } = getBibEntry(args.sourceBibTex, citeKey)
 
@@ -165,9 +165,10 @@ async function generateSourceFrontmatter(
     	return
     }
 
-    let refProperties: FilePropertyData  = {}
+    let refProperties: FilePropertyData = {};
 
 	let citationKey = bibEntry._id.toLowerCase();
+
 	let authorLastNames: string[] = [];
 	// let auFieldNames: string[] = [
 	//     "author",
@@ -201,7 +202,6 @@ async function generateSourceFrontmatter(
         }
 
     };
-
 	let compositeTitle = resolveBibtexTitle(bibEntry);
 	let sourceYear = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
 	let inTextCitationYear = sourceYear
@@ -258,10 +258,12 @@ async function generateSourceFrontmatter(
         "",
     ]
     // special meta-metadata for bibliosidian management
-    const entryUpdatedKey = bibToYamlLabelFn("entry-updated");
+    const entryUpdatedKey = settings.composePropertyKey("entry-updated");
 	refProperties[entryUpdatedKey] = fileProperties.concatItems(entryUpdatedKey, [updateDateStamp])
-    refProperties[bibToYamlLabelFn("citekey")] = citationKey
 
+    let refBibliographicalData: FilePropertyData = {};
+    refProperties[settings.composePropertyKey("data")] = refBibliographicalData;
+    refBibliographicalData["citekey"] = citationKey;
     for (const [key, value] of Object.entries(creatorNames)) {
         if (!bibEntry) {
             continue;
@@ -275,35 +277,33 @@ async function generateSourceFrontmatter(
             [value],
         );
         let authorBareLinks = authorLinks.map((link) => link.bareLink);
-        let refKey: string = bibToYamlLabelFn(key.endsWith("s") ? key : key + "s");
-        refProperties[refKey] = authorLinks.map((link) => link.aliasedLink);
+        let refKey: string = key.endsWith("s") ? key : key + "s";
+        refBibliographicalData[refKey] = authorLinks.map((link) => link.aliasedLink);
     }
+    refBibliographicalData["date"] = sourceYear
+    refBibliographicalData["title"] = compositeTitle
+	refBibliographicalData["journal"] = bibEntry.getFieldAsString("journal")
+	refBibliographicalData["volume"] = bibEntry.getFieldAsString("volume")
+	refBibliographicalData["number"] = bibEntry.getFieldAsString("number")
+	refBibliographicalData["pages"] = bibEntry.getFieldAsString("pages")
+	refBibliographicalData["doi"] = bibEntry.getFieldAsString("doi")
+	refBibliographicalData["url"] = bibEntry.getFieldAsString("url")
+	refBibliographicalData["publisher"] = bibEntry.getFieldAsString("publisher")
+	refBibliographicalData["booktitle"] = bibEntry.getFieldAsString("booktitle")
+	refBibliographicalData["editor"] = bibEntry.getFieldAsString("editor")
+	refBibliographicalData["keywords"] = bibEntry.getFieldAsString("keywords")
+	refBibliographicalData["series"] = bibEntry.getFieldAsString("series")
+	refBibliographicalData["address"] = bibEntry.getFieldAsString("address")
+	refBibliographicalData["edition"] = bibEntry.getFieldAsString("edition")
+	refBibliographicalData["chapter"] = bibEntry.getFieldAsString("chapter")
+	refBibliographicalData["note"] = bibEntry.getFieldAsString("note")
+	refBibliographicalData["institution"] = bibEntry.getFieldAsString("institution")
+	refBibliographicalData["month"] = bibEntry.getFieldAsString("month")
+	refBibliographicalData["school"] = bibEntry.getFieldAsString("school")
+	refBibliographicalData["thesis"] = bibEntry.getFieldAsString("thesis")
+	refBibliographicalData["howpublished"] = bibEntry.getFieldAsString("howpublished")
+	refBibliographicalData["bibtex"] = bibtexStr
 
-    refProperties[bibToYamlLabelFn("date")] = sourceYear
-
-    refProperties[bibToYamlLabelFn("title")] = compositeTitle
-
-	refProperties[bibToYamlLabelFn("journal")] = bibEntry.getFieldAsString("journal")
-	refProperties[bibToYamlLabelFn("volume")] = bibEntry.getFieldAsString("volume")
-	refProperties[bibToYamlLabelFn("number")] = bibEntry.getFieldAsString("number")
-	refProperties[bibToYamlLabelFn("pages")] = bibEntry.getFieldAsString("pages")
-	refProperties[bibToYamlLabelFn("doi")] = bibEntry.getFieldAsString("doi")
-	refProperties[bibToYamlLabelFn("url")] = bibEntry.getFieldAsString("url")
-	refProperties[bibToYamlLabelFn("publisher")] = bibEntry.getFieldAsString("publisher")
-	refProperties[bibToYamlLabelFn("booktitle")] = bibEntry.getFieldAsString("booktitle")
-	refProperties[bibToYamlLabelFn("editor")] = bibEntry.getFieldAsString("editor")
-	refProperties[bibToYamlLabelFn("keywords")] = bibEntry.getFieldAsString("keywords")
-	refProperties[bibToYamlLabelFn("series")] = bibEntry.getFieldAsString("series")
-	refProperties[bibToYamlLabelFn("address")] = bibEntry.getFieldAsString("address")
-	refProperties[bibToYamlLabelFn("edition")] = bibEntry.getFieldAsString("edition")
-	refProperties[bibToYamlLabelFn("chapter")] = bibEntry.getFieldAsString("chapter")
-	refProperties[bibToYamlLabelFn("note")] = bibEntry.getFieldAsString("note")
-	refProperties[bibToYamlLabelFn("institution")] = bibEntry.getFieldAsString("institution")
-	refProperties[bibToYamlLabelFn("month")] = bibEntry.getFieldAsString("month")
-	refProperties[bibToYamlLabelFn("school")] = bibEntry.getFieldAsString("school")
-	refProperties[bibToYamlLabelFn("thesis")] = bibEntry.getFieldAsString("thesis")
-	refProperties[bibToYamlLabelFn("howpublished")] = bibEntry.getFieldAsString("howpublished")
-	refProperties[bibToYamlLabelFn("bibtex")] = bibtexStr
 	refProperties["title"] = `${compositeTitle} ${inTextCitation}`
 	if (abstract) {
 		refProperties["abstract"] = abstract
@@ -317,7 +317,7 @@ async function generateSourceFrontmatter(
     // process attachments
     // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
     const fa = getFieldAsStringArray(bibEntry, "file");
-    refProperties[bibToYamlLabelFn("files")] = fa
+    refProperties[settings.composePropertyKey("files")] = fa
     updateFrontMatter(
     	this.app,
     	args.targetFilepath,

@@ -42,7 +42,7 @@ import { splitStringArray } from './utility'; // Ensure the path is correct
 
 
 import {
-	AssociatedNoteSettings,
+	NoteConfiguration,
 	BibliosidianSettings,
     DEFAULT_SETTINGS,
 } from "./settings";
@@ -213,7 +213,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 		)
 
         containerEl.createEl("h2", { text: `Associated notes` })
-		this.settings.associatedNotes.forEach( (noteConfig: AssociatedNoteSettings) => {
+		this.settings.associatedNotes.forEach( (noteConfig: NoteConfiguration) => {
 		    const className = noteConfig.className || "";
 		    containerEl.createEl("h3", { text: `${className} notes` })
             if (noteConfig.description) {
