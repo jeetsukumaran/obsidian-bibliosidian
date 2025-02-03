@@ -262,8 +262,11 @@ async function generateSourceFrontmatter(
     const entryUpdatedKey = composePropertyKey(settings, "entry-updated");
 	refProperties[entryUpdatedKey] = fileProperties.concatItems(entryUpdatedKey, [updateDateStamp])
 
+    const fa = getFieldAsStringArray(bibEntry, "file");
+    refProperties[composePropertyKey(settings, "files")] = fa
     let refBibliographicalData: FilePropertyData = {};
     refProperties[composePropertyKey(settings, "data")] = refBibliographicalData;
+
     refBibliographicalData["citekey"] = citationKey;
     refBibliographicalData["cite-as"] = citationStrings;
     for (const [key, value] of Object.entries(creatorNames)) {
@@ -307,20 +310,18 @@ async function generateSourceFrontmatter(
 	refBibliographicalData["howpublished"] = bibEntry.getFieldAsString("howpublished")
 	refBibliographicalData["bibtex"] = bibtexStr
 
-	refProperties["title"] = `${compositeTitle} ${inTextCitation}`
-	if (abstract) {
-		refProperties["abstract"] = abstract
-	}
 	refProperties["aliases"] = [
 			`@${citationKey}`,
 			inTextCitation,
 			compositeTitle,
 			unformattedEntryTitle,
 	]
+	refProperties["title"] = `${inTextCitation}: ${compositeTitle}`
+	if (abstract) {
+		refProperties["abstract"] = abstract
+	}
     // process attachments
     // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
-    const fa = getFieldAsStringArray(bibEntry, "file");
-    refProperties[composePropertyKey(settings, "files")] = fa
     updateFrontMatter(
     	this.app,
     	args.targetFilepath,
@@ -697,19 +698,6 @@ class BibTexModal extends Modal {
 		containerEl: HTMLElement,
 		initialValue: string = "",
 	) {
-		// let inputSetting = new Setting(containerEl)
-		// 	.setName("BiblioNote note path")
-		// 	.setDesc("Path to file in folder where this biblioNote will be stored.")
-		// inputSetting.addTextArea(text => {
-		// 	this.biblioNotePathTextComponent = text
-		// 	this.biblioNotePathTextComponent.setValue(initialValue);
-		// 	this.biblioNotePathTextComponent.inputEl.addEventListener("blur", async () => {
-		// 		// parseUpdatedValue()
-		// 	});
-		// 	this.biblioNotePathTextComponent.inputEl.style.height = "4rem"
-		// 	this.biblioNotePathTextComponent.inputEl.style.overflow = "scroll"
-		// });
-
 
         this.biblioNotePathTextComponent = containerEl.createEl("textarea");
         this.biblioNotePathTextComponent.style.width = "100%";
