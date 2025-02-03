@@ -21,9 +21,13 @@ export type NoteConfiguration = {
 	isAutoCreate: boolean;
 }
 
-export class BibliosidianSettings {
+export interface BibliosidianConfigurationData {
+    schemaVersion: string;
+    coreNotes: NoteConfiguration[];
+	associatedNotes: NoteConfiguration[];
+}
 
-    bibliosidianPropertyNamespace: string;
+export class BibliosidianSettings {
 
 	biblioNoteSourcePropertiesPrefix: string;
 	biblioNoteSourceBibTex: string;
@@ -49,8 +53,96 @@ export class BibliosidianSettings {
     citationKeyPropertyNames: string[];
     citationKeyPrefix: string;
     citationKeyPostfix: string;
-
 }
+
+export class BibliosidianConfiguration {
+    private settingsData: BibliosidianSettings;
+
+    constructor(settingsData: BibliosidianSettings) {
+        this.settingsData = settingsData;
+    }
+
+    get biblioNoteSourcePropertiesPrefix(): string {
+        return this.settingsData.biblioNoteSourcePropertiesPrefix || "";
+    }
+
+    get biblioNoteSourceBibTex(): string {
+        return this.settingsData.biblioNoteSourceBibTex || "";
+    }
+
+    get biblioNoteParentFolder(): string {
+        return this.settingsData.biblioNoteParentFolder || "";
+    }
+
+    get isSubdirectorizeBiblioNotesLexically(): boolean {
+        return this.settingsData.isSubdirectorizeBiblioNotesLexically ?? false;
+    }
+
+    get biblioNoteTagMetadata(): string[] {
+        return this.settingsData.biblioNoteTagMetadata || [];
+    }
+
+    get biblioNoteAdditionalMetadata(): FilePropertyData {
+        return this.settingsData.biblioNoteAdditionalMetadata;
+    }
+
+    get authorNoteParentFolderPath(): string {
+        return this.settingsData.authorNoteParentFolderPath || "";
+    }
+
+    get isSubdirectorizeAuthorNotesLexically(): boolean {
+        return this.settingsData.isSubdirectorizeAuthorNotesLexically ?? false;
+    }
+
+    get authorBiblioNoteOutlinkPropertyName(): string {
+        return this.settingsData.authorBiblioNoteOutlinkPropertyName || "";
+    }
+
+    get authorNoteTagMetadata(): string[] {
+        return this.settingsData.authorNoteTagMetadata || [];
+    }
+
+    get authorNoteAdditionalMetadata(): FilePropertyData {
+        return this.settingsData.authorNoteAdditionalMetadata;
+    }
+
+    get isCreateAuthorNotes(): boolean {
+        return this.settingsData.isCreateAuthorNotes ?? false;
+    }
+
+    get associatedNotes(): NoteConfiguration[] {
+        return this.settingsData.associatedNotes || [];
+    }
+
+    get holdingsParentFolder(): string {
+        return this.settingsData.holdingsParentFolder || "";
+    }
+
+    get holdingsPropertyName(): string {
+        return this.settingsData.holdingsPropertyName || "";
+    }
+
+    get citationOutlinkPropertyNames(): string[] {
+        return this.settingsData.citationOutlinkPropertyNames || [];
+    }
+
+    get citationInlinkPropertyNames(): string[] {
+        return this.settingsData.citationInlinkPropertyNames || [];
+    }
+
+    get citationKeyPropertyNames(): string[] {
+        return this.settingsData.citationKeyPropertyNames || [];
+    }
+
+    get citationKeyPrefix(): string {
+        return this.settingsData.citationKeyPrefix || "";
+    }
+
+    get citationKeyPostfix(): string {
+        return this.settingsData.citationKeyPostfix || "";
+    }
+}
+
 
 export function composePropertyKey(settings: BibliosidianSettings, propertyName: string): string {
     return `${settings.biblioNoteSourcePropertiesPrefix}${propertyName}`;
