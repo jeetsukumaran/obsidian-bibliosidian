@@ -278,9 +278,9 @@ async function generateSourceFrontmatter(
             `${inTextCitation} ${compositeTitle}`,
             [value],
         );
-        let authorBareLinks = authorLinks.map((link) => link.bareLink);
+        // let authorBareLinks = authorLinks.map((link) => link.bareLink);
         let refKey: string = key.endsWith("s") ? key : key + "s";
-        refBibliographicalData[refKey] = authorBareLinks;
+        refBibliographicalData[refKey] = authorLinks.map((link) => link.displayName);
         refProperties[composePropertyKey(settings, refKey)] = authorLinks.map((link) => link.aliasedLink);
     }
     refBibliographicalData["date"] = sourceYear
@@ -408,8 +408,18 @@ async function generateAuthorLinks(
     entry: BibEntry,
     entryTitle: string,
     creatorSets: Authors[],
-): Promise<{ bareLink: string; aliasedLink: string; }[]> {
-    let results: { bareLink: string; aliasedLink: string; }[] = [];
+): Promise<{
+    filePath: string;
+    displayName: string;
+    bareLink: string;
+    aliasedLink: string;
+}[]> {
+    let results: {
+        filePath: string;
+        displayName: string;
+        bareLink: string;
+        aliasedLink: string;
+    }[] = [];
     if (!entry) {
         return results;
     }
@@ -485,6 +495,8 @@ async function generateAuthorLinks(
             }
 
             results.push({
+                filePath: authorFilePath,
+                displayName: authorDisplayName,
                 bareLink: `[[${authorFilePath}]]`,
                 aliasedLink: `[[${authorFilePath}|${authorDisplayName}]]`,
             });
