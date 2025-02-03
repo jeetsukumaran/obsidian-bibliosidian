@@ -16,10 +16,10 @@ import {
 } from 'obsidian';
 
 import {
-    DataService,
+    fileDataService,
     FileNodeDataType,
     FileNodeDataRecords,
-} from "./DataService";
+} from "./fileDataService";
 
 import {
 	BibliosidianSettings,
@@ -30,7 +30,7 @@ export class CitationList {
 
     constructor(
         public hostFile: TFile,
-        public dataService: DataService,
+        public dataService: fileDataService,
         public settings: BibliosidianSettings,
     ) {
     }

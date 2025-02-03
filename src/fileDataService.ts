@@ -28,7 +28,7 @@ type DataviewPage = Record<string, Literal>
 export type FileNodeDataRecords = DataviewPage
 export type FileNodeDataType = Literal
 
-export class DataService {
+export class fileDataService {
     dataviewApi: DataviewApi;
     vaultFileRecords: FileNodeDataRecords[] = [];
 

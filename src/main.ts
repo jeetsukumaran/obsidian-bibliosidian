@@ -40,15 +40,15 @@ import {
 
 import {
     CitationList,
-} from "./CitationList";
+} from "./citationList";
 
 import {
-    DataService,
-} from "./DataService";
+    fileDataService,
+} from "./fileDataService";
 
 import {
     openAssociatedNote,
-} from "./fileservices";
+} from "./fileServices";
 
 
 import {
@@ -69,11 +69,11 @@ interface Footnote {
 
 export default class Bibliosidian extends Plugin {
 	settings: BibliosidianSettings;
-    dataService: DataService;
+    dataService: fileDataService;
 
 	async onload() {
 		await this.loadSettings();
-		this.dataService = new DataService();
+		this.dataService = new fileDataService();
 
 
 		// this.addRibbonIcon("book-up-2", "Create or update a single bibliographic note from BibTeX data", () => {

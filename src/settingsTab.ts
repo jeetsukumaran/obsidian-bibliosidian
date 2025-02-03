@@ -35,13 +35,9 @@ import {
 } from "./bibliosidian";
 
 import {
-    CitationList,
-} from "./CitationList";
+    fileDataService,
 
-import {
-    DataService,
-
-} from "./DataService";
+} from "./fileDataService";
 import { splitStringArray } from './utility'; // Ensure the path is correct
 
 
