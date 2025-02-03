@@ -15,8 +15,9 @@ export type NoteConfiguration = {
 	isSubdirectorizeLexically: boolean;
 	namePrefix: string;
 	namePostfix: string;
-	parentLinksPropertyName: string;
-	childLinksPropertyName: string;
+    frontmatterPropertyNamePrefix: string;
+    biblioNoteLinkPropertyName: string
+	associatedNotesLinkPropertyName: string;
     tagMetadata: string[];
 	frontmatterMetadata: FilePropertyData;
 	isAutoCreate: boolean;
@@ -29,12 +30,12 @@ const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         className: "Bibliographic",
         description: "Primary reference notes to index sources and fundamental bibliographic data.",
         parentFolderPath: "sources/references",
+        isSubdirectorizeLexically: true,
         namePrefix: "@",
         namePostfix: "",
-        isSubdirectorizeLexically: true,
-        frontmatterPropertyNamePrefix: "source-",
-        parentLinksPropertyName: "",
-        childLinksPropertyName: "children",
+        frontmatterPropertyNamePrefix: "reference-",
+	    biblioNoteLinkPropertyName: "",
+	    associatedNotesLinkPropertyName: "",
         tagMetadata: [
             // "#source/reference",
         ],
@@ -49,9 +50,9 @@ const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         namePrefix: "",
         namePostfix: "",
         isSubdirectorizeLexically: true,
-        frontmatterPropertyNamePrefix: "source-",
-        parentLinksPropertyName: "",
-        childLinksPropertyName: "children",
+        frontmatterPropertyNamePrefix: "author-",
+	    biblioNoteLinkPropertyName: "references",
+	    associatedNotesLinkPropertyName: "authors",
         tagMetadata: [
             // "#source/reference",
         ],
@@ -74,6 +75,8 @@ export interface BibliosidianSettings {
     citationKeyPostfix: string;
 }
 
+
+
 export class BibliosidianConfiguration {
     settings: BibliosidianSettings;
 
@@ -87,7 +90,8 @@ export class BibliosidianConfiguration {
             this.settings.coreNoteConfigurations = {}
         }
         if (!this.settings.coreNoteConfigurations[BIBLIO_NOTE_KEY]) {
-            this.settings.coreNoteConfigurations[BIBLIO_NOTE_KEY] = { ... CORE_NOTE_CONFIGURATIONS[BIBLIO_NOTE_KEY] };
+            // JSON.parse(JSON.stringify(obj));
+            this.settings.coreNoteConfigurations[BIBLIO_NOTE_KEY] = Object.assign({}, CORE_NOTE_CONFIGURATIONS[BIBLIO_NOTE_KEY] );
         }
     }
 
@@ -101,7 +105,8 @@ export class BibliosidianConfiguration {
 
     getCoreNoteConfiguration(key: string): NoteConfiguration {
         if (!this.settings.coreNoteConfigurations[key]) {
-            this.settings.coreNoteConfigurations[key] = { ... CORE_NOTE_CONFIGURATIONS[key] };
+            // JSON.parse(JSON.stringify(obj));
+            this.settings.coreNoteConfigurations[key] = Object.assign({}, CORE_NOTE_CONFIGURATIONS[key] );
         }
         return this.settings.coreNoteConfigurations[key]
     }
@@ -151,11 +156,12 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             className: "Extract",
             description: "Extracts, quotes, snippets, verbatim transcriptions, tables, figures or diagrams etc. from sources.",
             parentFolderPath: "sources/extracts",
+            isSubdirectorizeLexically: true,
             namePrefix: "",
             namePostfix: "_extract",
-            isSubdirectorizeLexically: true,
-            parentLinksPropertyName: "source-references",
-	        childLinksPropertyName: "",
+            frontmatterPropertyNamePrefix: "extract-",
+            biblioNoteLinkPropertyName: "references",
+            associatedNotesLinkPropertyName: "extracts",
             tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,
@@ -164,11 +170,12 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             className: "Outline",
             description: "Outlines, table of contents, guides to the organization of contents of sources.",
             parentFolderPath: "sources/outlines",
+            isSubdirectorizeLexically: true,
             namePrefix: "",
             namePostfix: "_outline",
-            isSubdirectorizeLexically: true,
-            parentLinksPropertyName: "source-references",
-            childLinksPropertyName: "",
+            frontmatterPropertyNamePrefix: "outline-",
+            biblioNoteLinkPropertyName: "references",
+            associatedNotesLinkPropertyName: "outlines",
             tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,
@@ -177,11 +184,12 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             className: "Reading",
             description: "Notes on your readings, analyses, or processing of sources.",
             parentFolderPath: "journals/readings",
+            isSubdirectorizeLexically: true,
             namePrefix: "",
             namePostfix: "_reading",
-            isSubdirectorizeLexically: true,
-            parentLinksPropertyName: "source-references",
-            childLinksPropertyName: "",
+            frontmatterPropertyNamePrefix: "reading-",
+            biblioNoteLinkPropertyName: "references",
+            associatedNotesLinkPropertyName: "readings",
             tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,

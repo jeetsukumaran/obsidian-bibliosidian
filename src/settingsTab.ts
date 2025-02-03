@@ -141,16 +141,30 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
                     noteConfig.isSubdirectorizeLexically = value;
                     await this.saveSettings();
         }));
-        new Setting(containerEl)
-            .setName("Bibliographic reference note property name")
-            .setDesc("Front matter metadata property linking to main bibliographic note.")
-            .addText(text => text
-                .setPlaceholder(`(E.g. 'sources/${className.toLowerCase()}')`)
-                .setValue(noteConfig.returnLinkPropertyName)
-                .onChange(async (value) => {
-                    noteConfig.returnLinkPropertyName = value
-                    await this.saveSettings();
-        }));
+        if (!excludeElements["biblioNoteLinkPropertyName"]) {
+            new Setting(containerEl)
+                .setName("Bibliographic reference note link property name")
+                .setDesc("Front matter metadata property linking to main bibliographic note.")
+                .addText(text => text
+                    .setPlaceholder(`(E.g. 'sources/${className.toLowerCase()}')`)
+                    .setValue(noteConfig.biblioNoteLinkPropertyName)
+                    .onChange(async (value) => {
+                        noteConfig.biblioNoteLinkPropertyName = value
+                        await this.saveSettings();
+            }));
+        }
+        if (!excludeElements["childLinkPropertyName"]) {
+            new Setting(containerEl)
+                .setName("Related notes link property name")
+                .setDesc("Front matter metadata property linking to notes bibliographic note.")
+                .addText(text => text
+                    .setPlaceholder(`(E.g. 'sources/${className.toLowerCase()}')`)
+                    .setValue(noteConfig.childLinkPropertyName)
+                    .onChange(async (value) => {
+                        noteConfig.childLinkPropertyName = value
+                        await this.saveSettings();
+            }));
+        }
 
         new Setting(containerEl)
             .setName("Tag metadata")
