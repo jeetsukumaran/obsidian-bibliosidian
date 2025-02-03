@@ -70,12 +70,14 @@ export async function openAssociatedNote(
         )
     }
     let newNoteTitle = `${refFileTitle} (${linkedNoteConfig.className})`;
+    let refNoteLinkName = `${linkedNoteConfig.frontmatterPropertyNamePrefix}${refNoteConfig.associatedNotesOutlinkPropertyName}`
     updateFrontMatter(
         app,
         newNotePath,
         {
             "tags": linkedNoteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
-            [refNoteConfig.associatedNotesOutlinkPropertyName]: [ `[[${refFilePath.replace(/\.md$/,"")}|${refFileTitle}]]`, ],
+            // [refNoteConfig.associatedNotesOutlinkPropertyName]: [ `[[${refFilePath.replace(/\.md$/,"")}|${refFileTitle}]]`, ],
+            [refNoteLinkName]: [ `[[${refFilePath.replace(/\.md$/,"")}|${refFileTitle}]]`, ],
             "title": newNoteTitle,
         } ,
     );
