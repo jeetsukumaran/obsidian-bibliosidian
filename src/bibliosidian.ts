@@ -321,7 +321,7 @@ async function generateSourceFrontmatter(
     updateFrontMatter(
     	this.app,
     	args.targetFilepath,
-    	refProperties,
+        refProperties,
     	// refBodyLines,
     	true,
     )
