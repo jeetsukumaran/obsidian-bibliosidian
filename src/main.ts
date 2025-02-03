@@ -44,8 +44,11 @@ import {
 
 import {
     DataService,
-
 } from "./DataService";
+
+import {
+    openAssociatedNote,
+} from "./fileservices";
 
 
 import {
@@ -92,7 +95,11 @@ export default class Bibliosidian extends Plugin {
 		this.addCommand({
 			id: 'open-reading-note',
 			name: 'Open reading note linked to the current note',
-			callback: () => this.openAssociatedNote(this.settings.associatedNotes[2]),
+			callback: () => openAssociatedNote(
+                this.app,
+                this.settings.associatedNotes[2],
+                false
+			),
 		});
 
 		this.addCommand({
@@ -127,50 +134,6 @@ export default class Bibliosidian extends Plugin {
             this.settings,
             async () => await this.saveData(this.settings)
         ));
-}
-
-    async openAssociatedNote(
-        noteConfig:AssociatedNoteSettings,
-        isForceNew: boolean = false,
-    ) {
-        let activeFile = this.app.workspace.getActiveFile();
-        if (!activeFile) {
-            return;
-        }
-
-        let refFileTitle = "hello";
-
-        const noteLocation = composeNoteLocation(
-            activeFile.path,
-            noteConfig.parentFolderPath,
-            noteConfig.namePrefix,
-            noteConfig.namePostfix,
-            noteConfig.isSubdirectorizeLexically,
-        );
-
-        let newNotePath = "";
-        if (isForceNew) {
-            newNotePath = await createUniqueNote(
-                this.app,
-                noteLocation.newFileBasename,
-                noteLocation.newFileParentDir,
-                "",
-                undefined,
-            )
-        } else {
-            newNotePath = await createOrOpenNote(
-                this.app,
-                noteLocation.newFilePath,
-            )
-        }
-        updateFrontMatter(
-            this.app,
-            newNotePath,
-            {
-                "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
-                [noteConfig.returnLinkPropertyName]: [ `[[${activeFile.path}|${refFileTitle}]]`, ],
-            } ,
-        );
     }
 
     async addHolding() {
