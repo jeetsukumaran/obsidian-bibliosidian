@@ -74,7 +74,7 @@ export async function openAssociatedNote(
         newNotePath,
         {
             "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
-            [noteConfig.returnLinkPropertyName]: [ `[[${activeFile.path}|${refFileTitle}]]`, ],
+            [noteConfig.returnLinkPropertyName]: [ `[[${refFilePath.replace(/\.md$/,"")}|${refFileTitle}]]`, ],
             "title": newNoteTitle,
         } ,
     );
