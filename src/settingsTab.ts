@@ -197,7 +197,8 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 		containerEl.empty();
 
         containerEl.createEl("h2", { text: `Core notes` })
-		this.configuration.associatedNotes.forEach( (noteConfig: NoteConfiguration) => {
+		Object.keys(this.configuration.settings.associatedNoteConfigurations).forEach( (noteConfigKey: string) => {
+		    const noteConfig: NoteConfiguration = this.configuration.settings.associatedNoteConfigurations[noteConfigKey];
 		});
 
 
