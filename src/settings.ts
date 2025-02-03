@@ -44,7 +44,7 @@ const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
     AUTHOR_NOTE_KEY: {
         className: "Author",
         description: "Notes to index and link authors across references.",
-        parentFolderPath: "sources/references",
+        parentFolderPath: "sources/authors",
         isSubdirectorizeLexically: true,
         namePrefix: "",
         namePostfix: "",

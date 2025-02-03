@@ -100,7 +100,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
         }
         new Setting(containerEl)
             .setName("Parent folder")
-            .setDesc("Path to parent folder of associated notes.")
+            .setDesc("Path to parent folder of notes.")
             .addText(text => text
                 .setPlaceholder(`(E.g. 'sources/${className.toLowerCase()}')`)
                 .setValue(noteConfig.parentFolderPath)
