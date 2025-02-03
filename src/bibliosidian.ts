@@ -286,6 +286,7 @@ async function generateSourceFrontmatter(
         refBibliographicalData[refKey] = authorLinks.map((link) => link.displayName);
         refProperties[composePropertyKey(settings, refKey)] = authorLinks.map((link) => link.aliasedLink);
     }
+
     refBibliographicalData["date"] = sourceYear
     refBibliographicalData["title"] = compositeTitle
 	refBibliographicalData["journal"] = bibEntry.getFieldAsString("journal")
