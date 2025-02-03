@@ -82,7 +82,7 @@ export default class Bibliosidian extends Plugin {
 		this.addRibbonIcon("scroll-text", "Import or update reference notes from BibTeX data", () => {
 			this.updateBiblioNoteLibraryFromBibTex()
 		});
-		this.addRibbonIcon("file-plus-2", "Import an external file as a bibliographic attachment of the current note", () => {
+		this.addRibbonIcon("pilcrow-right", "Import an external file as a bibliographic attachment of the current note", () => {
 			this.addHolding()
 		});
 
