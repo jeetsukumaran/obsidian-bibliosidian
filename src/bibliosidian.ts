@@ -41,7 +41,7 @@ import {
 } from "./utility";
 
 import {
-    BibliosidianSettings,
+    BibliosidianConfiguration,
 } from "./settings";
 
 // import { parseBibFile } from "bibtex";
@@ -151,12 +151,12 @@ function resolveBibtexTitle(bibEntry: BibEntry): string {
 
 async function generateSourceFrontmatter(
 	app: App,
-	settings: BibliosidianSettings,
+	configuration: BibliosidianConfiguration,
 	args: BibTexModalArgs,
     citeKey?: string,
 ) {
 
-	// let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${settings.biblioNoteSourcePropertiesPrefix}${bibStr}`
+	// let bibToYamlLabelFn: (arg0:string) => string = (bibStr) => `${configuration.biblioNoteSourcePropertiesPrefix}${bibStr}`
 
     let { bibEntry, bibtexStr, fieldValueMap } = getBibEntry(args.sourceBibTex, citeKey)
 
@@ -222,13 +222,13 @@ async function generateSourceFrontmatter(
     composeMetadata(
         fileProperties,
         refProperties,
-        settings.biblioNoteTagMetadata,
+        configuration.biblioNoteConfiguration.tagMetadata,
         false,
     )
     composeMetadata(
         fileProperties,
         refProperties,
-        settings.biblioNoteAdditionalMetadata,
+        configuration.biblioNoteConfiguration.frontmatterMetadata,
         true,
     )
 
@@ -257,14 +257,18 @@ async function generateSourceFrontmatter(
         "",
     ]
     // special meta-metadata for bibliosidian management
-    // console.log(settings);
-    const entryUpdatedKey = composePropertyKey(settings, "entry-updated");
+    // console.log(configuration);
+
+    const composeRefPropertyKey = (key: string) => {
+        return `${configuration.biblioNoteConfiguration.frontmatterPropertyNamePrefix || ""}${key}`;
+    };
+    const entryUpdatedKey = composeRefPropertyKey("updated");
 	refProperties[entryUpdatedKey] = fileProperties.concatItems(entryUpdatedKey, [updateDateStamp])
 
     const fa = getFieldAsStringArray(bibEntry, "file");
-    refProperties[composePropertyKey(settings, "files")] = fa
+    refProperties[composeRefPropertyKey("files")] = fa
     let refBibliographicalData: FilePropertyData = {};
-    refProperties[composePropertyKey(settings, "data")] = refBibliographicalData;
+    refProperties[composeRefPropertyKey("data")] = refBibliographicalData;
 
     refBibliographicalData["citekey"] = citationKey;
     refBibliographicalData["cite-as"] = citationStrings;
@@ -274,7 +278,7 @@ async function generateSourceFrontmatter(
         }
         let authorLinks = await generateAuthorLinks(
             app,
-            settings,
+            configuration,
             args,
             bibEntry,
             `${inTextCitation} ${compositeTitle}`,
@@ -283,7 +287,7 @@ async function generateSourceFrontmatter(
         // let authorBareLinks = authorLinks.map((link) => link.bareLink);
         let refKey: string = key.endsWith("s") ? key : key + "s";
         refBibliographicalData[refKey] = authorLinks.map((link) => link.displayName);
-        refProperties[composePropertyKey(settings, refKey)] = authorLinks.map((link) => link.aliasedLink);
+        refProperties[composeRefPropertyKey(refKey)] = authorLinks.map((link) => link.aliasedLink);
     }
 
     refBibliographicalData["date"] = sourceYear
@@ -404,7 +408,7 @@ function getBibEntry(
 
 async function generateAuthorLinks(
     app: App,
-    settings: BibliosidianSettings,
+    configuration: BibliosidianConfiguration,
     args: BibTexModalArgs,
     entry: BibEntry,
     entryTitle: string,
@@ -443,14 +447,14 @@ async function generateAuthorLinks(
             } = composeAuthorData(author);
 
             let authorParentFolderPath: string;
-            if (settings.isSubdirectorizeAuthorNotesLexically) {
-                authorParentFolderPath = _path.join(settings.authorNoteParentFolderPath, authorFileName[0]);
+            if (configuration.authorNoteConfiguration.isSubdirectorizeLexically) {
+                authorParentFolderPath = _path.join(configuration.authorNoteConfiguration.parentFolderPath, authorFileName[0]);
             } else {
-                authorParentFolderPath = settings.authorNoteParentFolderPath;
+                authorParentFolderPath = configuration.authorNoteConfiguration.parentFolderPath;
             }
             const authorFilePath = _path.join(authorParentFolderPath, authorFileName);
 
-            if (args.isCreateAuthorNotes) {
+            if (args.isCreateAuthorNotes && (configuration.authorNoteConfiguration.isAutoCreate ?? false)) {
                 let targetFilepath = authorFilePath;
                 if (!targetFilepath.endsWith(".md")) {
                     targetFilepath = targetFilepath + ".md";
@@ -464,26 +468,26 @@ async function generateAuthorLinks(
 
                 let fileProperties = new FileProperties(app, targetFilepath);
                 let authorProperties: FilePropertyData = {};
-                // if (settings.authorNoteAdditionalMetadata) {
-                //     authorProperties = { ...authorProperties, ...settings.authorNoteAdditionalMetadata };
+                // if (configuration.authorNoteAdditionalMetadata) {
+                //     authorProperties = { ...authorProperties, ...configuration.authorNoteAdditionalMetadata };
                 // }
                 composeMetadata(
                     fileProperties,
                     authorProperties,
-                    settings.authorNoteTagMetadata,
+                    configuration.authorNoteConfiguration.tagMetadata,
                     false,
                 )
                 composeMetadata(
                     fileProperties,
                     authorProperties,
-                    settings.authorNoteAdditionalMetadata,
+                    configuration.authorNoteConfiguration.frontmatterMetadata,
                     true,
                 )
                 authorProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp]);
                 authorProperties["title"] = authorDisplayName;
                 authorProperties["aliases"] = fileProperties.concatItems("aliases", [authorDisplayName]);
                 let sourceLink = `[[${args.targetFilepath.replace(/\.md$/, "")}|${entryTitle}]]`;
-                let refPropName = settings.authorBiblioNoteOutlinkPropertyName || "references";
+                let refPropName = configuration.authorNoteConfiguration.frontmatterPropertyNamePrefix + configuration.biblioNoteConfiguration.associatedNotesOutlinkPropertyName;
                 authorProperties[refPropName] = fileProperties.concatItems(refPropName, [sourceLink]);
 
                 await updateFrontMatter(
@@ -540,7 +544,7 @@ function composeMetadata(
 
 async function generateBiblioNote(
 	app: App,
-	settings: BibliosidianSettings,
+	configuration: BibliosidianConfiguration,
 	args: BibTexModalArgs,
 	citeKey?: string,
 ) {
@@ -555,7 +559,7 @@ async function generateBiblioNote(
 	)
     await generateSourceFrontmatter(
         app,
-        settings,
+        configuration,
         args,
         citeKey,
     )
@@ -563,12 +567,12 @@ async function generateBiblioNote(
 
 function computeBibEntryTargetFilePath(
 	bibEntry: BibEntry,
-	settings: BibliosidianSettings,
+	configuration: BibliosidianConfiguration,
 ): string {
 	let citationKey = bibEntry._id
 	let citekeyMarkedUp = `@${citationKey}`
-	let parentPath = settings.biblioNoteParentFolder
-	if (settings.isSubdirectorizeBiblioNotesLexically) {
+	let parentPath = configuration.biblioNoteParentFolder
+	if (configuration.isSubdirectorizeBiblioNotesLexically) {
 		parentPath = _path.join(parentPath, replaceProblematicChars(citationKey[0]))
 	}
 	return _path.join(parentPath, citekeyMarkedUp + ".md")
@@ -581,7 +585,7 @@ function replaceProblematicChars(input: string): string {
 
 class BibTexModal extends Modal {
     args: BibTexModalArgs;
-	settings: BibliosidianSettings;
+	configuration: BibliosidianConfiguration;
 	parsedSourceTextAreaComponent: HTMLTextAreaElement;
 	biblioNotePathTextComponent: HTMLTextAreaElement;
 	isEnableBiblioNotePathAutoUpdate: boolean = true
@@ -592,12 +596,12 @@ class BibTexModal extends Modal {
 
     constructor(
 		app: App,
-		settings: BibliosidianSettings,
+		configuration: BibliosidianConfiguration,
 		onGenerate: (arg0:BibTexModalArgs) => void,
 		args: BibTexModalArgs,
     ) {
         super(app);
-        this.settings = settings
+        this.configuration = configuration
         this.args = args;
         this.onGenerate = onGenerate
     }
@@ -687,7 +691,7 @@ class BibTexModal extends Modal {
 		if (this._parsedBibEntry) {
 			let filePath = computeBibEntryTargetFilePath(
 				this._parsedBibEntry,
-				this.settings,
+				this.configuration,
 			)
 			this.biblioNotePathTextComponent.value = filePath;
 		} else {
@@ -757,12 +761,12 @@ class BibTexModal extends Modal {
 		);
 
 		contentEl.createEl("h2", { text: "Author note(s)" })
-		let updateAuthorsSettings = new Setting(contentEl)
-		updateAuthorsSettings
+		let updateAuthorsConfiguration = new Setting(contentEl)
+		updateAuthorsConfiguration
 			.setName("Update source author notes")
 			.setDesc("Create or update notes for each author, adding links to bibliographic note and vice versa.")
 			// .setDesc("Create or update biblioNote and associated author notes.")
-		updateAuthorsSettings.addToggle( toggle => {
+		updateAuthorsConfiguration.addToggle( toggle => {
 			toggle
 				.setValue(this.args.isCreateAuthorNotes)
 				.onChange(async (value) => {
@@ -844,7 +848,7 @@ export type ProcessedBibTexResult = {
 export async function generateBiblioNoteLibrary(
     app: App,
     bibFileData: string,
-    settings: BibliosidianSettings,
+    configuration: BibliosidianConfiguration,
 ): Promise<ProcessedBibTexResult[]> {
     let processedResults: ProcessedBibTexResult[] = [];
     bibFileData = cleanBibFileData(bibFileData);
@@ -871,15 +875,15 @@ export async function generateBiblioNoteLibrary(
             if (processedBibTex.bibEntry) {
                 let filePath = computeBibEntryTargetFilePath(
                     processedBibTex.bibEntry,
-                    settings,
+                    configuration,
                 )
                 await generateBiblioNote(
                     app,
-                    settings,
+                    configuration,
                     {
                         sourceBibTex: processedBibTex.bibtexStr,
                         targetFilepath: filePath,
-                        isCreateAuthorNotes: settings.isCreateAuthorNotes,
+                        isCreateAuthorNotes: configuration.isCreateAuthorNotes,
                         isOpenNote: false,
                     },
                     citeKey,
@@ -901,7 +905,7 @@ export async function generateBiblioNoteLibrary(
 
 export async function createBiblioNote(
     app: App,
-    settings: BibliosidianSettings,
+    configuration: BibliosidianConfiguration,
     defaultBibTex: string,
     targetFilepath: string,
     citeKey?: string,
@@ -909,11 +913,11 @@ export async function createBiblioNote(
 ): Promise<void> {
     const bibtexModal = new BibTexModal(
         app,
-        settings,
+        configuration,
         async (updatedArgs: BibTexModalArgs) => {
             await generateBiblioNote(
                 app,
-                settings,
+                configuration,
                 updatedArgs,
                 undefined,
             );
@@ -921,7 +925,7 @@ export async function createBiblioNote(
         {
             sourceBibTex: defaultBibTex,
             targetFilepath: targetFilepath,
-            isCreateAuthorNotes: settings.isCreateAuthorNotes, // settings gives default, args overrides
+            isCreateAuthorNotes: configuration.isCreateAuthorNotes, // configuration gives default, args overrides
             isOpenNote: isOpenNote,
         },
     );

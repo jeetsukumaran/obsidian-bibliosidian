@@ -39,7 +39,7 @@ const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         ],
         frontmatterMetadata: {
         },
-        isAutoCreate: false,
+        isAutoCreate: true,
     },
     AUTHOR_NOTE_KEY: {
         className: "Author",
@@ -55,7 +55,7 @@ const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         ],
         frontmatterMetadata: {
         },
-        isAutoCreate: false,
+        isAutoCreate: true,
     },
 };
 
