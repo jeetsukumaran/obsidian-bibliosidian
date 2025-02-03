@@ -257,6 +257,7 @@ async function generateSourceFrontmatter(
         `> -- [@${citationKey}]: [[${internalLinkPath}|${compositeTitle}]]`,
         "",
     ]
+    // special meta-metadata for bibliosidian management
     const entryUpdatedKey = bibToYamlLabelFn("entry-updated");
 	refProperties[entryUpdatedKey] = fileProperties.concatItems(entryUpdatedKey, [updateDateStamp])
     refProperties[bibToYamlLabelFn("citekey")] = citationKey

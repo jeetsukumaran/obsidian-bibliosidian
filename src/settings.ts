@@ -5,6 +5,7 @@ import {
 	createFilePropertyDataTable,
 } from "./fileProperties";
 
+
 import * as _path from "path";
 
 export type AssociatedNoteSettings = {
