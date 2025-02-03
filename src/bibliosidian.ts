@@ -140,7 +140,7 @@ function cleanText(s: string | undefined): string {
     }
 }
 
-function resolveTitle(bibEntry: BibEntry): string {
+function resolveBibtexTitle(bibEntry: BibEntry): string {
 	let bibTitle = bibEntry.title$ || cleanText(bibEntry.getFieldAsString("title")?.toString());
 	let titleParts = [
 		cleanText(bibTitle),
@@ -203,7 +203,7 @@ async function generateSourceFrontmatter(
 
     };
 
-	let compositeTitle = resolveTitle(bibEntry);
+	let compositeTitle = resolveBibtexTitle(bibEntry);
 	let sourceYear = normalizeFieldValue( bibEntry.getField("date") ) || normalizeFieldValue( bibEntry.getField("year") )
 	let inTextCitationYear = sourceYear
 	let inTextCitationAuthors: string;
@@ -904,7 +904,7 @@ export async function generateBiblioNoteLibrary(
             let entry: BibEntry = bibFile.entries$[citeKey];
             console.log(entry);
             console.log(entry.title$);
-            let compositeTitle = resolveTitle(entry);
+            let compositeTitle = resolveBibtexTitle(entry);
             let result: ProcessedBibTexResult = {
                 successful: false,
                 citeKey: citeKey,

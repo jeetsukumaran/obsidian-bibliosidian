@@ -257,26 +257,6 @@ export async function updateFrontMatter(
     });
 }
 
-// export async function updateFrontMatter(
-//     app: App,
-//     file: TFile,
-//     propertyValueMap: FilePropertyData,
-//     isReplaceExisting: boolean = false,
-//     isAddUpdateNotice: boolean = false,
-// ) {
-//     await app.fileManager.processFrontMatter(file, (frontmatter: { [key: string]: any }) => {
-//         Object.entries(propertyValueMap).forEach(([propertyName, newValue]) => {
-//             frontmatter[propertyName] = newValue;
-//         });
-
-//         if (isAddUpdateNotice) {
-//             new Notice('Front matter updated.');
-//         }
-//     }).catch((error) => {
-//         new Notice(`Failed to update front matter: ${error.message}`);
-//     });
-// }
-
 export function createFilePropertyDataTable(containerEl: HTMLElement, filePropertyData: FilePropertyData): HTMLTableElement {
     // Create the table element
     const table = document.createElement('table');
