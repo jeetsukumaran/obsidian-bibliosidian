@@ -33,8 +33,7 @@ import {
 import {
 	FileProperties,
 	FilePropertyData,
-	updateFileProperties,
-	// updateFrontmatterYaml,
+	updateFrontMatter,
 } from "./fileProperties";
 
 import {
@@ -272,45 +271,11 @@ async function generateSourceFrontmatter(
         `> -- [@${citationKey}]: [[${internalLinkPath}|${compositeTitle}]]`,
         "",
     ]
-    let refBodyLines: string[] = [
-        // "",
-        // "## Citations",
-        // "",
-        // ... citationStrings,
-        "\n",
-        "## Abstract",
-        "\n",
-        ... quotedAbstractLines,
-        "\n",
-    ];
 
-
-	refProperties["entry-title"] = entryTitle
+	// refProperties["entry-title"] = entryTitle
 	refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
 
     refProperties[bibToYamlLabelFn("citekey")] = citationKey
-    // await Object.entries(creatorNames).forEach( async ([key, value]) => {
-    //     if (!bibEntry) {
-    //         return;
-    //     }
-    //     let authorLinks = await generateAuthorLinks(
-    //         app,
-    //         settings,
-    //         args,
-    //         bibEntry,
-    //         `${inTextCitation} ${compositeTitle}`,
-    //         // quotedAbstractLines,
-    //         [],
-    //         [value],
-    //     )
-    //     let authorBareLinks = authorLinks.map( (link) => link.bareLink );
-    //     if (!key.endsWith("s")) {
-    //         key = key + "s" // authors not author
-    //     }
-    //     let refKey: string = bibToYamlLabelFn(key);
-    //     refProperties[refKey] = authorLinks.map( (link) => link.aliasedLink );
-    //     // refProperties["entry-parents"].push(... fileProperties.concatItems("entry-parents", authorBareLinks))
-    // })
 
     for (const [key, value] of Object.entries(creatorNames)) {
         if (!bibEntry) {
@@ -322,7 +287,6 @@ async function generateSourceFrontmatter(
             args,
             bibEntry,
             `${inTextCitation} ${compositeTitle}`,
-            [],
             [value],
         );
         let authorBareLinks = authorLinks.map((link) => link.bareLink);
@@ -369,11 +333,11 @@ async function generateSourceFrontmatter(
     // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
     const fa = getFieldAsStringArray(bibEntry, "file");
     refProperties[bibToYamlLabelFn("files")] = fa
-    updateFileProperties(
+    updateFrontMatter(
     	this.app,
     	args.targetFilepath,
     	refProperties,
-    	refBodyLines,
+    	// refBodyLines,
     	true,
     )
 
@@ -455,7 +419,6 @@ async function generateAuthorLinks(
     args: BibTexModalArgs,
     entry: BibEntry,
     entryTitle: string,
-    bodyLines: string[],
     creatorSets: Authors[],
 ): Promise<{ bareLink: string; aliasedLink: string; }[]> {
     let results: { bareLink: string; aliasedLink: string; }[] = [];
@@ -524,11 +487,11 @@ async function generateAuthorLinks(
                 let refPropName = settings.authorBiblioNoteOutlinkPropertyName || "references";
                 authorProperties[refPropName] = fileProperties.concatItems(refPropName, [sourceLink]);
 
-                await updateFileProperties(
+                await updateFrontMatter(
                     app,
                     targetFilepath,
                     authorProperties,
-                    bodyLines,
+                    // bodyLines,
                     true,
                 );
             }

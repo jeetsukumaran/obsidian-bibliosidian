@@ -22,8 +22,7 @@ import {
 import {
 	FileProperties,
 	FilePropertyData,
-	updateFileProperties,
-	// updateFrontmatterYaml,
+	updateFrontMatter,
 } from "./fileProperties";
 
 import {
@@ -250,11 +249,10 @@ export class ImportHoldingModal extends Modal {
         let refProperties: FilePropertyData = {}
         let formattedNewHoldingPath = `[[${newHoldingPath}]]`;
         refProperties[holdingsPropertyName] = fileProperties.concatItems(holdingsPropertyName, [formattedNewHoldingPath])
-        updateFileProperties(
+        updateFrontMatter(
             this.app,
             hostFilePath,
             refProperties,
-            [],
             true,
         )
     }

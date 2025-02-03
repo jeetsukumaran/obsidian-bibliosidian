@@ -30,89 +30,89 @@ export type FilePropertyData = {
 };
 
 
-export async function updateFileProperties(
-    app: App,
-    filePath: string,
-    propertyValueMap: FilePropertyData,
-    newBodyLines: string[],
-    isClearEmpty: boolean = true,
-) {
-    const file = app.vault.getAbstractFileByPath(filePath);
-    if (!(file instanceof TFile)) {
-        console.error("File not found");
-        return;
-    }
+// export async function updateFileProperties(
+//     app: App,
+//     filePath: string,
+//     propertyValueMap: FilePropertyData,
+//     newBodyLines: string[],
+//     isClearEmpty: boolean = true,
+// ) {
+//     const file = app.vault.getAbstractFileByPath(filePath);
+//     if (!(file instanceof TFile)) {
+//         console.error("File not found");
+//         return;
+//     }
 
-    // Read current content and parse frontmatter
-    let currentContent = await app.vault.read(file);
-    let parsedFrontmatter: FilePropertyData = {};
-    const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
-    const frontMatterMatch = currentContent.match(frontmatterRegex);
+//     // Read current content and parse frontmatter
+//     let currentContent = await app.vault.read(file);
+//     let parsedFrontmatter: FilePropertyData = {};
+//     const frontmatterRegex = /^---\n([\s\S]*?)\n---/;
+//     const frontMatterMatch = currentContent.match(frontmatterRegex);
 
-    if (frontMatterMatch) {
-        try {
-            parsedFrontmatter = parseYaml(frontMatterMatch[1]);
-        } catch (err) {
-            console.error(`Malformed YAML frontmatter in file '${filePath}':`, err);
-            new Notice(`Malformed YAML frontmatter in file '${filePath}': ${err}`);
-            return;
-        }
-    }
+//     if (frontMatterMatch) {
+//         try {
+//             parsedFrontmatter = parseYaml(frontMatterMatch[1]);
+//         } catch (err) {
+//             console.error(`Malformed YAML frontmatter in file '${filePath}':`, err);
+//             new Notice(`Malformed YAML frontmatter in file '${filePath}': ${err}`);
+//             return;
+//         }
+//     }
 
-    // Deep clone the propertyValueMap to avoid reference issues
-    const newProperties = JSON.parse(JSON.stringify(propertyValueMap));
+//     // Deep clone the propertyValueMap to avoid reference issues
+//     const newProperties = JSON.parse(JSON.stringify(propertyValueMap));
 
-    // Merge properties, with special handling for arrays
-    for (const [key, newValue] of Object.entries(newProperties)) {
-        if (newValue === null || newValue === undefined) {
-            if (isClearEmpty && key in parsedFrontmatter) {
-                delete parsedFrontmatter[key];
-            }
-            continue;
-        }
+//     // Merge properties, with special handling for arrays
+//     for (const [key, newValue] of Object.entries(newProperties)) {
+//         if (newValue === null || newValue === undefined) {
+//             if (isClearEmpty && key in parsedFrontmatter) {
+//                 delete parsedFrontmatter[key];
+//             }
+//             continue;
+//         }
 
-        const existingValue = parsedFrontmatter[key];
+//         const existingValue = parsedFrontmatter[key];
 
-        if (Array.isArray(newValue)) {
-            if (Array.isArray(existingValue)) {
-                // Both are arrays - merge and deduplicate
-                parsedFrontmatter[key] = Array.from(new Set([...existingValue, ...newValue]));
-            } else if (existingValue) {
-                // Existing is scalar, new is array - combine into array
-                parsedFrontmatter[key] = Array.from(new Set([existingValue, ...newValue]));
-            } else {
-                // No existing value - use new array
-                parsedFrontmatter[key] = [...newValue];
-            }
-        } else if (Array.isArray(existingValue)) {
-            // Existing is array, new is scalar - append to array
-            parsedFrontmatter[key] = Array.from(new Set([...existingValue, newValue]));
-        } else {
-            // Both are scalar values or no existing value
-            parsedFrontmatter[key] = newValue;
-        }
-    }
+//         if (Array.isArray(newValue)) {
+//             if (Array.isArray(existingValue)) {
+//                 // Both are arrays - merge and deduplicate
+//                 parsedFrontmatter[key] = Array.from(new Set([...existingValue, ...newValue]));
+//             } else if (existingValue) {
+//                 // Existing is scalar, new is array - combine into array
+//                 parsedFrontmatter[key] = Array.from(new Set([existingValue, ...newValue]));
+//             } else {
+//                 // No existing value - use new array
+//                 parsedFrontmatter[key] = [...newValue];
+//             }
+//         } else if (Array.isArray(existingValue)) {
+//             // Existing is array, new is scalar - append to array
+//             parsedFrontmatter[key] = Array.from(new Set([...existingValue, newValue]));
+//         } else {
+//             // Both are scalar values or no existing value
+//             parsedFrontmatter[key] = newValue;
+//         }
+//     }
 
-    // Generate new frontmatter
-    const newFrontmatter = `---\n${stringifyYaml(parsedFrontmatter, {
-        doubleQuotedMinMultiLineLength: 900000,
-        lineWidth: 0,
-    }).trim()}\n---`;
+//     // Generate new frontmatter
+//     const newFrontmatter = `---\n${stringifyYaml(parsedFrontmatter, {
+//         doubleQuotedMinMultiLineLength: 900000,
+//         lineWidth: 0,
+//     }).trim()}\n---`;
 
-    // Combine content
-    const currentBody = frontMatterMatch
-        ? currentContent.replace(frontmatterRegex, '').trim()
-        : currentContent.trim();
+//     // Combine content
+//     const currentBody = frontMatterMatch
+//         ? currentContent.replace(frontmatterRegex, '').trim()
+//         : currentContent.trim();
 
-    const newContent = [
-        newFrontmatter,
-        ...newBodyLines,
-        currentBody
-    ].join('\n');
+//     const newContent = [
+//         newFrontmatter,
+//         ...newBodyLines,
+//         currentBody
+//     ].join('\n');
 
-    // Update file
-    await app.vault.modify(file, newContent);
-}
+//     // Update file
+//     await app.vault.modify(file, newContent);
+// }
 
 export class FileProperties {
 	app: App
