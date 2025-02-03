@@ -16,8 +16,7 @@ export type NoteConfiguration = {
 	namePrefix: string;
 	namePostfix: string;
     frontmatterPropertyNamePrefix: string;
-    biblioNoteLinkPropertyName: string
-	associatedNotesLinkPropertyName: string;
+	associatedNotesOutlinkPropertyName: string;
     tagMetadata: string[];
 	frontmatterMetadata: FilePropertyData;
 	isAutoCreate: boolean;
@@ -34,8 +33,7 @@ const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         namePrefix: "@",
         namePostfix: "",
         frontmatterPropertyNamePrefix: "reference-",
-	    biblioNoteLinkPropertyName: "",
-	    associatedNotesLinkPropertyName: "",
+	    associatedNotesOutlinkPropertyName: "references",
         tagMetadata: [
             // "#source/reference",
         ],
@@ -47,12 +45,11 @@ const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         className: "Author",
         description: "Notes to index and link authors across references.",
         parentFolderPath: "sources/references",
+        isSubdirectorizeLexically: true,
         namePrefix: "",
         namePostfix: "",
-        isSubdirectorizeLexically: true,
         frontmatterPropertyNamePrefix: "author-",
-	    biblioNoteLinkPropertyName: "references",
-	    associatedNotesLinkPropertyName: "authors",
+	    associatedNotesOutlinkPropertyName: "authors",
         tagMetadata: [
             // "#source/reference",
         ],
@@ -160,8 +157,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             namePrefix: "",
             namePostfix: "_extract",
             frontmatterPropertyNamePrefix: "extract-",
-            biblioNoteLinkPropertyName: "references",
-            associatedNotesLinkPropertyName: "extracts",
+            associatedNotesOutlinkPropertyName: "extracts",
             tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,
@@ -174,8 +170,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             namePrefix: "",
             namePostfix: "_outline",
             frontmatterPropertyNamePrefix: "outline-",
-            biblioNoteLinkPropertyName: "references",
-            associatedNotesLinkPropertyName: "outlines",
+            associatedNotesOutlinkPropertyName: "outlines",
             tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,
@@ -188,8 +183,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             namePrefix: "",
             namePostfix: "_reading",
             frontmatterPropertyNamePrefix: "reading-",
-            biblioNoteLinkPropertyName: "references",
-            associatedNotesLinkPropertyName: "readings",
+            associatedNotesOutlinkPropertyName: "readings",
             tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,
