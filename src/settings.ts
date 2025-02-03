@@ -144,10 +144,7 @@ export class BibliosidianConfiguration {
 export const DEFAULT_SETTINGS: BibliosidianSettings = {
 
     schemaVersion: "1.0.0",
-    coreNoteConfigurations: {
-        ... CORE_NOTE_CONFIGURATIONS[BIBLIO_NOTE_KEY],
-        ... CORE_NOTE_CONFIGURATIONS[AUTHOR_NOTE_KEY],
-    },
+    coreNoteConfigurations: Object.assign({}, CORE_NOTE_CONFIGURATIONS),
     associatedNoteConfigurations: {
         "extract": {
             className: "Extract",
