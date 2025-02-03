@@ -219,12 +219,7 @@ async function generateSourceFrontmatter(
 	const updateDate = new Date();
 	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
 
-    composeMetadata(
-        fileProperties,
-        refProperties,
-        configuration.biblioNoteConfiguration.tagMetadata,
-        false,
-    )
+    refProperties["tags"] = configuration.biblioNoteConfiguration.tagMetadata.map( (s) => s.replace(/^#/,"") );
     composeMetadata(
         fileProperties,
         refProperties,
@@ -468,15 +463,7 @@ async function generateAuthorLinks(
 
                 let fileProperties = new FileProperties(app, targetFilepath);
                 let authorProperties: FilePropertyData = {};
-                // if (configuration.authorNoteAdditionalMetadata) {
-                //     authorProperties = { ...authorProperties, ...configuration.authorNoteAdditionalMetadata };
-                // }
-                composeMetadata(
-                    fileProperties,
-                    authorProperties,
-                    configuration.authorNoteConfiguration.tagMetadata,
-                    false,
-                )
+                authorProperties["tags"] = configuration.authorNoteConfiguration.tagMetadata.map( (s) => s.replace(/^#/,"") );
                 composeMetadata(
                     fileProperties,
                     authorProperties,
