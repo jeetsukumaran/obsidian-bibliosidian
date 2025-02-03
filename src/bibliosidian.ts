@@ -219,7 +219,6 @@ async function generateSourceFrontmatter(
 	const updateDate = new Date();
 	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
 
-
     composeMetadata(
         fileProperties,
         refProperties,
@@ -232,21 +231,8 @@ async function generateSourceFrontmatter(
         settings.biblioNoteAdditionalMetadata,
         true,
     )
-	// if (settings.biblionoteadditionalmetadata) {
-	//     if (false) {
-            // refProperties = {
-                // ... refProperties,
-                // ... settings.biblioNoteAdditionalMetadata
-            // }
-        // } else {
-            // for (const propertyKey of Object.keys(settings.biblioNoteAdditionalMetadata)) {
-                // let value = settings.biblioNoteAdditionalMetadata[propertyKey];
-                // refProperties[propertyKey] = value
-            // }
-        // }
-	// }
 
-	let entryTitle = `${inTextCitation} *${compositeTitle}*`
+	// let entryTitle = `${inTextCitation} *${compositeTitle}*`
 	let unformattedEntryTitle = `${inTextCitation}: ${compositeTitle}`
 	let abstract = cleanText( (bibEntry.getFieldAsString("abstract")?.toString() || "") )
 	// let entryTitle = `(@${citationKey}) ${compositeTitle}`
@@ -271,10 +257,8 @@ async function generateSourceFrontmatter(
         `> -- [@${citationKey}]: [[${internalLinkPath}|${compositeTitle}]]`,
         "",
     ]
-
-	// refProperties["entry-title"] = entryTitle
-	refProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp])
-
+    const entryUpdatedKey = bibToYamlLabelFn("entry-updated");
+	refProperties[entryUpdatedKey] = fileProperties.concatItems(entryUpdatedKey, [updateDateStamp])
     refProperties[bibToYamlLabelFn("citekey")] = citationKey
 
     for (const [key, value] of Object.entries(creatorNames)) {
