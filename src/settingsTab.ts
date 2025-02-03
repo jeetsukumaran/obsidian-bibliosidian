@@ -233,44 +233,44 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 		}));
 	}
 
-	manageAdditionalPropertiesSettings(
-		containerEl: HTMLElement,
-		configurationPropertyName: "biblioNoteAdditionalMetadata" | "authorNoteAdditionalMetadata",
-		configurationPropertyDisplayName: string = "Additional front matter properties (YAML)",
-		configurationPropertyParameterInitialDescription: string = "Other front matter metadata properties to be updated specified in YAML.",
-		configurationPropertyParameterPlaceholder: string = "(E.g., 'reference-case: Project 1', 'reading-priority: medium')",
-	) {
-			let currentAdditionalPropertiesString: string = "";
-			if (this.configuration[configurationPropertyName]) {
-				let cachedValue: FilePropertyData = this.configuration[configurationPropertyName] as FilePropertyData
-				if (cachedValue) {
-					currentAdditionalPropertiesString = stringifyYaml(cachedValue)
-				}
-			}
-			let refPropertiesSetting = new Setting(containerEl)
-			.setName(configurationPropertyDisplayName)
-			.setDesc(configurationPropertyParameterInitialDescription)
-			.addTextArea(text => {
-				text.setPlaceholder(configurationPropertyParameterPlaceholder)
-				.setValue(currentAdditionalPropertiesString);
-				// text.inputEl.style.height = "8rem"
-				text.inputEl.addEventListener("blur", async () => {
-					try {
-						let refProperties: FilePropertyData = parseYaml(text.getValue());
-						// refPropertiesSetting.setDesc("YAML parsed successfully. Recognized fields: " + Object.keys(refProperties).join(", "));
-						// refPropertiesSetting.setDesc(`YAML parsed successfully: ${refProperties}`)
-						refPropertiesSetting.descEl.empty()
-						createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
-						// this.configuration.biblioNoteAdditionalMetadata = stringifyYaml(refProperties);
-						// this.configuration[configurationPropertyName] = refProperties;
-						this.configuration[configurationPropertyName] = refProperties
-						await this.saveSettings();
-					} catch (error) {
-						refPropertiesSetting.setDesc("YAML Parse Error: " + error.message);
-					}
-				});
-			});
-	}
+	// manageAdditionalPropertiesSettings(
+	// 	containerEl: HTMLElement,
+	// 	configurationPropertyName: "biblioNoteAdditionalMetadata" | "authorNoteAdditionalMetadata",
+	// 	configurationPropertyDisplayName: string = "Additional front matter properties (YAML)",
+	// 	configurationPropertyParameterInitialDescription: string = "Other front matter metadata properties to be updated specified in YAML.",
+	// 	configurationPropertyParameterPlaceholder: string = "(E.g., 'reference-case: Project 1', 'reading-priority: medium')",
+	// ) {
+	// 		let currentAdditionalPropertiesString: string = "";
+	// 		if (this.configuration[configurationPropertyName]) {
+	// 			let cachedValue: FilePropertyData = this.configuration[configurationPropertyName] as FilePropertyData
+	// 			if (cachedValue) {
+	// 				currentAdditionalPropertiesString = stringifyYaml(cachedValue)
+	// 			}
+	// 		}
+	// 		let refPropertiesSetting = new Setting(containerEl)
+	// 		.setName(configurationPropertyDisplayName)
+	// 		.setDesc(configurationPropertyParameterInitialDescription)
+	// 		.addTextArea(text => {
+	// 			text.setPlaceholder(configurationPropertyParameterPlaceholder)
+	// 			.setValue(currentAdditionalPropertiesString);
+	// 			// text.inputEl.style.height = "8rem"
+	// 			text.inputEl.addEventListener("blur", async () => {
+	// 				try {
+	// 					let refProperties: FilePropertyData = parseYaml(text.getValue());
+	// 					// refPropertiesSetting.setDesc("YAML parsed successfully. Recognized fields: " + Object.keys(refProperties).join(", "));
+	// 					// refPropertiesSetting.setDesc(`YAML parsed successfully: ${refProperties}`)
+	// 					refPropertiesSetting.descEl.empty()
+	// 					createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
+	// 					// this.configuration.biblioNoteAdditionalMetadata = stringifyYaml(refProperties);
+	// 					// this.configuration[configurationPropertyName] = refProperties;
+	// 					this.configuration[configurationPropertyName] = refProperties
+	// 					await this.saveSettings();
+	// 				} catch (error) {
+	// 					refPropertiesSetting.setDesc("YAML Parse Error: " + error.message);
+	// 				}
+	// 			});
+	// 		});
+	// }
 
 
 }
