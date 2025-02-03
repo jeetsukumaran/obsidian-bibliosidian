@@ -56,22 +56,22 @@ export class BibliosidianSettings {
 }
 
 export class BibliosidianConfiguration {
-    private settingsData: BibliosidianSettings;
+    readonly settingsData: BibliosidianSettings;
 
     constructor(settingsData: BibliosidianSettings) {
         this.settingsData = settingsData;
     }
 
     get biblioNoteSourcePropertiesPrefix(): string {
-        return this.settingsData.biblioNoteSourcePropertiesPrefix || "";
+        return this.settingsData.biblioNoteSourcePropertiesPrefix ?? "";
     }
 
     get biblioNoteSourceBibTex(): string {
-        return this.settingsData.biblioNoteSourceBibTex || "";
+        return this.settingsData.biblioNoteSourceBibTex ?? "";
     }
 
     get biblioNoteParentFolder(): string {
-        return this.settingsData.biblioNoteParentFolder || "";
+        return this.settingsData.biblioNoteParentFolder ?? "";
     }
 
     get isSubdirectorizeBiblioNotesLexically(): boolean {
@@ -79,7 +79,7 @@ export class BibliosidianConfiguration {
     }
 
     get biblioNoteTagMetadata(): string[] {
-        return this.settingsData.biblioNoteTagMetadata || [];
+        return this.settingsData.biblioNoteTagMetadata ?? [];
     }
 
     get biblioNoteAdditionalMetadata(): FilePropertyData {
@@ -87,7 +87,7 @@ export class BibliosidianConfiguration {
     }
 
     get authorNoteParentFolderPath(): string {
-        return this.settingsData.authorNoteParentFolderPath || "";
+        return this.settingsData.authorNoteParentFolderPath ?? "";
     }
 
     get isSubdirectorizeAuthorNotesLexically(): boolean {
@@ -95,11 +95,11 @@ export class BibliosidianConfiguration {
     }
 
     get authorBiblioNoteOutlinkPropertyName(): string {
-        return this.settingsData.authorBiblioNoteOutlinkPropertyName || "";
+        return this.settingsData.authorBiblioNoteOutlinkPropertyName ?? "";
     }
 
     get authorNoteTagMetadata(): string[] {
-        return this.settingsData.authorNoteTagMetadata || [];
+        return this.settingsData.authorNoteTagMetadata ?? [];
     }
 
     get authorNoteAdditionalMetadata(): FilePropertyData {
@@ -111,37 +111,38 @@ export class BibliosidianConfiguration {
     }
 
     get associatedNotes(): NoteConfiguration[] {
-        return this.settingsData.associatedNotes || [];
+        return this.settingsData.associatedNotes ?? [];
     }
 
     get holdingsParentFolder(): string {
-        return this.settingsData.holdingsParentFolder || "";
+        return this.settingsData.holdingsParentFolder ?? "";
     }
 
     get holdingsPropertyName(): string {
-        return this.settingsData.holdingsPropertyName || "";
+        return this.settingsData.holdingsPropertyName ?? "";
     }
 
     get citationOutlinkPropertyNames(): string[] {
-        return this.settingsData.citationOutlinkPropertyNames || [];
+        return this.settingsData.citationOutlinkPropertyNames ?? [];
     }
 
     get citationInlinkPropertyNames(): string[] {
-        return this.settingsData.citationInlinkPropertyNames || [];
+        return this.settingsData.citationInlinkPropertyNames ?? [];
     }
 
     get citationKeyPropertyNames(): string[] {
-        return this.settingsData.citationKeyPropertyNames || [];
+        return this.settingsData.citationKeyPropertyNames ?? [];
     }
 
     get citationKeyPrefix(): string {
-        return this.settingsData.citationKeyPrefix || "";
+        return this.settingsData.citationKeyPrefix ?? "";
     }
 
     get citationKeyPostfix(): string {
-        return this.settingsData.citationKeyPostfix || "";
+        return this.settingsData.citationKeyPostfix ?? "";
     }
 }
+
 
 
 export function composePropertyKey(settings: BibliosidianSettings, propertyName: string): string {
