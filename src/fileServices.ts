@@ -43,9 +43,7 @@ export async function openAssociatedNote(
     const refFilePath = activeFile.path;
     const refFileProperties = new FileProperties(app, refFilePath);
     const refFileBaseName = _path.basename(activeFile.path);
-    const refFileTitle = titlePropertyNames
-        .map(propertyName => refFileProperties.readPropertyString(propertyName))
-        .find(propertyValue => propertyValue) ?? refFileBaseName;
+    const refFileTitle = refFileProperties.resolveFirstMatchingPropertyValue(titlePropertyNames);
 
     const noteLocation = composeNoteLocation(
         refFilePath,

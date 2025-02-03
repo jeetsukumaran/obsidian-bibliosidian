@@ -83,6 +83,28 @@ export class FileProperties {
 		}
 	}
 
+    resolveFirstMatchingPropertyValue(
+		propertyNameList: string[],
+		defaultValue: string = "",
+    ): string {
+
+        // return propertyNameList
+        //         .map(propertyName => this.readPropertyString(propertyName))
+        //         .find(propertyValue => propertyValue) ?? defaultValue;
+
+        // return propertyNameList
+        //     .find(propertyName => {
+        //         const value = this.readPropertyString(propertyName);
+        //         return value ? ((defaultValue = value), true) : false;
+        //     }) ? defa
+
+        for (const propertyName of propertyNameList) {
+                const value = this.readPropertyString(propertyName);
+                if (value) return value;
+            }
+        return defaultValue;
+    }
+
 
 	concatItems(
 		propertyName: string,
