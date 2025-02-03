@@ -108,6 +108,15 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
                     noteConfig.parentFolderPath = value;
                     await this.saveSettings();
         }));
+        new Setting(containerEl)
+            .setName("Organize into subdirectories based on source names")
+            .setDesc("Enable or disable lexical organization of notes into subdirectories.")
+            .addToggle(toggle => toggle
+                .setValue(noteConfig.isSubdirectorizeLexically)
+                .onChange(async (value) => {
+                    noteConfig.isSubdirectorizeLexically = value;
+                    await this.saveSettings();
+        }));
         if (!excludeElements["namePrefix"]) {
             new Setting(containerEl)
                 .setName("Name composition: prefix")
@@ -132,15 +141,18 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
                         await this.saveSettings();
             }));
         }
-        new Setting(containerEl)
-            .setName("Organize into subdirectories based on source names")
-            .setDesc("Enable or disable lexical organization of notes into subdirectories.")
-            .addToggle(toggle => toggle
-                .setValue(noteConfig.isSubdirectorizeLexically)
-                .onChange(async (value) => {
-                    noteConfig.isSubdirectorizeLexically = value;
-                    await this.saveSettings();
-        }));
+        if (!excludeElements["frontmatterPropertyNamePrefix"]) {
+            new Setting(containerEl)
+                .setName("Front matter property name prefix")
+                .setDesc("Front matter metadata property will be prefixed by this.")
+                .addText(text => text
+                    .setPlaceholder(`(E.g. '${className.toLowerCase()}-')`)
+                    .setValue(noteConfig.frontmatterPropertyNamePrefix)
+                    .onChange(async (value) => {
+                        noteConfig.frontmatterPropertyNamePrefix = value
+                        await this.saveSettings();
+            }));
+        }
         if (!excludeElements["biblioNoteLinkPropertyName"]) {
             new Setting(containerEl)
                 .setName("Bibliographic reference note link property name")
@@ -153,15 +165,15 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
                         await this.saveSettings();
             }));
         }
-        if (!excludeElements["childLinkPropertyName"]) {
+        if (!excludeElements["associatedNotesLinkPropertyName"]) {
             new Setting(containerEl)
                 .setName("Related notes link property name")
                 .setDesc("Front matter metadata property linking to notes bibliographic note.")
                 .addText(text => text
                     .setPlaceholder(`(E.g. 'sources/${className.toLowerCase()}')`)
-                    .setValue(noteConfig.childLinkPropertyName)
+                    .setValue(noteConfig.associatedNotesLinkPropertyName)
                     .onChange(async (value) => {
-                        noteConfig.childLinkPropertyName = value
+                        noteConfig.associatedNotesLinkPropertyName = value
                         await this.saveSettings();
             }));
         }
