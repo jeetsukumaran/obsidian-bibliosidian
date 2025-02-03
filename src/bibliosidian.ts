@@ -249,7 +249,6 @@ async function generateSourceFrontmatter(
         `[[${internalLinkPath}|${unformattedEntryTitle}]]`,
         `[[${internalLinkPath}|@${citationKey}]]`,
     ];
-    refProperties["cite-as"] = citationStrings;
     let quotedAbstractLines: string[] = [
         "> [!quote] Abstract",
         ">",
@@ -266,6 +265,7 @@ async function generateSourceFrontmatter(
     let refBibliographicalData: FilePropertyData = {};
     refProperties[composePropertyKey(settings, "data")] = refBibliographicalData;
     refBibliographicalData["citekey"] = citationKey;
+    refBibliographicalData["cite-as"] = citationStrings;
     for (const [key, value] of Object.entries(creatorNames)) {
         if (!bibEntry) {
             continue;
