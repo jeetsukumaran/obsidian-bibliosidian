@@ -41,7 +41,6 @@ import {
 } from "./utility";
 
 import {
-    composePropertyKey,
     BibliosidianSettings,
 } from "./settings";
 

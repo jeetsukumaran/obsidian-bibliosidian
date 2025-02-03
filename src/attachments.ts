@@ -15,8 +15,7 @@ import * as fs from 'fs';
 import { promisify } from 'util';
 
 import {
-	BibliosidianSettings,
-    DEFAULT_SETTINGS,
+	BibliosidianConfiguration,
 } from "./settings";
 
 import {
@@ -72,16 +71,16 @@ export class ImportHoldingModal extends Modal {
     private sourcePath: HTMLTextAreaElement;
     private destinationPath: HTMLTextAreaElement;
     private defaultDestinationFolder: string;
-    private settings: BibliosidianSettings;
+    private configuration: BibliosidianConfiguration;
     private activeFile: TFile | null;
 
     constructor(
         app: App,
-        settings: BibliosidianSettings,
+        configuration: BibliosidianConfiguration,
     ) {
         super(app);
-        this.settings = settings;
-        this.defaultDestinationFolder = this.settings.holdingsParentFolder;
+        this.configuration = configuration;
+        this.defaultDestinationFolder = this.configuration.holdingsParentFolder;
         this.activeFile = null;
     }
 
@@ -90,7 +89,7 @@ export class ImportHoldingModal extends Modal {
             return [];
         }
         const fileProperties = new FileProperties(this.app, this.activeFile.path);
-        return fileProperties.readPropertyList(`${this.settings.biblioNoteSourcePropertiesPrefix}files`);
+        return fileProperties.readPropertyList(`${this.configuration.biblioNoteConfiguration.frontmatterPropertyNamePrefix}files`);
     }
 
     async validateSourceFile(path: string): Promise<boolean> {
@@ -155,7 +154,7 @@ export class ImportHoldingModal extends Modal {
             }
 
             let parentPath = this.defaultDestinationFolder;
-            if (this.settings.isSubdirectorizeBiblioNotesLexically) {
+            if (this.configuration.biblioNoteConfiguration.isSubdirectorizeLexically) {
                 let holdingSubDir = destinationFilename[0] === "@" ? destinationFilename[1] : destinationFilename[0];
                 if (holdingSubDir === "@") {
                     holdingSubDir = this.activeFile.path[1];
@@ -245,7 +244,7 @@ export class ImportHoldingModal extends Modal {
             return;
         }
         let fileProperties = new FileProperties(this.app, hostFilePath);
-        let holdingsPropertyName = this.settings.holdingsPropertyName;
+        let holdingsPropertyName = this.configuration.holdingsPropertyName;
         let refProperties: FilePropertyData = {}
         let formattedNewHoldingPath = `[[${newHoldingPath}]]`;
         refProperties[holdingsPropertyName] = fileProperties.concatItems(holdingsPropertyName, [formattedNewHoldingPath])
