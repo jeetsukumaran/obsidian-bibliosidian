@@ -569,10 +569,10 @@ function computeBibEntryTargetFilePath(
 	bibEntry: BibEntry,
 	configuration: BibliosidianConfiguration,
 ): string {
-	let citationKey = bibEntry._id
-	let citekeyMarkedUp = `@${citationKey}`
-	let parentPath = configuration.biblioNoteParentFolder
-	if (configuration.isSubdirectorizeBiblioNotesLexically) {
+	let citationKey = bibEntry._id;
+	let citekeyMarkedUp = `@${citationKey}`;
+	let parentPath = configuration.biblioNoteConfiguration.parentFolderPath;
+	if (configuration.biblioNoteConfiguration.isSubdirectorizeLexically) {
 		parentPath = _path.join(parentPath, replaceProblematicChars(citationKey[0]))
 	}
 	return _path.join(parentPath, citekeyMarkedUp + ".md")
@@ -883,7 +883,7 @@ export async function generateBiblioNoteLibrary(
                     {
                         sourceBibTex: processedBibTex.bibtexStr,
                         targetFilepath: filePath,
-                        isCreateAuthorNotes: configuration.isCreateAuthorNotes,
+                        isCreateAuthorNotes: true,
                         isOpenNote: false,
                     },
                     citeKey,
@@ -925,7 +925,7 @@ export async function createBiblioNote(
         {
             sourceBibTex: defaultBibTex,
             targetFilepath: targetFilepath,
-            isCreateAuthorNotes: configuration.isCreateAuthorNotes, // configuration gives default, args overrides
+            isCreateAuthorNotes: true,
             isOpenNote: isOpenNote,
         },
     );

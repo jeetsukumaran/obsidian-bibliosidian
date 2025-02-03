@@ -31,7 +31,8 @@ import {
 
 export async function openAssociatedNote(
         app: App,
-        noteConfig: NoteConfiguration,
+        refNoteConfig: NoteConfiguration,
+        linkedNoteConfig: NoteConfiguration,
         isForceNew: boolean = false,
         titlePropertyNames: string[] = ["shorttitle", "title"],
     ) {
@@ -47,10 +48,10 @@ export async function openAssociatedNote(
 
     const noteLocation = composeNoteLocation(
         refFilePath,
-        noteConfig.parentFolderPath,
-        noteConfig.namePrefix,
-        noteConfig.namePostfix,
-        noteConfig.isSubdirectorizeLexically,
+        linkedNoteConfig.parentFolderPath,
+        linkedNoteConfig.namePrefix,
+        linkedNoteConfig.namePostfix,
+        linkedNoteConfig.isSubdirectorizeLexically,
     );
 
     let newNotePath = "";
@@ -68,13 +69,13 @@ export async function openAssociatedNote(
             noteLocation.newFilePath,
         )
     }
-    let newNoteTitle = `${refFileTitle} (${noteConfig.className})`;
+    let newNoteTitle = `${refFileTitle} (${linkedNoteConfig.className})`;
     updateFrontMatter(
         app,
         newNotePath,
         {
-            "tags": noteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
-            [noteConfig.returnLinkPropertyName]: [ `[[${refFilePath.replace(/\.md$/,"")}|${refFileTitle}]]`, ],
+            "tags": linkedNoteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
+            [refNoteConfig.associatedNotesOutlinkPropertyName]: [ `[[${refFilePath.replace(/\.md$/,"")}|${refFileTitle}]]`, ],
             "title": newNoteTitle,
         } ,
     );

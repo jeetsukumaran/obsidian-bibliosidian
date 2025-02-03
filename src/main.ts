@@ -97,8 +97,9 @@ export default class Bibliosidian extends Plugin {
 			name: 'Open reading note linked to the current note',
 			callback: () => openAssociatedNote(
                 this.app,
-                this.configuration.associatedNotes[2],
-                false
+                this.configuration.biblioNoteConfiguration,
+                this.configuration.getAssociatedNoteConfiguration("reading"),
+                false,
 			),
 		});
 
@@ -132,7 +133,7 @@ export default class Bibliosidian extends Plugin {
         this.addSettingTab(new BibliosidianSettingsTab(
             this,
             this.configuration,
-            async () => await this.saveData(this.configuration.settingsData)
+            async () => await this.saveData(this.configuration.settings)
         ));
     }
 
