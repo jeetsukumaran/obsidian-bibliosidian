@@ -15,7 +15,8 @@ export type NoteConfiguration = {
 	isSubdirectorizeLexically: boolean;
 	namePrefix: string;
 	namePostfix: string;
-	returnLinkPropertyName: string;
+	parentLinksPropertyName: string;
+	childLinksPropertyName: string;
     tagMetadata: string[];
 	frontmatterMetadata: FilePropertyData;
 	isAutoCreate: boolean;
@@ -153,7 +154,8 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             namePrefix: "",
             namePostfix: "_extract",
             isSubdirectorizeLexically: true,
-            returnLinkPropertyName: "source-references",
+            parentLinksPropertyName: "source-references",
+	        childLinksPropertyName: "",
             tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,
@@ -165,7 +167,8 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             namePrefix: "",
             namePostfix: "_outline",
             isSubdirectorizeLexically: true,
-            returnLinkPropertyName: "source-references",
+            parentLinksPropertyName: "source-references",
+            childLinksPropertyName: "",
             tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,
@@ -177,7 +180,8 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             namePrefix: "",
             namePostfix: "_reading",
             isSubdirectorizeLexically: true,
-            returnLinkPropertyName: "source-references",
+            parentLinksPropertyName: "source-references",
+            childLinksPropertyName: "",
             tagMetadata: [],
             frontmatterMetadata: {},
             isAutoCreate: false,
