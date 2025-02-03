@@ -259,7 +259,7 @@ async function generateSourceFrontmatter(
         "",
     ]
     // special meta-metadata for bibliosidian management
-    console.log(settings);
+    // console.log(settings);
     const entryUpdatedKey = composePropertyKey(settings, "entry-updated");
 	refProperties[entryUpdatedKey] = fileProperties.concatItems(entryUpdatedKey, [updateDateStamp])
 
@@ -280,7 +280,8 @@ async function generateSourceFrontmatter(
         );
         let authorBareLinks = authorLinks.map((link) => link.bareLink);
         let refKey: string = key.endsWith("s") ? key : key + "s";
-        refBibliographicalData[refKey] = authorLinks.map((link) => link.aliasedLink);
+        refBibliographicalData[refKey] = authorBareLinks;
+        refProperties[composePropertyKey(settings, refKey)] = authorLinks.map((link) => link.aliasedLink);
     }
     refBibliographicalData["date"] = sourceYear
     refBibliographicalData["title"] = compositeTitle
