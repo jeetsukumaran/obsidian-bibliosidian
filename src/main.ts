@@ -75,7 +75,6 @@ export default class Bibliosidian extends Plugin {
         await this.loadConfiguration();
 		this.dataService = new fileDataService();
 
-
 		// this.addRibbonIcon("book-up-2", "Create or update a single bibliographic note from BibTeX data", () => {
 		// 	this.updateBiblioNoteFromBibTex()
 		// });
@@ -191,7 +190,11 @@ export default class Bibliosidian extends Plugin {
 	}
 
 	async loadConfiguration() {
-		const settingsData = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		let settingsData = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		if (!settingsData) {
+		    settingsData = Object.assign({}, DEFAULT_SETTINGS);
+		}
+
         this.configuration = new BibliosidianConfiguration(settingsData);
 	}
 

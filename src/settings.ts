@@ -25,7 +25,7 @@ export type NoteConfiguration = {
 const BIBLIO_NOTE_KEY = "bibliographic"
 const AUTHOR_NOTE_KEY = "author"
 const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
-    BIBLIO_NOTE_KEY: {
+    [BIBLIO_NOTE_KEY]: {
         className: "Bibliographic",
         description: "Primary reference notes to index sources and fundamental bibliographic data.",
         parentFolderPath: "sources/references",
@@ -41,7 +41,7 @@ const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         },
         isAutoCreate: true,
     },
-    AUTHOR_NOTE_KEY: {
+    [AUTHOR_NOTE_KEY]: {
         className: "Author",
         description: "Notes to index and link authors across references.",
         parentFolderPath: "sources/authors",
