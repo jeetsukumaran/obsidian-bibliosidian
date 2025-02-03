@@ -53,7 +53,7 @@ import {
 
 import {
     NoteConfiguration,
-	BibliosidianSettings,
+    BibliosidianConfiguration,
     DEFAULT_SETTINGS,
 } from "./settings";
 
@@ -68,11 +68,11 @@ interface Footnote {
 }
 
 export default class Bibliosidian extends Plugin {
-	settings: BibliosidianSettings;
+	configuration: BibliosidianConfiguration;
     dataService: fileDataService;
 
-	async onload() {
-		await this.loadSettings();
+    async onload() {
+        await this.loadConfiguration();
 		this.dataService = new fileDataService();
 
 
@@ -97,7 +97,7 @@ export default class Bibliosidian extends Plugin {
 			name: 'Open reading note linked to the current note',
 			callback: () => openAssociatedNote(
                 this.app,
-                this.settings.associatedNotes[2],
+                this.configuration.associatedNotes[2],
                 false
 			),
 		});
@@ -119,7 +119,7 @@ export default class Bibliosidian extends Plugin {
                 let citationList = new CitationList(
                     activeFile,
 		            this.dataService,
-                    this.settings,
+                    this.configuration,
                 );
                 let results = citationList.generate();
                 editor.replaceRange(
@@ -131,8 +131,8 @@ export default class Bibliosidian extends Plugin {
 
         this.addSettingTab(new BibliosidianSettingsTab(
             this,
-            this.settings,
-            async () => await this.saveData(this.settings)
+            this.configuration,
+            async () => await this.saveData(this.configuration.settingsData)
         ));
     }
 
@@ -144,7 +144,7 @@ export default class Bibliosidian extends Plugin {
         }
         const modal = new ImportHoldingModal(
             app,
-            this.settings,
+            this.configuration,
         );
         modal.open();
     }
@@ -159,7 +159,7 @@ export default class Bibliosidian extends Plugin {
                     let processedResults = await generateBiblioNoteLibrary(
                         this.app,
                         sourceBibTex,
-                        this.settings,
+                        this.configuration,
                     );
                     if (processedResults.length > 0) {
                         const resultsModal = new BibTexResultsModal(this.app, processedResults);
@@ -177,7 +177,7 @@ export default class Bibliosidian extends Plugin {
 		let defaultBibTex = ""
 		createBiblioNote(
 			this.app,
-			this.settings,
+			this.configuration,
 			defaultBibTex,
 			"",
 			undefined,
@@ -189,10 +189,9 @@ export default class Bibliosidian extends Plugin {
 
 	}
 
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-        this.settings.biblioNoteTagMetadata = ensureStringArray(this.settings.biblioNoteTagMetadata);
-        this.settings.authorNoteTagMetadata = ensureStringArray(this.settings.authorNoteTagMetadata);
+	async loadConfiguration() {
+		const settingsData = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+        this.configuration = new BibliosidianConfiguration(settingsData);
 	}
 
 }

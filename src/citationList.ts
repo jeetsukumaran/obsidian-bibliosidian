@@ -22,7 +22,7 @@ import {
 } from "./fileDataService";
 
 import {
-	BibliosidianSettings,
+	BibliosidianConfiguration,
     DEFAULT_SETTINGS,
 } from "./settings";
 
@@ -31,7 +31,7 @@ export class CitationList {
     constructor(
         public hostFile: TFile,
         public dataService: fileDataService,
-        public settings: BibliosidianSettings,
+        public configuration: BibliosidianConfiguration,
     ) {
     }
 
@@ -40,7 +40,7 @@ export class CitationList {
         if (!citationKey) {
             return "";
         }
-        return `- ${this.settings.citationKeyPrefix}${citationKey}${this.settings.citationKeyPostfix}`;
+        return `- ${this.configuration.citationKeyPrefix}${citationKey}${this.configuration.citationKeyPostfix}`;
     }
 
 
@@ -68,7 +68,7 @@ export class CitationList {
     }
 
     extractCitationKey(fileData: FileNodeDataType) {
-        const citationKey: string = this.settings.citationKeyPropertyNames
+        const citationKey: string = this.configuration.citationKeyPropertyNames
             // .map( (key) => fileData[key])
             .map( (key) => {
                 return fileData[key];
@@ -84,7 +84,7 @@ export class CitationList {
         let hostFileData = this.dataService.readFileNodeDataRecords(this.hostFile.path)
         this.processCitationProperties(
             hostFileData,
-            this.settings.citationOutlinkPropertyNames,
+            this.configuration.citationOutlinkPropertyNames,
             (propertyValue: FileNodeDataType) => {
                 if (propertyValue.path) {
                     let fileData = this.dataService.readFileNodeDataRecords(propertyValue.path)
@@ -99,7 +99,7 @@ export class CitationList {
         vaultFileRecords.forEach( (fileData: FileNodeDataRecords) => {
             this.processCitationProperties(
                 fileData,
-                this.settings.citationInlinkPropertyNames,
+                this.configuration.citationInlinkPropertyNames,
                 (propertyValue: FileNodeDataType) => {
                     if (propertyValue.path && propertyValue.path === this.hostFile.path) {
                         let key = this.extractCitationKey(fileData);

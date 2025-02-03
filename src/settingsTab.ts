@@ -43,25 +43,25 @@ import { splitStringArray } from './utility'; // Ensure the path is correct
 
 import {
 	NoteConfiguration,
+	BibliosidianConfiguration,
 	BibliosidianSettings,
     DEFAULT_SETTINGS,
 } from "./settings";
 
 export class BibliosidianSettingsTab extends PluginSettingTab {
 	plugin: Plugin;
-	settings: BibliosidianSettings;
-	// saveSettingsCallback: (settings: BibliosidianSettings) => Promise<void>;
+	configuration: BibliosidianConfiguration;
+	// saveSettingsCallback: (configuration: BibliosidianSettings) => Promise<void>;
 	saveSettingsCallback: () => Promise<void>;
 
 	constructor(
         plugin: Plugin,
-        settings: BibliosidianSettings,
-        // saveSettingsCallback: (settings: BibliosidianSettings) => Promise<void>,
+        configuration: BibliosidianConfiguration,
         saveSettingsCallback: () => Promise<void>,
 	) {
 		super(plugin.app, plugin);
 		this.plugin = plugin;
-		this.settings = settings;
+		this.configuration = configuration;
 		this.saveSettingsCallback = saveSettingsCallback;
 	}
 
@@ -86,9 +86,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setDesc("Path to folder of bibliographic notes.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/references')")
-				.setValue(this.settings.biblioNoteParentFolder)
+				.setValue(this.configuration.biblioNoteParentFolder)
 				.onChange(async (value) => {
-					this.settings.biblioNoteParentFolder = value;
+					this.configuration.biblioNoteParentFolder = value;
 					await this.saveSettings();
 		}));
 
@@ -96,9 +96,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setName("Organize bibliographic notes into subdirectories based on citation key")
 			.setDesc("Enable or disable lexical organization of bibliographic notes into subdirectories.")
 			.addToggle(toggle => toggle
-				.setValue(this.settings.isSubdirectorizeBiblioNotesLexically)
+				.setValue(this.configuration.isSubdirectorizeBiblioNotesLexically)
 				.onChange(async (value) => {
-					this.settings.isSubdirectorizeBiblioNotesLexically = value;
+					this.configuration.isSubdirectorizeBiblioNotesLexically = value;
 					await this.saveSettings();
         }));
 
@@ -107,9 +107,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setDesc(`Front matter metadata property in bibliographic note to store source BibTeX data. `)
 			.addText(text => text
 				.setPlaceholder("(YAML frontmatter property name, e.g. 'reference-bibtex')")
-				.setValue(this.settings.biblioNoteSourceBibTex)
+				.setValue(this.configuration.biblioNoteSourceBibTex)
 				.onChange(async (value) => {
-					this.settings.biblioNoteSourceBibTex = value;
+					this.configuration.biblioNoteSourceBibTex = value;
 					await this.saveSettings();
 		}));
 
@@ -122,9 +122,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			)
 			.addText(text => text
 				.setPlaceholder("(e.g., 'reference-')")
-				.setValue(this.settings.biblioNoteSourcePropertiesPrefix)
+				.setValue(this.configuration.biblioNoteSourcePropertiesPrefix)
 				.onChange(async (value) => {
-					this.settings.biblioNoteSourcePropertiesPrefix = value;
+					this.configuration.biblioNoteSourcePropertiesPrefix = value;
 		}));
 
 
@@ -133,9 +133,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             .setDesc("Enter tags to be added, separated by newlines, spaces, commas, or semicolons.")
             .addTextArea(text => {
                 text.setPlaceholder("#source/reference")
-                    .setValue(this.settings.biblioNoteTagMetadata?.join("\n") || "")
+                    .setValue(this.configuration.biblioNoteTagMetadata?.join("\n") || "")
                     .onChange(async (value) => {
-                        this.settings.biblioNoteTagMetadata = splitStringArray(value);
+                        this.configuration.biblioNoteTagMetadata = splitStringArray(value);
                         await this.saveSettings();
                     });
                 // text.inputEl.style.height = "8rem";
@@ -157,9 +157,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setName("Create author notes automatically")
 			.setDesc("Enable or disable creation or updating of linked author notes when creating or updating bibliographic notes.")
 			.addToggle(toggle => toggle
-					.setValue(this.settings.isCreateAuthorNotes)
+					.setValue(this.configuration.isCreateAuthorNotes)
 					.onChange(async (value) => {
-						this.settings.isCreateAuthorNotes = value;
+						this.configuration.isCreateAuthorNotes = value;
 						await this.saveSettings();
 		}));
 
@@ -168,18 +168,18 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setDesc("Path to folder of author notes.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/authors')")
-				.setValue(this.settings.authorNoteParentFolderPath)
+				.setValue(this.configuration.authorNoteParentFolderPath)
 				.onChange(async (value) => {
-					this.settings.authorNoteParentFolderPath = value;
+					this.configuration.authorNoteParentFolderPath = value;
 					await this.saveSettings();
 		}));
 		new Setting(containerEl)
 			.setName("Organize author notes into subdirectories based on names")
 			.setDesc("Enable or disable lexical organization of author notes into subdirectories.")
 			.addToggle(toggle => toggle
-				.setValue(this.settings.isSubdirectorizeAuthorNotesLexically)
+				.setValue(this.configuration.isSubdirectorizeAuthorNotesLexically)
 				.onChange(async (value) => {
-					this.settings.isSubdirectorizeAuthorNotesLexically = value;
+					this.configuration.isSubdirectorizeAuthorNotesLexically = value;
 					await this.saveSettings();
         }));
 		new Setting(containerEl)
@@ -187,9 +187,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setDesc("Front matter metadata property on author note linking to associated bibliographic note.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'author-references')")
-				.setValue(this.settings.authorBiblioNoteOutlinkPropertyName)
+				.setValue(this.configuration.authorBiblioNoteOutlinkPropertyName)
 				.onChange(async (value) => {
-					this.settings.authorBiblioNoteOutlinkPropertyName = value
+					this.configuration.authorBiblioNoteOutlinkPropertyName = value
 					await this.saveSettings();
 		}));
 
@@ -198,9 +198,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             .setDesc("Enter tags to be added, separated by newlines, spaces, commas, or semicolons.")
             .addTextArea(text => {
                 text.setPlaceholder("#source/author")
-                    .setValue(this.settings.authorNoteTagMetadata?.join("\n") || "")
+                    .setValue(this.configuration.authorNoteTagMetadata?.join("\n") || "")
                     .onChange(async (value) => {
-                        this.settings.authorNoteTagMetadata = splitStringArray(value);
+                        this.configuration.authorNoteTagMetadata = splitStringArray(value);
                         await this.saveSettings();
                     });
                 // text.inputEl.style.height = "8rem";
@@ -213,7 +213,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 		)
 
         containerEl.createEl("h2", { text: `Associated notes` })
-		this.settings.associatedNotes.forEach( (noteConfig: NoteConfiguration) => {
+		this.configuration.associatedNotes.forEach( (noteConfig: NoteConfiguration) => {
 		    const className = noteConfig.className || "";
 		    containerEl.createEl("h3", { text: `${className} notes` })
             if (noteConfig.description) {
@@ -301,9 +301,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setDesc("Path to parent or root folder of holdings (attachments). Leave blank to store alongside bibliographic file.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'sources/references')")
-				.setValue(this.settings.holdingsParentFolder)
+				.setValue(this.configuration.holdingsParentFolder)
 				.onChange(async (value) => {
-					this.settings.holdingsParentFolder = value;
+					this.configuration.holdingsParentFolder = value;
 					await this.saveSettings();
 		}));
 		new Setting(containerEl)
@@ -311,32 +311,32 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setDesc("Name of property on bibliographic note to update with link to imported holdings.")
 			.addText(text => text
 				.setPlaceholder("(E.g. 'attachments' or 'pdfs')")
-				.setValue(this.settings.holdingsPropertyName)
+				.setValue(this.configuration.holdingsPropertyName)
 				.onChange(async (value) => {
-					this.settings.holdingsPropertyName = value;
+					this.configuration.holdingsPropertyName = value;
 					await this.saveSettings();
 		}));
 	}
 
 	manageAdditionalPropertiesSettings(
 		containerEl: HTMLElement,
-		settingsPropertyName: "biblioNoteAdditionalMetadata" | "authorNoteAdditionalMetadata",
-		settingsPropertyDisplayName: string = "Additional front matter properties (YAML)",
-		settingsPropertyParameterInitialDescription: string = "Other front matter metadata properties to be updated specified in YAML.",
-		settingsPropertyParameterPlaceholder: string = "(E.g., 'reference-case: Project 1', 'reading-priority: medium')",
+		configurationPropertyName: "biblioNoteAdditionalMetadata" | "authorNoteAdditionalMetadata",
+		configurationPropertyDisplayName: string = "Additional front matter properties (YAML)",
+		configurationPropertyParameterInitialDescription: string = "Other front matter metadata properties to be updated specified in YAML.",
+		configurationPropertyParameterPlaceholder: string = "(E.g., 'reference-case: Project 1', 'reading-priority: medium')",
 	) {
 			let currentAdditionalPropertiesString: string = "";
-			if (this.settings[settingsPropertyName]) {
-				let cachedValue: FilePropertyData = this.settings[settingsPropertyName] as FilePropertyData
+			if (this.configuration[configurationPropertyName]) {
+				let cachedValue: FilePropertyData = this.configuration[configurationPropertyName] as FilePropertyData
 				if (cachedValue) {
 					currentAdditionalPropertiesString = stringifyYaml(cachedValue)
 				}
 			}
 			let refPropertiesSetting = new Setting(containerEl)
-			.setName(settingsPropertyDisplayName)
-			.setDesc(settingsPropertyParameterInitialDescription)
+			.setName(configurationPropertyDisplayName)
+			.setDesc(configurationPropertyParameterInitialDescription)
 			.addTextArea(text => {
-				text.setPlaceholder(settingsPropertyParameterPlaceholder)
+				text.setPlaceholder(configurationPropertyParameterPlaceholder)
 				.setValue(currentAdditionalPropertiesString);
 				// text.inputEl.style.height = "8rem"
 				text.inputEl.addEventListener("blur", async () => {
@@ -346,9 +346,9 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 						// refPropertiesSetting.setDesc(`YAML parsed successfully: ${refProperties}`)
 						refPropertiesSetting.descEl.empty()
 						createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
-						// this.settings.biblioNoteAdditionalMetadata = stringifyYaml(refProperties);
-						// this.settings[settingsPropertyName] = refProperties;
-						this.settings[settingsPropertyName] = refProperties
+						// this.configuration.biblioNoteAdditionalMetadata = stringifyYaml(refProperties);
+						// this.configuration[configurationPropertyName] = refProperties;
+						this.configuration[configurationPropertyName] = refProperties
 						await this.saveSettings();
 					} catch (error) {
 						refPropertiesSetting.setDesc("YAML Parse Error: " + error.message);
