@@ -41,6 +41,7 @@ import {
 } from "./utility";
 
 import {
+    composePropertyKey,
     BibliosidianSettings,
 } from "./settings";
 
@@ -258,11 +259,12 @@ async function generateSourceFrontmatter(
         "",
     ]
     // special meta-metadata for bibliosidian management
-    const entryUpdatedKey = settings.composePropertyKey("entry-updated");
+    console.log(settings);
+    const entryUpdatedKey = composePropertyKey(settings, "entry-updated");
 	refProperties[entryUpdatedKey] = fileProperties.concatItems(entryUpdatedKey, [updateDateStamp])
 
     let refBibliographicalData: FilePropertyData = {};
-    refProperties[settings.composePropertyKey("data")] = refBibliographicalData;
+    refProperties[composePropertyKey(settings, "data")] = refBibliographicalData;
     refBibliographicalData["citekey"] = citationKey;
     for (const [key, value] of Object.entries(creatorNames)) {
         if (!bibEntry) {
@@ -317,7 +319,7 @@ async function generateSourceFrontmatter(
     // process attachments
     // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
     const fa = getFieldAsStringArray(bibEntry, "file");
-    refProperties[settings.composePropertyKey("files")] = fa
+    refProperties[composePropertyKey(settings, "files")] = fa
     updateFrontMatter(
     	this.app,
     	args.targetFilepath,
@@ -850,8 +852,8 @@ export async function generateBiblioNoteLibrary(
         // Replace forEach with for...of to properly handle async operations
         for (const citeKey of Object.keys(bibFile.entries$)) {
             let entry: BibEntry = bibFile.entries$[citeKey];
-            console.log(entry);
-            console.log(entry.title$);
+            // console.log(entry);
+            // console.log(entry.title$);
             let compositeTitle = resolveBibtexTitle(entry);
             let result: ProcessedBibTexResult = {
                 successful: false,

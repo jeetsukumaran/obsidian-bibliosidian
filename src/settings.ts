@@ -50,9 +50,10 @@ export class BibliosidianSettings {
     citationKeyPrefix: string;
     citationKeyPostfix: string;
 
-    composePropertyKey(propertyName: string) {
-        return `${this.biblioNoteSourcePropertiesPrefix}${propertyName}`;
-    }
+}
+
+export function composePropertyKey(settings: BibliosidianSettings, propertyName: string): string {
+    return `${settings.biblioNoteSourcePropertiesPrefix}${propertyName}`;
 }
 
 export const DEFAULT_SETTINGS: Partial<BibliosidianSettings> = {

@@ -19,7 +19,7 @@ export async function createOrOpenNote(
 
     // const path = require('path');
     let notePath = filePath || "";
-    console.log(notePath);
+    // console.log(notePath);
     if (!notePath.endsWith(".md")) {
     	notePath = notePath + ".md"
     }
