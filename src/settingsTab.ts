@@ -48,6 +48,96 @@ import {
     DEFAULT_SETTINGS,
 } from "./settings";
 
+type SettingType = "text" | "toggle" | "textarea";
+
+interface SettingConfig<T extends keyof NoteConfiguration> {
+    key: T;                         // The property key in noteConfig
+    name: string;                    // Display name
+    description: string;              // Tooltip description
+    type: SettingType;                // Type: text, toggle, textarea
+    placeholder?: string;             // Placeholder for text inputs
+    disallowEmpty?: boolean;          // Whether empty values are allowed
+    isDisabled?: boolean;             // Whether the setting should be disabled
+}
+
+function createSetting<T extends keyof NoteConfiguration>(
+    containerEl: HTMLElement,
+    noteConfig: NoteConfiguration,
+    setting: SettingConfig<T>,
+    saveSettings: () => Promise<void>
+) {
+    if (!(setting.key in noteConfig)) {
+        console.warn(`Invalid setting key: ${setting.key}`);
+        return;
+    }
+
+    const settingEl = new Setting(containerEl)
+        .setName(setting.name)
+        .setDesc(setting.description);
+
+    if (setting.type === "toggle") {
+        settingEl.addToggle(toggle =>
+            toggle.setValue(noteConfig[setting.key] as boolean)
+                  .setDisabled(setting.isDisabled ?? false)
+                  .onChange(async (newValue) => {
+                      noteConfig[setting.key] = newValue as NoteConfiguration[T];  // Type assertion
+                      await saveSettings();
+                  })
+        );
+    } else if (setting.type === "textarea") {
+        settingEl.addTextArea(textarea =>
+            textarea.setPlaceholder(setting.placeholder || "")
+                    .setValue(Array.isArray(noteConfig[setting.key]) ? (noteConfig[setting.key] as string[]).join("\n") : (noteConfig[setting.key] as string))
+                    .setDisabled(setting.isDisabled ?? false)
+                    .onChange(async (newValue) => {
+                        noteConfig[setting.key] = newValue.split(/\s*[\n,;]\s*/) as NoteConfiguration[T];  // Type assertion
+                        await saveSettings();
+                    })
+        );
+    } else { // "text"
+        settingEl.addText(text => {
+            let tempValue = noteConfig[setting.key] as string;
+
+            text.setPlaceholder(setting.placeholder || "")
+                .setValue(tempValue)
+                .setDisabled(setting.isDisabled ?? false)
+                .onChange((newValue) => {
+                    tempValue = newValue.trim(); // Store temporary value
+                })
+                .then(text => {
+                    text.inputEl.addEventListener("blur", async () => {
+                        if (setting.disallowEmpty && !tempValue) {
+                            new Notice(`${setting.name} cannot be empty.`);
+                            text.setValue(noteConfig[setting.key] as string); // Restore previous value
+                            return;
+                        }
+                        noteConfig[setting.key] = tempValue as NoteConfiguration[T];  // Type assertion
+                        await saveSettings();
+                    });
+                });
+        });
+    }
+}
+
+const settingsConfig: SettingConfig<keyof NoteConfiguration>[] = [
+    { key: "isAutoCreate", name: "Create automatically", description: "Enable or disable automatic creation when importing or updating bibliographic notes.", type: "toggle" },
+
+    { key: "parentFolderPath", name: "Parent folder", description: "Path to parent folder of notes.", type: "text", placeholder: "(E.g. 'sources/classname')", disallowEmpty: true },
+
+    { key: "isSubdirectorizeLexically", name: "Organize into subdirectories based on source names", description: "Enable or disable lexical organization of notes into subdirectories.", type: "toggle" },
+
+    { key: "namePrefix", name: "Name composition: prefix", description: "String to prefix in front of base file name to disambiguate it from reference.", type: "text", placeholder: "(E.g. 'classname_')" },
+
+    { key: "namePostfix", name: "Name composition: postfix", description: "String to append to back of base file name to disambiguate it from reference.", type: "text", placeholder: "(E.g. '_classname')" },
+
+    { key: "frontmatterPropertyNamePrefix", name: "Front matter property name prefix", description: "Front matter metadata property will be prefixed by this.", type: "text", placeholder: "(E.g. 'classname-')" },
+
+    { key: "associatedNotesOutlinkPropertyName", name: "Associated notes outlink property name", description: "Metadata property name in the front matter that lists this note in other notes. Use a plural form for multiple references.", type: "text", placeholder: "references, authors, extracts, readings", disallowEmpty: true },
+
+    { key: "tagMetadata", name: "Tag metadata", description: "Enter tags to be added, separated by newlines, spaces, commas, or semicolons.", type: "textarea", placeholder: "(E.g. '#source/classname')" }
+];
+
+
 export class BibliosidianSettingsTab extends PluginSettingTab {
 	plugin: Plugin;
 	configuration: BibliosidianConfiguration;
@@ -68,6 +158,8 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 	async saveSettings() {
 	    await this.saveSettingsCallback()
 	}
+
+
 
 	setupNoteConfigurationSettings(
         containerEl: HTMLElement,
@@ -153,31 +245,31 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
                         await this.saveSettings();
             }));
         }
- if (!excludeElements["associatedNotesOutlinkPropertyName"]) {
-    new Setting(containerEl)
-        .setName("Associated notes outlink property name")
-        .setDesc("Metadata property name in the front matter that lists this note in other notes. Use a plural form for multiple references.")
-        .addText(text => {
-            let tempValue = noteConfig.associatedNotesOutlinkPropertyName;
+        if (!excludeElements["associatedNotesOutlinkPropertyName"]) {
+            new Setting(containerEl)
+                .setName("Associated notes outlink property name")
+                .setDesc("Metadata property name in the front matter that lists this note in other notes. Use a plural form for multiple references.")
+                .addText(text => {
+                    let tempValue = noteConfig.associatedNotesOutlinkPropertyName;
 
-            text.setPlaceholder("references, authors, extracts, readings")
-                .setValue(tempValue)
-                .onChange(value => {
-                    tempValue = value.trim(); // Store interim value but don't persist yet
-                })
-                .then(text => {
-                    text.inputEl.addEventListener("blur", async () => {
-                        if (!tempValue) {
-                            new Notice("This field cannot be blank.");
-                            text.setValue(noteConfig.associatedNotesOutlinkPropertyName);
-                            return;
-                        }
-                        noteConfig.associatedNotesOutlinkPropertyName = tempValue;
-                        await this.saveSettings();
-                    });
+                    text.setPlaceholder("references, authors, extracts, readings")
+                        .setValue(tempValue)
+                        .onChange(value => {
+                            tempValue = value.trim(); // Store interim value but don't persist yet
+                        })
+                        .then(text => {
+                            text.inputEl.addEventListener("blur", async () => {
+                                if (!tempValue) {
+                                    new Notice("This field cannot be blank.");
+                                    text.setValue(noteConfig.associatedNotesOutlinkPropertyName);
+                                    return;
+                                }
+                                noteConfig.associatedNotesOutlinkPropertyName = tempValue;
+                                await this.saveSettings();
+                            });
+                        });
                 });
-        });
-}
+        }
 
         // if (!excludeElements["associatedNotesOutlinkPropertyName"]) {
         //     new Setting(containerEl)
