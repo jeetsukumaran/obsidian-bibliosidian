@@ -91,23 +91,17 @@ export default class Bibliosidian extends Plugin {
 			callback: () => this.updateBiblioNoteLibraryFromBibTex(),
 		});
 
-		this.addCommand({
-			id: 'open-reading-note',
-			name: 'Open reading note linked to the current note',
-			callback: () => {
-                let activeFile = app.workspace.getActiveFile();
-                if (!activeFile) {
-                    return;
-                }
-			    openAssociatedNote(
-                    this.app,
-                    activeFile.path,
-                    this.configuration.biblioNoteConfiguration,
-                    this.configuration.getAssociatedNoteConfiguration("reading"),
-                    false,
-                )
-            }
-		});
+        [
+            "reading",
+            "extract",
+            "outline",
+        ].forEach( (noteConfigurationKey) => {
+            this.addCommand({
+                id: `open-associated-${noteConfigurationKey}-note`,
+                name: `Open ${noteConfigurationKey} note linked to the current note`,
+                callback: () => this.openAssociatedNote(noteConfigurationKey),
+            });
+        });
 
 		this.addCommand({
 			id: 'add-biblionote-holding',
@@ -194,6 +188,20 @@ export default class Bibliosidian extends Plugin {
 
 	onunload() {
 
+	}
+
+	openAssociatedNote(noteConfigurationKey: string) {
+        let activeFile = app.workspace.getActiveFile();
+        if (!activeFile) {
+            return;
+        }
+        openAssociatedNote(
+            this.app,
+            activeFile.path,
+            this.configuration.biblioNoteConfiguration,
+            this.configuration.getAssociatedNoteConfiguration(noteConfigurationKey),
+            false,
+        )
 	}
 
 	async loadConfiguration() {
