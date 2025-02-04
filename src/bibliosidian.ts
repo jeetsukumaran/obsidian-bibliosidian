@@ -339,6 +339,7 @@ async function generateSourceFrontmatter(
         if (noteConfig.isAutoCreate) {
             await openAssociatedNote(
                 app,
+                args.targetFilepath,
     	        compositeTitle,
                 configuration.biblioNoteConfiguration,
                 noteConfig,

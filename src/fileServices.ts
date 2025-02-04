@@ -42,6 +42,7 @@ export function resolveFileTitle(
 export async function openAssociatedNote(
         app: App,
         refFilePath: string,
+        refFileTitle: string,
         refNoteConfig: NoteConfiguration,
         linkedNoteConfig: NoteConfiguration,
         isForceNew: boolean = false,
@@ -53,7 +54,7 @@ export async function openAssociatedNote(
     // }
 
     // const refFilePath = activeFile.path;
-    const refFileTitle = resolveFileTitle(app, refFilePath, titlePropertyNames);
+    refFileTitle = refFileTitle || resolveFileTitle(app, refFilePath, titlePropertyNames);
     const noteLocation = composeNoteLocation(
         refFilePath,
         linkedNoteConfig.parentFolderPath,

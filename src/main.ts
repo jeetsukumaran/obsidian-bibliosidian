@@ -21,6 +21,7 @@ import {
 } from "./utility";
 
 import {
+	FileProperties,
 	FilePropertyData,
 	parseYaml,
 	stringifyYaml,
@@ -192,13 +193,14 @@ export default class Bibliosidian extends Plugin {
 	}
 
 	openAssociatedNote(noteConfigurationKey: string) {
-        let activeFile = app.workspace.getActiveFile();
+        let activeFile = this.app.workspace.getActiveFile();
         if (!activeFile) {
             return;
         }
         openAssociatedNote(
             this.app,
             activeFile.path,
+            "",
             this.configuration.biblioNoteConfiguration,
             this.configuration.getAssociatedNoteConfiguration(noteConfigurationKey),
             false,
