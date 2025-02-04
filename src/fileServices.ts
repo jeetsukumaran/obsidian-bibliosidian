@@ -62,9 +62,16 @@ export class FileConflictModal extends Modal {
 
         contentEl.createEl('h2', { text: 'File Conflict' });
         contentEl.createEl('p', { text: `File already exists at path:` });
-        contentEl.createEl('br');
-        contentEl.createEl('p', { text: `${this.filePath}` });
-        contentEl.createEl('br');
+        // contentEl.createEl('br');
+        // contentEl.createEl('p', { text: `${this.filePath}` });
+        // contentEl.createEl('br');
+        const existingPathArea = contentEl.createEl('textarea', {
+            text: this.filePath
+        });
+        existingPathArea.setAttr('readonly', 'true');
+        existingPathArea.style.width = '100%';
+        existingPathArea.style.height = '3em';
+        existingPathArea.style.marginBottom = '1em';
         contentEl.createEl('p', { text: 'Would you like to replace this?' });
 
 
@@ -103,10 +110,6 @@ export class FileConflictModal extends Modal {
                     })
             );
 
-        // Separator
-        contentEl.createEl('hr');
-
-        // Apply to all actions
         new Setting(contentEl)
             .setName('Apply to all conflicts')
             .setDesc('Choose an action to apply to all remaining conflicts')
@@ -132,33 +135,6 @@ export class FileConflictModal extends Modal {
                         this.resolveAndClose({ action: 'disambiguate', applyToAll: true });
                     })
             );
-
-        // const buttonContainer = contentEl.createDiv('button-container');
-        // const createActionButton = (
-        //     text: string,
-        //     action: ConflictResolution['action'],
-        //     applyToAll: boolean
-        // ) => {
-        //     new ButtonComponent(buttonContainer)
-        //         .setButtonText(text)
-        //         .onClick(() => {
-        //             this.resolution = { action, applyToAll };
-        //             this.onResolve(this.resolution);
-        //             this.close();
-        //         });
-        // };
-
-        // // Single action buttons
-        // createActionButton('Yes', 'replace', false);
-        // createActionButton('No', 'skip', false);
-        // createActionButton('Rename', 'disambiguate', false);
-
-        // contentEl.createEl('hr');
-
-        // // Apply to all buttons
-        // createActionButton('Yes to all', 'replace', true);
-        // createActionButton('No to all', 'skip', true);
-        // createActionButton('Rename all', 'disambiguate', true);
 
     }
 
