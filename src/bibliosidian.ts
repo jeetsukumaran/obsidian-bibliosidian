@@ -326,7 +326,7 @@ async function generateSourceFrontmatter(
 	}
     // process attachments
     // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
-    updateFrontMatter(
+    await updateFrontMatter(
     	this.app,
     	args.targetFilepath,
         refProperties,
@@ -334,10 +334,10 @@ async function generateSourceFrontmatter(
     	true,
     )
 
-    Object.keys(configuration.settings.associatedNoteConfigurations).forEach( (noteConfigKey: string) => {
+    Object.keys(configuration.settings.associatedNoteConfigurations).forEach( async (noteConfigKey: string) => {
         const noteConfig: NoteConfiguration = configuration.settings.associatedNoteConfigurations[noteConfigKey];
         if (noteConfig.isAutoCreate) {
-            openAssociatedNote(
+            await openAssociatedNote(
                 app,
     	        args.targetFilepath,
                 configuration.biblioNoteConfiguration,
