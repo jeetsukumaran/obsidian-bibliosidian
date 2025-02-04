@@ -29,6 +29,16 @@ import {
 	updateFrontMatter,
 } from "./fileProperties";
 
+export function resolveFileTitle(
+    app: App,
+    refFilePath: string,
+    titlePropertyNames: string[] = ["shorttitle", "title"],
+): string {
+    const refFileProperties = new FileProperties(app, refFilePath);
+    const refFileTitle = refFileProperties.resolveFirstMatchingPropertyValue(titlePropertyNames);
+    return refFileTitle;
+}
+
 export async function openAssociatedNote(
         app: App,
         refFilePath: string,
@@ -43,10 +53,7 @@ export async function openAssociatedNote(
     // }
 
     // const refFilePath = activeFile.path;
-    const refFileProperties = new FileProperties(app, refFilePath);
-    const refFileBaseName = _path.basename(refFilePath);
-    const refFileTitle = refFileProperties.resolveFirstMatchingPropertyValue(titlePropertyNames);
-
+    const refFileTitle = resolveFileTitle(app, refFilePath, titlePropertyNames);
     const noteLocation = composeNoteLocation(
         refFilePath,
         linkedNoteConfig.parentFolderPath,

@@ -224,8 +224,6 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
         }
 
         for (const settingOptionConfiguration of settingOptionConfigurations) {
-            console.log(excludeElements);
-            console.log(settingOptionConfiguration.key);
             if (!excludeElements[settingOptionConfiguration.key]) {
                 createSetting(containerEl, noteConfig, settingOptionConfiguration, this.saveSettings.bind(this));
             }

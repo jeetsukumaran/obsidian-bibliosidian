@@ -34,7 +34,7 @@ export class FileProperties {
 	app: App
 	filePath: string;
 	sourceFile: TFile
-	private metadataCache: CachedMetadata
+	// private metadataCache: CachedMetadata
 
 	constructor(
 		app: App,
@@ -43,10 +43,18 @@ export class FileProperties {
 		this.app = app
 		this.filePath = filePath;
 		this.sourceFile = app.vault.getAbstractFileByPath(filePath) as TFile
+        // if (this.sourceFile && this.sourceFile.path) {
+        //     this.metadataCache = app.metadataCache.getFileCache(this.sourceFile) || {}
+        // } else {
+        //     this.metadataCache = {}
+        // }
+	}
+
+	get metadataCache(): CachedMetadata {
 		if (this.sourceFile && this.sourceFile.path) {
-			this.metadataCache = app.metadataCache.getFileCache(this.sourceFile) || {}
+			return app.metadataCache.getFileCache(this.sourceFile) || {};
 		} else {
-			this.metadataCache = {}
+			return {};
 		}
 	}
 
