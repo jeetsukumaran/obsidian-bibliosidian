@@ -25,6 +25,7 @@ import {
 } from "./fileProperties";
 
 import {
+    updateHostFileHoldingsData,
     importHolding,
 } from "./fileServices";
 
@@ -312,24 +313,24 @@ export class ImportHoldingModal extends Modal {
 
 
 
-function updateHostFileHoldingsData(
-    app: App,
-    configuration: BibliosidianConfiguration,
-    hostFilePath: string,
-    newHoldingPath: string,
-) {
-    if (!hostFilePath) {
-        return;
-    }
-    let fileProperties = new FileProperties(app, hostFilePath);
-    let holdingsPropertyName = configuration.holdingsPropertyName;
-    let refProperties: FilePropertyData = {}
-    let formattedNewHoldingPath = `[[${newHoldingPath}]]`;
-    refProperties[holdingsPropertyName] = fileProperties.concatItems(holdingsPropertyName, [formattedNewHoldingPath])
-    updateFrontMatter(
-        app,
-        hostFilePath,
-        refProperties,
-        true,
-    )
-}
+// function updateHostFileHoldingsData(
+//     app: App,
+//     configuration: BibliosidianConfiguration,
+//     hostFilePath: string,
+//     newHoldingPath: string,
+// ) {
+//     if (!hostFilePath) {
+//         return;
+//     }
+//     let fileProperties = new FileProperties(app, hostFilePath);
+//     let holdingsPropertyName = configuration.holdingsPropertyName;
+//     let refProperties: FilePropertyData = {}
+//     let formattedNewHoldingPath = `[[${newHoldingPath}]]`;
+//     refProperties[holdingsPropertyName] = fileProperties.concatItems(holdingsPropertyName, [formattedNewHoldingPath])
+//     updateFrontMatter(
+//         app,
+//         hostFilePath,
+//         refProperties,
+//         true,
+//     )
+// }

@@ -2,6 +2,7 @@
 import {
     TFile,
     FileSystemAdapter,
+    ButtonComponent,
 	App,
 	CachedMetadata,
 	Editor,
@@ -40,6 +41,68 @@ import {
 const copyFile = promisify(fs.copyFile);
 const fileExists = promisify(fs.access);
 
+export type ConflictResolution = {
+    action: 'skip' | 'replace' | 'disambiguate';
+    applyToAll: boolean;
+}
+
+export class FileConflictModal extends Modal {
+    private resolution: ConflictResolution | null = null;
+    private onResolve: (resolution: ConflictResolution) => void;
+    private filePath: string;
+
+    constructor(app: App, filePath: string, onResolve: (resolution: ConflictResolution) => void) {
+        super(app);
+        this.filePath = filePath;
+        this.onResolve = onResolve;
+    }
+
+    onOpen() {
+        const { contentEl } = this;
+
+        contentEl.createEl('h2', { text: 'File Conflict' });
+        contentEl.createEl('p', { text: `File already exists at path: ${this.filePath}` });
+        contentEl.createEl('p', { text: 'How would you like to handle this?' });
+
+        const buttonContainer = contentEl.createDiv('button-container');
+
+        const createActionButton = (
+            text: string,
+            action: ConflictResolution['action'],
+            applyToAll: boolean
+        ) => {
+            new ButtonComponent(buttonContainer)
+                .setButtonText(text)
+                .onClick(() => {
+                    this.resolution = { action, applyToAll };
+                    this.onResolve(this.resolution);
+                    this.close();
+                });
+        };
+
+        // Single action buttons
+        createActionButton('Skip', 'skip', false);
+        createActionButton('Replace', 'replace', false);
+        createActionButton('Rename', 'disambiguate', false);
+
+        contentEl.createEl('hr');
+
+        // Apply to all buttons
+        createActionButton('Skip All', 'skip', true);
+        createActionButton('Replace All', 'replace', true);
+        createActionButton('Rename All', 'disambiguate', true);
+    }
+
+    onClose() {
+        const { contentEl } = this;
+        contentEl.empty();
+        if (!this.resolution) {
+            // If modal was closed without selection, default to skip
+            this.onResolve({ action: 'skip', applyToAll: false });
+        }
+    }
+}
+
 interface ImportResult {
     success: boolean;
     destinationPath: string;
@@ -50,7 +113,8 @@ export async function importHolding(
     app: App,
     configuration: BibliosidianConfiguration,
     hostFilePath: string,
-    sourceFilePath: string
+    sourceFilePath: string,
+    importConflict: 'prompt-user' | 'skip' | 'replace' | 'disambiguate' = 'prompt-user'
 ): Promise<ImportResult> {
     try {
         // Validate inputs
@@ -109,9 +173,42 @@ export async function importHolding(
 
         // Ensure directory exists and path is unique
         await ensureDirectoryExists(app, _path.dirname(destinationPath));
-        destinationPath = await ensureUniquePath(app, destinationPath);
+         // Check if file exists
+        const isDestinationExists = await app.vault.adapter.exists(destinationPath);
 
-        // Get vault base path
+        if (isDestinationExists) {
+            let resolution: ConflictResolution;
+
+            if (importConflict === 'prompt-user') {
+                // Create and open modal, wait for user decision
+                resolution = await new Promise<ConflictResolution>(resolve => {
+                    const modal = new FileConflictModal(app, destinationPath, resolve);
+                    modal.open();
+                });
+            } else {
+                resolution = {
+                    action: importConflict as ConflictResolution['action'],
+                    applyToAll: false
+                };
+            }
+
+            switch (resolution.action) {
+                case 'skip':
+                    return {
+                        success: false,
+                        destinationPath: '',
+                        error: 'Import skipped due to existing file'
+                    };
+                case 'disambiguate':
+                    destinationPath = await ensureUniquePath(app, destinationPath);
+                    break;
+                case 'replace':
+                    // Continue with existing path, file will be overwritten
+                    break;
+            }
+        }
+
+        // Get vault base path and copy file
         const adapter = app.vault.adapter;
         if (!(adapter instanceof FileSystemAdapter)) {
             return {
@@ -123,11 +220,29 @@ export async function importHolding(
         const vaultBasePath = adapter.getBasePath();
         const fullDestinationPath = _path.join(vaultBasePath, destinationPath);
 
-        // Copy the file
         await copyFile(sourceFilePath, fullDestinationPath);
 
         // Update host file's holdings data
         updateHostFileHoldingsData(app, configuration, hostFilePath, destinationPath);
+        // destinationPath = await ensureUniquePath(app, destinationPath);
+
+        // // Get vault base path
+        // const adapter = app.vault.adapter;
+        // if (!(adapter instanceof FileSystemAdapter)) {
+        //     return {
+        //         success: false,
+        //         destinationPath: '',
+        //         error: 'Could not access vault file system'
+        //     };
+        // }
+        // const vaultBasePath = adapter.getBasePath();
+        // const fullDestinationPath = _path.join(vaultBasePath, destinationPath);
+
+        // // Copy the file
+        // await copyFile(sourceFilePath, fullDestinationPath);
+
+        // // Update host file's holdings data
+        // updateHostFileHoldingsData(app, configuration, hostFilePath, destinationPath);
 
         return {
             success: true,
@@ -143,7 +258,7 @@ export async function importHolding(
     }
 }
 
-function updateHostFileHoldingsData(
+export function updateHostFileHoldingsData(
     app: App,
     configuration: BibliosidianConfiguration,
     hostFilePath: string,
