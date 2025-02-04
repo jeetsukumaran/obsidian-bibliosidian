@@ -35,7 +35,7 @@ const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         frontmatterPropertyNamePrefix: "reference-",
 	    associatedNotesOutlinkPropertyName: "references",
         tagMetadata: [
-            // "#source/reference",
+            "#source/reference",
         ],
         frontmatterMetadata: {
         },
@@ -51,7 +51,7 @@ const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         frontmatterPropertyNamePrefix: "author-",
 	    associatedNotesOutlinkPropertyName: "authors",
         tagMetadata: [
-            // "#source/reference",
+            "#source/author",
         ],
         frontmatterMetadata: {
         },
@@ -155,7 +155,9 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             namePostfix: "_extract",
             frontmatterPropertyNamePrefix: "extract-",
             associatedNotesOutlinkPropertyName: "extracts",
-            tagMetadata: [],
+            tagMetadata: [
+                "#source/extract",
+            ],
             frontmatterMetadata: {},
             isAutoCreate: false,
         },
@@ -168,7 +170,9 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             namePostfix: "_outline",
             frontmatterPropertyNamePrefix: "outline-",
             associatedNotesOutlinkPropertyName: "outlines",
-            tagMetadata: [],
+            tagMetadata: [
+                "#source/outline",
+            ],
             frontmatterMetadata: {},
             isAutoCreate: false,
         },
@@ -181,7 +185,9 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             namePostfix: "_reading",
             frontmatterPropertyNamePrefix: "reading-",
             associatedNotesOutlinkPropertyName: "readings",
-            tagMetadata: [],
+            tagMetadata: [
+                "#source/reading",
+            ],
             frontmatterMetadata: {},
             isAutoCreate: false,
         },
