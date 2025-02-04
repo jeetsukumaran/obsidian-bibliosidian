@@ -396,9 +396,9 @@ export async function openAssociatedNote(
     );
 }
 
-export function getSourceFilesFromFrontmatter(app: App, configuration: BibliosidianConfiguration, filePath: string ): string[] {
+export function getSourceFilesExternalAttachmentLocations(app: App, configuration: BibliosidianConfiguration, filePath: string ): string[] {
     const refData = readPropertyDict(app, filePath, configuration.biblioNoteDataPropertyName);
-    const files: string[] = Array.isArray(refData?.["files"]) && refData["files"].every(f => typeof f === "string") ? refData["files"] : [];
-    return files;
+    const filePaths: string[] = Array.isArray(refData?.["file"]) && refData["file"].every(f => typeof f === "string") ? refData["file"] : [];
+    return filePaths;
 }
 

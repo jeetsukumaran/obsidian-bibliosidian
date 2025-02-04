@@ -49,7 +49,7 @@ import {
 import {
     openAssociatedNote,
     importHolding,
-    getSourceFilesFromFrontmatter,
+    getSourceFilesExternalAttachmentLocations,
 } from "./fileServices";
 
 
@@ -355,11 +355,26 @@ class BibTexResultsModal extends Modal {
                 .onClick(async () => {
                     filteredResults.forEach ( (result: ProcessedBibTexResult) => {
                         const hostFilePath = result.filePath;
-                        getSourceFilesFromFrontmatter(
+                        getSourceFilesExternalAttachmentLocations(
                             this.app,
                             this.configuration,
                             hostFilePath,
-                        );
+                        )
+                            .forEach( (sourceFilePath: string) => {
+                                try {
+                                    importHolding(
+                                        this.app,
+                                        this.configuration,
+                                        hostFilePath,
+                                        sourceFilePath,
+                                        "prompt-user",
+                                    );
+                                } catch(error) {
+                                    const errMsg = `Error importing holding '${sourceFilePath}': ${error}`
+                                    console.log(errMsg);
+                                    new Notice(errMsg);
+                                }
+                            });
                         // successful: boolean,
                         // citeKey: string,
                         // citation: string,
@@ -367,18 +382,6 @@ class BibTexResultsModal extends Modal {
                         // filePath: string,
                         // linkFilePath: string,
                         // fileLink: string,
-                        // try {
-                        //     importHolding(
-                        //         this.app,
-                        //         this.configuration,
-                        //         hostFilePath,
-                        //         sourceFilePath,
-                        //         "prompt-user",
-                        //     );
-                        // } catch(error) {
-                        //     console.log(error);
-                        //     continue;
-                        // }
                     });
                 })
             )

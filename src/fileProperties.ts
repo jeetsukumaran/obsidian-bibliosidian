@@ -36,7 +36,6 @@ export function getMetadataCache(app: App, filePath: string): CachedMetadata {
 
 export function readPropertyDict(app: App, filePath: string, key: string): FilePropertyData {
     const cachedMetadata = getMetadataCache(app, filePath);
-    console.log(key);
     const data = cachedMetadata?.frontmatter?.["reference-data"]
     return data || {};
 }
