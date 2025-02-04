@@ -590,7 +590,7 @@ function replaceProblematicChars(input: string): string {
     return input.replace(regex, "0");
 }
 
-class BibTexModal extends Modal {
+class xBibTexModal extends Modal {
     args: BibTexModalArgs;
 	configuration: BibliosidianConfiguration;
 	parsedSourceTextAreaComponent: HTMLTextAreaElement;
@@ -910,34 +910,34 @@ export async function generateBiblioNoteLibrary(
     return processedResults;
 }
 
-export async function createBiblioNote(
-    app: App,
-    configuration: BibliosidianConfiguration,
-    defaultBibTex: string,
-    targetFilepath: string,
-    citeKey?: string,
-    isOpenNote: boolean = true,
-): Promise<void> {
-    const bibtexModal = new BibTexModal(
-        app,
-        configuration,
-        async (updatedArgs: BibTexModalArgs) => {
-            await generateBiblioNote(
-                app,
-                configuration,
-                updatedArgs,
-                undefined,
-            );
-        },
-        {
-            sourceBibTex: defaultBibTex,
-            targetFilepath: targetFilepath,
-            isCreateAuthorNotes: true,
-            isOpenNote: isOpenNote,
-        },
-    );
-    bibtexModal.open();
-}
+// export async function createBiblioNote(
+//     app: App,
+//     configuration: BibliosidianConfiguration,
+//     defaultBibTex: string,
+//     targetFilepath: string,
+//     citeKey?: string,
+//     isOpenNote: boolean = true,
+// ): Promise<void> {
+//     const bibtexModal = new BibTexModal(
+//         app,
+//         configuration,
+//         async (updatedArgs: BibTexModalArgs) => {
+//             await generateBiblioNote(
+//                 app,
+//                 configuration,
+//                 updatedArgs,
+//                 undefined,
+//             );
+//         },
+//         {
+//             sourceBibTex: defaultBibTex,
+//             targetFilepath: targetFilepath,
+//             isCreateAuthorNotes: true,
+//             isOpenNote: isOpenNote,
+//         },
+//     );
+//     bibtexModal.open();
+// }
 
 
 export function createKeyValueTable<T extends Record<string, any>>(

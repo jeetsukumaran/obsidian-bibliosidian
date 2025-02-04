@@ -29,7 +29,7 @@ import {
 } from "./attachments";
 
 import {
-	createBiblioNote,
+	// createBiblioNote,
 	generateBiblioNoteLibrary,
 	ProcessedBibTexResult,
 } from "./bibliosidian";
