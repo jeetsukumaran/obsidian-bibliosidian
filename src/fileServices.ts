@@ -78,7 +78,7 @@ export async function openAssociatedNote(
             noteLocation.newFilePath,
         )
     }
-    let newNoteTitle = `${refFileTitle} (${linkedNoteConfig.className})`;
+    let newNoteTitle = `${refFileTitle} -- [${linkedNoteConfig.className}]`;
     let refNoteLinkName = `${linkedNoteConfig.frontmatterPropertyNamePrefix}${refNoteConfig.associatedNotesOutlinkPropertyName}`
     updateFrontMatter(
         app,
