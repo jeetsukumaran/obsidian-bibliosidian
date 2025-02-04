@@ -24,11 +24,6 @@ export {
 	stringifyYaml,
 };
 
-import {
-    BibliosidianConfiguration,
-} from "./settings";
-
-
 export type FilePropertyData = {
     [key: string]: any;
 };
@@ -39,12 +34,11 @@ export function getMetadataCache(app: App, filePath: string): CachedMetadata {
     return app.metadataCache.getFileCache(sourceFile) || {};
 }
 
-export function getSourceFilesFromFrontmatter(app: App, configuration: BibliosidianConfiguration, filePath: string ): string[] {
+export function readPropertyDict(app: App, filePath: string, key: string): FilePropertyData {
     const cachedMetadata = getMetadataCache(app, filePath);
-    console.log(cachedMetadata);
-    // const fileProperties = new FileProperties(this.app, filePath);
-    // const data = fileProperties.readPropertyList(configuration.referenceSourceFilesPropertyName);
-    return [];
+    console.log(key);
+    const data = cachedMetadata?.frontmatter?.["reference-data"]
+    return data || {};
 }
 
 export class FileProperties {

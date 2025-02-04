@@ -32,6 +32,7 @@ import {
 } from "./utility";
 
 import {
+    readPropertyDict,
 	getMetadataCache,
 	FileProperties,
 	FilePropertyData,
@@ -396,8 +397,8 @@ export async function openAssociatedNote(
 }
 
 export function getSourceFilesFromFrontmatter(app: App, configuration: BibliosidianConfiguration, filePath: string ): string[] {
-    const cachedMetadata = getMetadataCache(app, filePath);
-    console.log(cachedMetadata);
+    const refData = readPropertyDict(app, filePath, configuration.biblioNoteDataPropertyName);
+    console.log(refData);
     // const fileProperties = new FileProperties(this.app, filePath);
     // const data = fileProperties.readPropertyList(configuration.referenceSourceFilesPropertyName);
     return [];

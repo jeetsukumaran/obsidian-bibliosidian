@@ -96,6 +96,19 @@ export class BibliosidianConfiguration {
         return this.getCoreNoteConfiguration(BIBLIO_NOTE_KEY);
     }
 
+    get biblioNotePropertyNamePrefix(): string {
+        return this.biblioNoteConfiguration.frontmatterPropertyNamePrefix;
+    }
+
+    composeBiblioNotePropertyName(name: string): string {
+        return `${this.biblioNotePropertyNamePrefix}${name}`;
+    }
+
+    get biblioNoteDataPropertyName(): string {
+        return `${this.composeBiblioNotePropertyName("data")}`;
+    }
+
+
     get authorNoteConfiguration(): NoteConfiguration {
         return this.getCoreNoteConfiguration(AUTHOR_NOTE_KEY);
     }
@@ -141,13 +154,6 @@ export class BibliosidianConfiguration {
     }
 
 
-    get biblioNotePropertyNamePrefix(): string {
-        return this.biblioNoteConfiguration.frontmatterPropertyNamePrefix;
-    }
-
-    composeBiblioNotePropertyName(name: string): string {
-        return `${this.biblioNotePropertyNamePrefix}${name}`;
-    }
 }
 
 export const DEFAULT_SETTINGS: BibliosidianSettings = {

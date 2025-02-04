@@ -355,7 +355,11 @@ class BibTexResultsModal extends Modal {
                 .onClick(async () => {
                     filteredResults.forEach ( (result: ProcessedBibTexResult) => {
                         const hostFilePath = result.filePath;
-                        getSourceFilesFromFrontmatter(this.app, this.configuration, hostFilePath);
+                        getSourceFilesFromFrontmatter(
+                            this.app,
+                            this.configuration,
+                            hostFilePath,
+                        );
                         // successful: boolean,
                         // citeKey: string,
                         // citation: string,
