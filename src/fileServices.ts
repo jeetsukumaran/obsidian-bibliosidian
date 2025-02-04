@@ -162,154 +162,242 @@ interface ImportResult {
     error?: string;
 }
 
+let globalResolution: ConflictResolution | null = null;
+
 export async function importHolding(
     app: App,
     configuration: BibliosidianConfiguration,
     hostFilePath: string,
     sourceFilePath: string,
-    importConflict: 'prompt-user' | 'skip' | 'replace' | 'disambiguate' = 'prompt-user'
+    importConflict: 'prompt-user' | 'skip' | 'replace' | 'disambiguate' = 'prompt-user',
+    isSilent: boolean = false // Controls detailed feedback
 ): Promise<ImportResult> {
     try {
-        // Validate inputs
         if (!hostFilePath || !sourceFilePath) {
-            return {
-                success: false,
-                destinationPath: '',
-                error: 'Host file path or source file path is empty'
-            };
+            return { success: false, destinationPath: '', error: 'Host or source file path is empty' };
         }
 
-        // Validate source file exists
         try {
             await fileExists(sourceFilePath);
         } catch {
-            return {
-                success: false,
-                destinationPath: '',
-                error: `Source file does not exist: ${sourceFilePath}`
-            };
+            return { success: false, destinationPath: '', error: `Source file does not exist: ${sourceFilePath}` };
         }
 
-        // Get the host file details
         const hostFile = app.vault.getAbstractFileByPath(hostFilePath);
         if (!(hostFile instanceof TFile)) {
-            return {
-                success: false,
-                destinationPath: '',
-                error: 'Host file not found or is not a file'
-            };
+            return { success: false, destinationPath: '', error: 'Host file not found or not a valid file' };
         }
 
-        // Calculate destination path
-        const destExtension = _path.extname(sourceFilePath);
-        const hostFileNameWithoutExtension = _path.basename(
-            hostFile.path,
-            _path.extname(hostFile.path)
-        );
-
-        let destinationFilename = hostFileNameWithoutExtension + destExtension;
-        if (destinationFilename.startsWith("@")) {
-            destinationFilename = destinationFilename.slice(1);
-        }
-
-        // Handle parent path and subdirectories
         let parentPath = configuration.holdingsParentFolder;
+        const destExtension = _path.extname(sourceFilePath);
+        let destinationFilename = _path.basename(hostFile.path, _path.extname(hostFile.path)) + destExtension;
+
         if (configuration.biblioNoteConfiguration.isSubdirectorizeLexically) {
-            let holdingSubDir = destinationFilename[0] === "@" ? destinationFilename[1] : destinationFilename[0];
-            if (holdingSubDir === "@") {
-                holdingSubDir = hostFile.path[1];
-            }
-            parentPath = _path.join(parentPath, holdingSubDir);
+            const subDir = destinationFilename[0] === "@" ? destinationFilename[1] : destinationFilename[0];
+            parentPath = _path.join(parentPath, subDir);
         }
 
         let destinationPath = _path.join(parentPath, destinationFilename);
-
-        // Ensure directory exists and path is unique
         await ensureDirectoryExists(app, _path.dirname(destinationPath));
-         // Check if file exists
+
+        const adapter = app.vault.adapter;
+        if (!(adapter instanceof FileSystemAdapter)) {
+            return { success: false, destinationPath: '', error: 'Could not access vault file system' };
+        }
+        const vaultBasePath = adapter.getBasePath();
+        const fullDestinationPath = _path.join(vaultBasePath, destinationPath);
         const isDestinationExists = await app.vault.adapter.exists(destinationPath);
 
         if (isDestinationExists) {
-            let resolution: ConflictResolution;
+            let resolution: ConflictResolution = globalResolution ?? { action: 'skip', applyToAll: false };
 
-            if (importConflict === 'prompt-user') {
-                // Create and open modal, wait for user decision
-                resolution = await new Promise<ConflictResolution>(resolve => {
-                    const modal = new FileConflictModal(app, destinationPath, resolve);
-                    modal.open();
-                });
-            } else {
-                resolution = {
-                    action: importConflict as ConflictResolution['action'],
-                    applyToAll: false
-                };
+            if (!globalResolution || globalResolution.applyToAll === false) {
+                if (importConflict === 'prompt-user') {
+                    resolution = await new Promise<ConflictResolution>((resolve) => {
+                        const modal = new FileConflictModal(app, destinationPath, resolve);
+                        modal.open();
+                    });
+                } else {
+                    resolution = { action: importConflict as ConflictResolution['action'], applyToAll: false };
+                }
+
+                if (resolution.applyToAll) {
+                    globalResolution = resolution; // Persist choice for future files
+                }
             }
 
             switch (resolution.action) {
                 case 'skip':
-                    return {
-                        success: false,
-                        destinationPath: '',
-                        error: 'Import skipped due to existing file'
-                    };
+                    if (!isSilent) new Notice(`Skipped: ${destinationPath}`);
+                    return { success: false, destinationPath: '', error: 'Import skipped due to existing file' };
                 case 'disambiguate':
                     destinationPath = await ensureUniquePath(app, destinationPath);
                     break;
                 case 'replace':
-                    // Continue with existing path, file will be overwritten
-                    break;
+                    break; // Overwrite existing file
             }
         }
 
-        // Get vault base path and copy file
-        const adapter = app.vault.adapter;
-        if (!(adapter instanceof FileSystemAdapter)) {
-            return {
-                success: false,
-                destinationPath: '',
-                error: 'Could not access vault file system'
-            };
-        }
-        const vaultBasePath = adapter.getBasePath();
-        const fullDestinationPath = _path.join(vaultBasePath, destinationPath);
-
         await copyFile(sourceFilePath, fullDestinationPath);
-
-        // Update host file's holdings data
         updateHostFileHoldingsData(app, configuration, hostFilePath, destinationPath);
-        // destinationPath = await ensureUniquePath(app, destinationPath);
 
-        // // Get vault base path
-        // const adapter = app.vault.adapter;
-        // if (!(adapter instanceof FileSystemAdapter)) {
-        //     return {
-        //         success: false,
-        //         destinationPath: '',
-        //         error: 'Could not access vault file system'
-        //     };
-        // }
-        // const vaultBasePath = adapter.getBasePath();
-        // const fullDestinationPath = _path.join(vaultBasePath, destinationPath);
-
-        // // Copy the file
-        // await copyFile(sourceFilePath, fullDestinationPath);
-
-        // // Update host file's holdings data
-        // updateHostFileHoldingsData(app, configuration, hostFilePath, destinationPath);
-
-        return {
-            success: true,
-            destinationPath: destinationPath
-        };
+        if (!isSilent) new Notice(`Imported: ${destinationPath}`);
+        return { success: true, destinationPath };
 
     } catch (error) {
-        return {
-            success: false,
-            destinationPath: '',
-            error: `Import failed: ${error}`
-        };
+        return { success: false, destinationPath: '', error: `Import failed: ${error}` };
     }
 }
+
+
+// export async function importHolding(
+//     app: App,
+//     configuration: BibliosidianConfiguration,
+//     hostFilePath: string,
+//     sourceFilePath: string,
+//     importConflict: 'prompt-user' | 'skip' | 'replace' | 'disambiguate' = 'prompt-user'
+// ): Promise<ImportResult> {
+//     try {
+//         // Validate inputs
+//         if (!hostFilePath || !sourceFilePath) {
+//             return {
+//                 success: false,
+//                 destinationPath: '',
+//                 error: 'Host file path or source file path is empty'
+//             };
+//         }
+
+//         // Validate source file exists
+//         try {
+//             await fileExists(sourceFilePath);
+//         } catch {
+//             return {
+//                 success: false,
+//                 destinationPath: '',
+//                 error: `Source file does not exist: ${sourceFilePath}`
+//             };
+//         }
+
+//         // Get the host file details
+//         const hostFile = app.vault.getAbstractFileByPath(hostFilePath);
+//         if (!(hostFile instanceof TFile)) {
+//             return {
+//                 success: false,
+//                 destinationPath: '',
+//                 error: 'Host file not found or is not a file'
+//             };
+//         }
+
+//         // Calculate destination path
+//         const destExtension = _path.extname(sourceFilePath);
+//         const hostFileNameWithoutExtension = _path.basename(
+//             hostFile.path,
+//             _path.extname(hostFile.path)
+//         );
+
+//         let destinationFilename = hostFileNameWithoutExtension + destExtension;
+//         if (destinationFilename.startsWith("@")) {
+//             destinationFilename = destinationFilename.slice(1);
+//         }
+
+//         // Handle parent path and subdirectories
+//         let parentPath = configuration.holdingsParentFolder;
+//         if (configuration.biblioNoteConfiguration.isSubdirectorizeLexically) {
+//             let holdingSubDir = destinationFilename[0] === "@" ? destinationFilename[1] : destinationFilename[0];
+//             if (holdingSubDir === "@") {
+//                 holdingSubDir = hostFile.path[1];
+//             }
+//             parentPath = _path.join(parentPath, holdingSubDir);
+//         }
+
+//         let destinationPath = _path.join(parentPath, destinationFilename);
+
+//         // Ensure directory exists and path is unique
+//         await ensureDirectoryExists(app, _path.dirname(destinationPath));
+//          // Check if file exists
+//         const isDestinationExists = await app.vault.adapter.exists(destinationPath);
+
+//         if (isDestinationExists) {
+//             let resolution: ConflictResolution;
+
+//             if (importConflict === 'prompt-user') {
+//                 // Create and open modal, wait for user decision
+//                 resolution = await new Promise<ConflictResolution>(resolve => {
+//                     const modal = new FileConflictModal(app, destinationPath, resolve);
+//                     modal.open();
+//                 });
+//             } else {
+//                 resolution = {
+//                     action: importConflict as ConflictResolution['action'],
+//                     applyToAll: false
+//                 };
+//             }
+
+//             switch (resolution.action) {
+//                 case 'skip':
+//                     return {
+//                         success: false,
+//                         destinationPath: '',
+//                         error: 'Import skipped due to existing file'
+//                     };
+//                 case 'disambiguate':
+//                     destinationPath = await ensureUniquePath(app, destinationPath);
+//                     break;
+//                 case 'replace':
+//                     // Continue with existing path, file will be overwritten
+//                     break;
+//             }
+//         }
+
+//         // Get vault base path and copy file
+//         const adapter = app.vault.adapter;
+//         if (!(adapter instanceof FileSystemAdapter)) {
+//             return {
+//                 success: false,
+//                 destinationPath: '',
+//                 error: 'Could not access vault file system'
+//             };
+//         }
+//         const vaultBasePath = adapter.getBasePath();
+//         const fullDestinationPath = _path.join(vaultBasePath, destinationPath);
+
+//         await copyFile(sourceFilePath, fullDestinationPath);
+
+//         // Update host file's holdings data
+//         updateHostFileHoldingsData(app, configuration, hostFilePath, destinationPath);
+//         // destinationPath = await ensureUniquePath(app, destinationPath);
+
+//         // // Get vault base path
+//         // const adapter = app.vault.adapter;
+//         // if (!(adapter instanceof FileSystemAdapter)) {
+//         //     return {
+//         //         success: false,
+//         //         destinationPath: '',
+//         //         error: 'Could not access vault file system'
+//         //     };
+//         // }
+//         // const vaultBasePath = adapter.getBasePath();
+//         // const fullDestinationPath = _path.join(vaultBasePath, destinationPath);
+
+//         // // Copy the file
+//         // await copyFile(sourceFilePath, fullDestinationPath);
+
+//         // // Update host file's holdings data
+//         // updateHostFileHoldingsData(app, configuration, hostFilePath, destinationPath);
+
+//         return {
+//             success: true,
+//             destinationPath: destinationPath
+//         };
+
+//     } catch (error) {
+//         return {
+//             success: false,
+//             destinationPath: '',
+//             error: `Import failed: ${error}`
+//         };
+//     }
+// }
 
 export function updateHostFileHoldingsData(
     app: App,
