@@ -170,7 +170,7 @@ const settingsConfig: SettingConfig<keyof NoteConfiguration>[] = [
     {
         key: "associatedNotesOutlinkPropertyName",
         name: "Associated notes outlink property name",
-        description: "Metadata property name in the front matter that lists this note in other notes. Use a plural form for multiple references.",
+        description: "Front matter property name of links to this class of notes from other notes: what do other notes call this class of note when linking to it? Use a plural form to allow for multiple links.",
         type: "text",
         placeholder: "references, authors, extracts, readings",
         disallowEmpty: true
