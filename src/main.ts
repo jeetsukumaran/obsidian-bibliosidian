@@ -78,7 +78,8 @@ export default class Bibliosidian extends Plugin {
 		// this.addRibbonIcon("book-up-2", "Create or update a single bibliographic note from BibTeX data", () => {
 		// 	this.updateBiblioNoteFromBibTex()
 		// });
-		this.addRibbonIcon("pilcrow-right", "Import or update reference notes from BibTeX data", () => {
+		// this.addRibbonIcon("pilcrow-right", "Import or update reference notes from BibTeX data", () => {
+		this.addRibbonIcon("between-vertical-start", "Import or update reference notes from BibTeX data", () => {
 			this.updateBiblioNoteLibraryFromBibTex()
 		});
 		this.addRibbonIcon("package-plus", "Import an external file as a bibliographic attachment of the current note", () => {
@@ -174,17 +175,17 @@ export default class Bibliosidian extends Plugin {
         modal.open();
     }
 
-	updateBiblioNoteFromBibTex(isOpenNote: boolean = true) {
-		let defaultBibTex = ""
-		createBiblioNote(
-			this.app,
-			this.configuration,
-			defaultBibTex,
-			"",
-			undefined,
-			isOpenNote,
-		)
-	}
+	// updateBiblioNoteFromBibTex(isOpenNote: boolean = true) {
+	// 	let defaultBibTex = ""
+	// 	createBiblioNote(
+	// 		this.app,
+	// 		this.configuration,
+	// 		defaultBibTex,
+	// 		"",
+	// 		undefined,
+	// 		isOpenNote,
+	// 	)
+	// }
 
 	onunload() {
 
