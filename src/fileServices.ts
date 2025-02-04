@@ -61,8 +61,11 @@ export class FileConflictModal extends Modal {
         const { contentEl } = this;
 
         contentEl.createEl('h2', { text: 'File Conflict' });
-        contentEl.createEl('p', { text: `File already exists at path: ${this.filePath}` });
-        contentEl.createEl('p', { text: 'How would you like to handle this?' });
+        contentEl.createEl('p', { text: `File already exists at path:` });
+        contentEl.createEl('br');
+        contentEl.createEl('p', { text: `${this.filePath}` });
+        contentEl.createEl('br');
+        contentEl.createEl('p', { text: 'Would you like to replace this?' });
 
         const buttonContainer = contentEl.createDiv('button-container');
 
@@ -81,16 +84,16 @@ export class FileConflictModal extends Modal {
         };
 
         // Single action buttons
-        createActionButton('Skip', 'skip', false);
-        createActionButton('Replace', 'replace', false);
+        createActionButton('Yes', 'replace', false);
+        createActionButton('No', 'skip', false);
         createActionButton('Rename', 'disambiguate', false);
 
         contentEl.createEl('hr');
 
         // Apply to all buttons
-        createActionButton('Skip All', 'skip', true);
-        createActionButton('Replace All', 'replace', true);
-        createActionButton('Rename All', 'disambiguate', true);
+        createActionButton('Yes to all', 'replace', true);
+        createActionButton('No to all', 'skip', true);
+        createActionButton('Rename all', 'disambiguate', true);
     }
 
     onClose() {
