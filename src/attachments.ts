@@ -206,7 +206,9 @@ export class ImportHoldingModal extends Modal {
                         return;
                     }
                     await this.importFile();
-                    this.updateHostFileHoldingsData(
+                    updateHostFileHoldingsData(
+                        this.app,
+                        this.configuration,
                         this.activeFile?.path || "",
                         this.cleanDestinationPath
                     );
@@ -221,7 +223,9 @@ export class ImportHoldingModal extends Modal {
                         return;
                     }
                     await this.importFile();
-                    this.updateHostFileHoldingsData(
+                    updateHostFileHoldingsData(
+                        this.app,
+                        this.configuration,
                         this.activeFile?.path || "",
                         this.cleanDestinationPath
                     );
@@ -233,27 +237,6 @@ export class ImportHoldingModal extends Modal {
                     );
                     this.close();
                 }));
-    }
-
-
-    updateHostFileHoldingsData(
-        hostFilePath: string,
-        newHoldingPath: string,
-    ) {
-        if (!hostFilePath) {
-            return;
-        }
-        let fileProperties = new FileProperties(this.app, hostFilePath);
-        let holdingsPropertyName = this.configuration.holdingsPropertyName;
-        let refProperties: FilePropertyData = {}
-        let formattedNewHoldingPath = `[[${newHoldingPath}]]`;
-        refProperties[holdingsPropertyName] = fileProperties.concatItems(holdingsPropertyName, [formattedNewHoldingPath])
-        updateFrontMatter(
-            this.app,
-            hostFilePath,
-            refProperties,
-            true,
-        )
     }
 
     getVaultBasePath(): string {
@@ -300,3 +283,26 @@ export class ImportHoldingModal extends Modal {
 }
 
 
+
+
+function updateHostFileHoldingsData(
+    app: App,
+    configuration: BibliosidianConfiguration,
+    hostFilePath: string,
+    newHoldingPath: string,
+) {
+    if (!hostFilePath) {
+        return;
+    }
+    let fileProperties = new FileProperties(app, hostFilePath);
+    let holdingsPropertyName = configuration.holdingsPropertyName;
+    let refProperties: FilePropertyData = {}
+    let formattedNewHoldingPath = `[[${newHoldingPath}]]`;
+    refProperties[holdingsPropertyName] = fileProperties.concatItems(holdingsPropertyName, [formattedNewHoldingPath])
+    updateFrontMatter(
+        app,
+        hostFilePath,
+        refProperties,
+        true,
+    )
+}
