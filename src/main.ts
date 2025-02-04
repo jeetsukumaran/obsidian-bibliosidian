@@ -79,10 +79,10 @@ export default class Bibliosidian extends Plugin {
 		// 	this.updateBiblioNoteFromBibTex()
 		// });
 		// this.addRibbonIcon("pilcrow-right", "Import or update reference notes from BibTeX data", () => {
-		this.addRibbonIcon("between-vertical-start", "Import or update reference notes from BibTeX data", () => {
+		this.addRibbonIcon("between-vertical-start", "Import or update bibliographic, author, and selected associated notes from BibTeX data", () => {
 			this.updateBiblioNoteLibraryFromBibTex()
 		});
-		this.addRibbonIcon("package-plus", "Import an external file as a bibliographic attachment of the current note", () => {
+		this.addRibbonIcon("package-plus", "Attach an external file as a bibliographic holding of the current note", () => {
 			this.addHolding()
 		});
 
