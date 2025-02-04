@@ -101,6 +101,7 @@ export default class Bibliosidian extends Plugin {
                 }
 			    openAssociatedNote(
                     this.app,
+                    activeFile.path,
                     this.configuration.biblioNoteConfiguration,
                     this.configuration.getAssociatedNoteConfiguration("reading"),
                     false,
