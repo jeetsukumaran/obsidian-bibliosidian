@@ -72,6 +72,7 @@ function createSetting<T extends keyof NoteConfiguration>(
         return;
     }
 
+    const expandVars = (val: string) =>  val.replace(/{{notetype}}/g, (noteConfig.className?.toLowerCase() || "{{notetype}}"));
     const settingEl = new Setting(containerEl)
         .setName(settingOptionConfiguration.name)
         .setDesc(settingOptionConfiguration.description);
@@ -87,7 +88,7 @@ function createSetting<T extends keyof NoteConfiguration>(
         );
     } else if (settingOptionConfiguration.type === "textarea") {
         settingEl.addTextArea(textarea =>
-            textarea.setPlaceholder(settingOptionConfiguration.placeholder || "")
+            textarea.setPlaceholder(expandVars(settingOptionConfiguration.placeholder || ""))
                     .setValue(Array.isArray(noteConfig[settingOptionConfiguration.key]) ? (noteConfig[settingOptionConfiguration.key] as string[]).join("\n") : (noteConfig[settingOptionConfiguration.key] as string))
                     .setDisabled(settingOptionConfiguration.isDisabled ?? false)
                     .onChange(async (newValue) => {
@@ -99,7 +100,7 @@ function createSetting<T extends keyof NoteConfiguration>(
         settingEl.addText(text => {
             let tempValue = noteConfig[settingOptionConfiguration.key] as string;
 
-            text.setPlaceholder(settingOptionConfiguration.placeholder || "")
+            text.setPlaceholder(expandVars(settingOptionConfiguration.placeholder || ""))
                 .setValue(tempValue)
                 .setDisabled(settingOptionConfiguration.isDisabled ?? false)
                 .onChange((newValue) => {
@@ -133,7 +134,7 @@ const settingOptionConfigurations: SettingOptionConfiguration<keyof NoteConfigur
         name: "Parent folder",
         description: "Path to parent folder of notes.",
         type: "text",
-        placeholder: "(E.g. 'sources/classname')",
+        placeholder: "(E.g. 'sources/{{notetype}}')",
         disallowEmpty: true
     },
 
@@ -149,7 +150,7 @@ const settingOptionConfigurations: SettingOptionConfiguration<keyof NoteConfigur
         name: "Name composition: prefix",
         description: "String to prefix in front of base file name to disambiguate it from reference.",
         type: "text",
-        placeholder: "(E.g. 'classname_')"
+        placeholder: "(E.g. '{{notetype}}_')"
     },
 
     {
@@ -157,7 +158,7 @@ const settingOptionConfigurations: SettingOptionConfiguration<keyof NoteConfigur
         name: "Name composition: postfix",
         description: "String to append to back of base file name to disambiguate it from reference.",
         type: "text",
-        placeholder: "(E.g. '_classname')"
+        placeholder: "(E.g. '_{{notetype}}')"
     },
 
     {
@@ -165,7 +166,7 @@ const settingOptionConfigurations: SettingOptionConfiguration<keyof NoteConfigur
         name: "Front matter property name prefix",
         description: "Front matter metadata property will be prefixed by this.",
         type: "text",
-        placeholder: "(E.g. 'classname-')"
+        placeholder: "(E.g. '{{notetype}}-')"
     },
 
     {
@@ -182,7 +183,7 @@ const settingOptionConfigurations: SettingOptionConfiguration<keyof NoteConfigur
         name: "Tag metadata",
         description: "Enter tags to be added, separated by newlines, spaces, commas, or semicolons.",
         type: "textarea",
-        placeholder: "(E.g. '#source/classname')"
+        placeholder: "(E.g. '#source/{{notetype}}')"
     },
 ];
 
