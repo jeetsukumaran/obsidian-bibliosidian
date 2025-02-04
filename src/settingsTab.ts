@@ -50,68 +50,69 @@ import {
 
 type SettingType = "text" | "toggle" | "textarea";
 
-interface SettingConfig<T extends keyof NoteConfiguration> {
+interface SettingOptionConfiguration<T extends keyof NoteConfiguration> {
     key: T;                         // The property key in noteConfig
     name: string;                    // Display name
     description: string;              // Tooltip description
     type: SettingType;                // Type: text, toggle, textarea
     placeholder?: string;             // Placeholder for text inputs
     disallowEmpty?: boolean;          // Whether empty values are allowed
-    isDisabled?: boolean;             // Whether the setting should be disabled
+    isDisabled?: boolean;             // Whether the settingOptionConfiguration should be disabled
 }
 
 function createSetting<T extends keyof NoteConfiguration>(
     containerEl: HTMLElement,
     noteConfig: NoteConfiguration,
-    setting: SettingConfig<T>,
-    saveSettings: () => Promise<void>
+    settingOptionConfiguration: SettingOptionConfiguration<T>,
+    saveSettings: () => Promise<void>,
+    // excludeElements: { [key: string]: boolean },
 ) {
-    if (!(setting.key in noteConfig)) {
-        console.warn(`Invalid setting key: ${setting.key}`);
+    if (!(settingOptionConfiguration.key in noteConfig)) {
+        console.warn(`Invalid settingOptionConfiguration key: ${settingOptionConfiguration.key}`);
         return;
     }
 
     const settingEl = new Setting(containerEl)
-        .setName(setting.name)
-        .setDesc(setting.description);
+        .setName(settingOptionConfiguration.name)
+        .setDesc(settingOptionConfiguration.description);
 
-    if (setting.type === "toggle") {
+    if (settingOptionConfiguration.type === "toggle") {
         settingEl.addToggle(toggle =>
-            toggle.setValue(noteConfig[setting.key] as boolean)
-                  .setDisabled(setting.isDisabled ?? false)
+            toggle.setValue(noteConfig[settingOptionConfiguration.key] as boolean)
+                  .setDisabled(settingOptionConfiguration.isDisabled ?? false)
                   .onChange(async (newValue) => {
-                      noteConfig[setting.key] = newValue as NoteConfiguration[T];  // Type assertion
+                      noteConfig[settingOptionConfiguration.key] = newValue as NoteConfiguration[T];  // Type assertion
                       await saveSettings();
                   })
         );
-    } else if (setting.type === "textarea") {
+    } else if (settingOptionConfiguration.type === "textarea") {
         settingEl.addTextArea(textarea =>
-            textarea.setPlaceholder(setting.placeholder || "")
-                    .setValue(Array.isArray(noteConfig[setting.key]) ? (noteConfig[setting.key] as string[]).join("\n") : (noteConfig[setting.key] as string))
-                    .setDisabled(setting.isDisabled ?? false)
+            textarea.setPlaceholder(settingOptionConfiguration.placeholder || "")
+                    .setValue(Array.isArray(noteConfig[settingOptionConfiguration.key]) ? (noteConfig[settingOptionConfiguration.key] as string[]).join("\n") : (noteConfig[settingOptionConfiguration.key] as string))
+                    .setDisabled(settingOptionConfiguration.isDisabled ?? false)
                     .onChange(async (newValue) => {
-                        noteConfig[setting.key] = newValue.split(/\s*[\n,;]\s*/) as NoteConfiguration[T];  // Type assertion
+                        noteConfig[settingOptionConfiguration.key] = newValue.split(/\s*[\n,;]\s*/) as NoteConfiguration[T];  // Type assertion
                         await saveSettings();
                     })
         );
     } else { // "text"
         settingEl.addText(text => {
-            let tempValue = noteConfig[setting.key] as string;
+            let tempValue = noteConfig[settingOptionConfiguration.key] as string;
 
-            text.setPlaceholder(setting.placeholder || "")
+            text.setPlaceholder(settingOptionConfiguration.placeholder || "")
                 .setValue(tempValue)
-                .setDisabled(setting.isDisabled ?? false)
+                .setDisabled(settingOptionConfiguration.isDisabled ?? false)
                 .onChange((newValue) => {
                     tempValue = newValue.trim(); // Store temporary value
                 })
                 .then(text => {
                     text.inputEl.addEventListener("blur", async () => {
-                        if (setting.disallowEmpty && !tempValue) {
-                            new Notice(`${setting.name} cannot be empty.`);
-                            text.setValue(noteConfig[setting.key] as string); // Restore previous value
+                        if (settingOptionConfiguration.disallowEmpty && !tempValue) {
+                            new Notice(`${settingOptionConfiguration.name} cannot be empty.`);
+                            text.setValue(noteConfig[settingOptionConfiguration.key] as string); // Restore previous value
                             return;
                         }
-                        noteConfig[setting.key] = tempValue as NoteConfiguration[T];  // Type assertion
+                        noteConfig[settingOptionConfiguration.key] = tempValue as NoteConfiguration[T];  // Type assertion
                         await saveSettings();
                     });
                 });
@@ -119,7 +120,7 @@ function createSetting<T extends keyof NoteConfiguration>(
     }
 }
 
-const settingsConfig: SettingConfig<keyof NoteConfiguration>[] = [
+const settingOptionConfigurations: SettingOptionConfiguration<keyof NoteConfiguration>[] = [
     {
         key: "isAutoCreate",
         name: "Create automatically",
@@ -222,9 +223,11 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
             containerEl.createEl("p", { text: noteConfig.description });
         }
 
-        for (const setting of settingsConfig) {
-            if (!excludeElements[setting.key]) {
-                createSetting(containerEl, noteConfig, setting, this.saveSettings.bind(this));
+        for (const settingOptionConfiguration of settingOptionConfigurations) {
+            console.log(excludeElements);
+            console.log(settingOptionConfiguration.key);
+            if (!excludeElements[settingOptionConfiguration.key]) {
+                createSetting(containerEl, noteConfig, settingOptionConfiguration, this.saveSettings.bind(this));
             }
         }
     }
