@@ -286,9 +286,10 @@ export async function importHoldingsFromBibRecords(app: App, configuration: Bibl
                     sourceFilePath,
                     "prompt-user",
                 );
-
-                if (importResult.error) {
+                if (!importResult.success && importResult.error) {
                     console.log(`Error importing holding '${sourceFilePath}': ${importResult.error}`);
+                } else if (importResult.success && importResult.error) {
+                    console.log(`Not importing holding '${sourceFilePath}': ${importResult.error}`);
                 } else {
                     console.log(`Successfully imported: ${importResult.destinationPath}`);
                 }
@@ -391,44 +392,6 @@ class BibTexResultsModal extends Modal {
                         this.configuration,
                         filteredResults,
                     );
-                    // filteredResults.forEach ( async (result: ProcessedBibTexResult) => {
-                        // const hostFilePath = result.filePath;
-                        // getSourceFilesExternalAttachmentLocations(
-                        //     this.app,
-                        //     this.configuration,
-                        //     hostFilePath,
-                        // )
-                        //     .forEach( async (sourceFilePath: string) => {
-                        //         try {
-                        //             // interface ImportResult {
-                        //             //     success: boolean;
-                        //             //     destinationPath: string;
-                        //             //     error?: string;
-                        //             // }
-                        //             const importResult = await importHolding(
-                        //                 this.app,
-                        //                 this.configuration,
-                        //                 hostFilePath,
-                        //                 sourceFilePath,
-                        //                 "prompt-user",
-                        //             );
-                        //             if (importResult.error) {
-                        //             } else {
-                        //             }
-                        //         } catch(error) {
-                        //             const errMsg = `Error importing holding '${sourceFilePath}': ${error}`
-                        //             console.log(errMsg);
-                        //             new Notice(errMsg);
-                        //         }
-                        //     });
-                        // // successful: boolean,
-                        // // citeKey: string,
-                        // // citation: string,
-                        // // title: string,
-                        // // filePath: string,
-                        // // linkFilePath: string,
-                        // // fileLink: string,
-                    // });
                 })
             )
             .addButton((btn) =>

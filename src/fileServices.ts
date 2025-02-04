@@ -230,7 +230,7 @@ export async function importHolding(
             switch (resolution.action) {
                 case 'skip':
                     if (!isSilent) new Notice(`Skipped: ${destinationPath}`);
-                    return { success: false, destinationPath: '', error: 'Import skipped due to existing file' };
+                    return { success: true, destinationPath: '', error: 'Import skipped due to existing file' };
                 case 'disambiguate':
                     destinationPath = await ensureUniquePath(app, destinationPath);
                     break;
