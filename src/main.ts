@@ -268,6 +268,39 @@ class BibTexCaptureModal extends Modal {
     }
 }
 
+export async function importHoldingsFromBibRecords(app: App, configuration: BibliosidianConfiguration, bibRecords: ProcessedBibTexResult[]) {
+    for (const result of bibRecords) {
+        const hostFilePath = result.filePath;
+        const sourceFilePaths = getSourceFilesExternalAttachmentLocations(
+            app,
+            configuration,
+            hostFilePath,
+        );
+
+        for (const sourceFilePath of sourceFilePaths) {
+            try {
+                const importResult = await importHolding(
+                    app,
+                    configuration,
+                    hostFilePath,
+                    sourceFilePath,
+                    "prompt-user",
+                );
+
+                if (importResult.error) {
+                    console.log(`Error importing holding '${sourceFilePath}': ${importResult.error}`);
+                } else {
+                    console.log(`Successfully imported: ${importResult.destinationPath}`);
+                }
+            } catch (error) {
+                const errMsg = `Error importing holding '${sourceFilePath}': ${error}`;
+                console.log(errMsg);
+                new Notice(errMsg);
+            }
+        }
+    }
+}
+
 
 class BibTexResultsModal extends Modal {
     configuration: BibliosidianConfiguration;
@@ -353,44 +386,49 @@ class BibTexResultsModal extends Modal {
                 btn
                 .setButtonText('Import ALL file attachments')
                 .onClick(async () => {
-                    filteredResults.forEach ( async (result: ProcessedBibTexResult) => {
-                        const hostFilePath = result.filePath;
-                        getSourceFilesExternalAttachmentLocations(
-                            this.app,
-                            this.configuration,
-                            hostFilePath,
-                        )
-                            .forEach( async (sourceFilePath: string) => {
-                                try {
-                                    // interface ImportResult {
-                                    //     success: boolean;
-                                    //     destinationPath: string;
-                                    //     error?: string;
-                                    // }
-                                    const importResult = await importHolding(
-                                        this.app,
-                                        this.configuration,
-                                        hostFilePath,
-                                        sourceFilePath,
-                                        "prompt-user",
-                                    );
-                                    if (importResult.error) {
-                                    } else {
-                                    }
-                                } catch(error) {
-                                    const errMsg = `Error importing holding '${sourceFilePath}': ${error}`
-                                    console.log(errMsg);
-                                    new Notice(errMsg);
-                                }
-                            });
-                        // successful: boolean,
-                        // citeKey: string,
-                        // citation: string,
-                        // title: string,
-                        // filePath: string,
-                        // linkFilePath: string,
-                        // fileLink: string,
-                    });
+                    await importHoldingsFromBibRecords(
+                        this.app,
+                        this.configuration,
+                        filteredResults,
+                    );
+                    // filteredResults.forEach ( async (result: ProcessedBibTexResult) => {
+                        // const hostFilePath = result.filePath;
+                        // getSourceFilesExternalAttachmentLocations(
+                        //     this.app,
+                        //     this.configuration,
+                        //     hostFilePath,
+                        // )
+                        //     .forEach( async (sourceFilePath: string) => {
+                        //         try {
+                        //             // interface ImportResult {
+                        //             //     success: boolean;
+                        //             //     destinationPath: string;
+                        //             //     error?: string;
+                        //             // }
+                        //             const importResult = await importHolding(
+                        //                 this.app,
+                        //                 this.configuration,
+                        //                 hostFilePath,
+                        //                 sourceFilePath,
+                        //                 "prompt-user",
+                        //             );
+                        //             if (importResult.error) {
+                        //             } else {
+                        //             }
+                        //         } catch(error) {
+                        //             const errMsg = `Error importing holding '${sourceFilePath}': ${error}`
+                        //             console.log(errMsg);
+                        //             new Notice(errMsg);
+                        //         }
+                        //     });
+                        // // successful: boolean,
+                        // // citeKey: string,
+                        // // citation: string,
+                        // // title: string,
+                        // // filePath: string,
+                        // // linkFilePath: string,
+                        // // fileLink: string,
+                    // });
                 })
             )
             .addButton((btn) =>
