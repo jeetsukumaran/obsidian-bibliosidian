@@ -153,18 +153,48 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
                         await this.saveSettings();
             }));
         }
-        if (!excludeElements["associatedNotesOutlinkPropertyName"]) {
-            new Setting(containerEl)
-                .setName("Associated notes outlink property name")
-                .setDesc("Front matter metadata property name that other notes call this note. Use plural to allow for multiple links.")
-                .addText(text => text
-                    .setPlaceholder(`(E.g. 'references', 'authors', 'extracts', 'readings')`)
-                    .setValue(noteConfig.associatedNotesOutlinkPropertyName)
-                    .onChange(async (value) => {
-                        noteConfig.associatedNotesOutlinkPropertyName = value
+ if (!excludeElements["associatedNotesOutlinkPropertyName"]) {
+    new Setting(containerEl)
+        .setName("Associated notes outlink property name")
+        .setDesc("Metadata property name in the front matter that lists this note in other notes. Use a plural form for multiple references.")
+        .addText(text => {
+            let tempValue = noteConfig.associatedNotesOutlinkPropertyName;
+
+            text.setPlaceholder("references, authors, extracts, readings")
+                .setValue(tempValue)
+                .onChange(value => {
+                    tempValue = value.trim(); // Store interim value but don't persist yet
+                })
+                .then(text => {
+                    text.inputEl.addEventListener("blur", async () => {
+                        if (!tempValue) {
+                            new Notice("This field cannot be blank.");
+                            text.setValue(noteConfig.associatedNotesOutlinkPropertyName);
+                            return;
+                        }
+                        noteConfig.associatedNotesOutlinkPropertyName = tempValue;
                         await this.saveSettings();
-            }));
-        }
+                    });
+                });
+        });
+}
+
+        // if (!excludeElements["associatedNotesOutlinkPropertyName"]) {
+        //     new Setting(containerEl)
+        //         .setName("Associated notes outlink property name")
+        //         .setDesc("Front matter metadata property name that other notes call this note. Use plural to allow for multiple links.")
+        //         .addText(text => text
+        //             .setPlaceholder(`(E.g. 'references', 'authors', 'extracts', 'readings')`)
+        //             .setValue(noteConfig.associatedNotesOutlinkPropertyName)
+        //             .onChange(async (value) => {
+        //                 if (!value.trim()) {
+        //                     text.setValue(noteConfig.associatedNotesOutlinkPropertyName);
+        //                     return;
+        //                 }
+        //                 noteConfig.associatedNotesOutlinkPropertyName = value
+        //                 await this.saveSettings();
+        //     }));
+        // }
 
         new Setting(containerEl)
             .setName("Tag metadata")
