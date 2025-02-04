@@ -48,6 +48,7 @@ import {
 
 import {
     openAssociatedNote,
+    importHolding,
 } from "./fileServices";
 
 
@@ -164,7 +165,11 @@ export default class Bibliosidian extends Plugin {
                         this.configuration,
                     );
                     if (processedResults.length > 0) {
-                        const resultsModal = new BibTexResultsModal(this.app, processedResults);
+                        const resultsModal = new BibTexResultsModal(
+                            this.app,
+                            this.configuration,
+                            processedResults,
+                        );
                         await resultsModal.open();
                     } else {
                         new Notice("No results returned by BibTex parser");
@@ -264,10 +269,16 @@ class BibTexCaptureModal extends Modal {
 
 
 class BibTexResultsModal extends Modal {
+    configuration: BibliosidianConfiguration;
 	private processedResults: ProcessedBibTexResult[];
 
-	constructor(app: App, processedResults: ProcessedBibTexResult[]) {
+	constructor(
+        app: App,
+        configuration: BibliosidianConfiguration,
+        processedResults: ProcessedBibTexResult[]
+	) {
 		super(app);
+		this.configuration = configuration;
 		this.processedResults = processedResults;
 	}
 
@@ -335,6 +346,25 @@ class BibTexResultsModal extends Modal {
                     new Notice('Copied to clipboard');
                     // Close the modal
                     this.close();
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Import ALL file attachments')
+                .onClick(async () => {
+                    // try {
+                    //     authors = new Authors(fieldValue);
+                    // } catch(error) {
+                    //     console.log(`Error creating author for value ${fieldValue}: ${error}`);
+                    //     continue;
+                    // }
+                    importHolding(
+                        this.app,
+                        this.configuration,
+                        hostFilePath,
+                        sourceFilePath,
+                        "prompt-user",
+                    );
                 })
             )
             .addButton((btn) =>
