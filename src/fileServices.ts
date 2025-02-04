@@ -67,33 +67,105 @@ export class FileConflictModal extends Modal {
         contentEl.createEl('br');
         contentEl.createEl('p', { text: 'Would you like to replace this?' });
 
-        const buttonContainer = contentEl.createDiv('button-container');
 
-        const createActionButton = (
-            text: string,
-            action: ConflictResolution['action'],
-            applyToAll: boolean
-        ) => {
-            new ButtonComponent(buttonContainer)
-                .setButtonText(text)
-                .onClick(() => {
-                    this.resolution = { action, applyToAll };
-                    this.onResolve(this.resolution);
-                    this.close();
-                });
-        };
+        // Individual actions
+        new Setting(contentEl)
+            .setName('Skip')
+            .setDesc('Skip importing this file')
+            .addButton((btn) =>
+                btn
+                    .setButtonText('Skip')
+                    .onClick(() => {
+                        this.resolveAndClose({ action: 'skip', applyToAll: false });
+                    })
+            );
 
-        // Single action buttons
-        createActionButton('Yes', 'replace', false);
-        createActionButton('No', 'skip', false);
-        createActionButton('Rename', 'disambiguate', false);
+        new Setting(contentEl)
+            .setName('Replace')
+            .setDesc('Replace existing file')
+            .addButton((btn) =>
+                btn
+                    .setButtonText('Replace')
+                    .onClick(() => {
+                        this.resolveAndClose({ action: 'replace', applyToAll: false });
+                    })
+            );
 
+        new Setting(contentEl)
+            .setName('Rename')
+            .setDesc('Automatically rename to avoid conflict')
+            .addButton((btn) =>
+                btn
+                    .setButtonText('Rename')
+                    .setCta()
+                    .onClick(() => {
+                        this.resolveAndClose({ action: 'disambiguate', applyToAll: false });
+                    })
+            );
+
+        // Separator
         contentEl.createEl('hr');
 
-        // Apply to all buttons
-        createActionButton('Yes to all', 'replace', true);
-        createActionButton('No to all', 'skip', true);
-        createActionButton('Rename all', 'disambiguate', true);
+        // Apply to all actions
+        new Setting(contentEl)
+            .setName('Apply to all conflicts')
+            .setDesc('Choose an action to apply to all remaining conflicts')
+            .addButton((btn) =>
+                btn
+                    .setButtonText('Skip All')
+                    .onClick(() => {
+                        this.resolveAndClose({ action: 'skip', applyToAll: true });
+                    })
+            )
+            .addButton((btn) =>
+                btn
+                    .setButtonText('Replace All')
+                    .onClick(() => {
+                        this.resolveAndClose({ action: 'replace', applyToAll: true });
+                    })
+            )
+            .addButton((btn) =>
+                btn
+                    .setButtonText('Rename All')
+                    .setCta()
+                    .onClick(() => {
+                        this.resolveAndClose({ action: 'disambiguate', applyToAll: true });
+                    })
+            );
+
+        // const buttonContainer = contentEl.createDiv('button-container');
+        // const createActionButton = (
+        //     text: string,
+        //     action: ConflictResolution['action'],
+        //     applyToAll: boolean
+        // ) => {
+        //     new ButtonComponent(buttonContainer)
+        //         .setButtonText(text)
+        //         .onClick(() => {
+        //             this.resolution = { action, applyToAll };
+        //             this.onResolve(this.resolution);
+        //             this.close();
+        //         });
+        // };
+
+        // // Single action buttons
+        // createActionButton('Yes', 'replace', false);
+        // createActionButton('No', 'skip', false);
+        // createActionButton('Rename', 'disambiguate', false);
+
+        // contentEl.createEl('hr');
+
+        // // Apply to all buttons
+        // createActionButton('Yes to all', 'replace', true);
+        // createActionButton('No to all', 'skip', true);
+        // createActionButton('Rename all', 'disambiguate', true);
+
+    }
+
+    private resolveAndClose(resolution: ConflictResolution) {
+        this.resolution = resolution;
+        this.onResolve(resolution);
+        this.close();
     }
 
     onClose() {

@@ -34,7 +34,6 @@ import {
 } from "./attachments";
 
 import {
-	// createBiblioNote,
 	generateBiblioNoteLibrary,
 	ProcessedBibTexResult,
 } from "./bibliosidian";
