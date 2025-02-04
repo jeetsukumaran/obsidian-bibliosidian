@@ -398,9 +398,7 @@ export async function openAssociatedNote(
 
 export function getSourceFilesFromFrontmatter(app: App, configuration: BibliosidianConfiguration, filePath: string ): string[] {
     const refData = readPropertyDict(app, filePath, configuration.biblioNoteDataPropertyName);
-    console.log(refData);
-    // const fileProperties = new FileProperties(this.app, filePath);
-    // const data = fileProperties.readPropertyList(configuration.referenceSourceFilesPropertyName);
-    return [];
+    const files: string[] = Array.isArray(refData?.["files"]) && refData["files"].every(f => typeof f === "string") ? refData["files"] : [];
+    return files;
 }
 
