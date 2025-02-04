@@ -94,12 +94,18 @@ export default class Bibliosidian extends Plugin {
 		this.addCommand({
 			id: 'open-reading-note',
 			name: 'Open reading note linked to the current note',
-			callback: () => openAssociatedNote(
-                this.app,
-                this.configuration.biblioNoteConfiguration,
-                this.configuration.getAssociatedNoteConfiguration("reading"),
-                false,
-			),
+			callback: () => {
+                let activeFile = app.workspace.getActiveFile();
+                if (!activeFile) {
+                    return;
+                }
+			    openAssociatedNote(
+                    this.app,
+                    this.configuration.biblioNoteConfiguration,
+                    this.configuration.getAssociatedNoteConfiguration("reading"),
+                    false,
+                )
+            }
 		});
 
 		this.addCommand({

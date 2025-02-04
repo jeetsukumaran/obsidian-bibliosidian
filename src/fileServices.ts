@@ -31,19 +31,20 @@ import {
 
 export async function openAssociatedNote(
         app: App,
+        refFilePath: string,
         refNoteConfig: NoteConfiguration,
         linkedNoteConfig: NoteConfiguration,
         isForceNew: boolean = false,
         titlePropertyNames: string[] = ["shorttitle", "title"],
     ) {
-    let activeFile = app.workspace.getActiveFile();
-    if (!activeFile) {
-        return;
-    }
+    // let activeFile = app.workspace.getActiveFile();
+    // if (!activeFile) {
+    //     return;
+    // }
 
-    const refFilePath = activeFile.path;
+    // const refFilePath = activeFile.path;
     const refFileProperties = new FileProperties(app, refFilePath);
-    const refFileBaseName = _path.basename(activeFile.path);
+    const refFileBaseName = _path.basename(refFilePath);
     const refFileTitle = refFileProperties.resolveFirstMatchingPropertyValue(titlePropertyNames);
 
     const noteLocation = composeNoteLocation(

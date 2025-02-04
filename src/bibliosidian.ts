@@ -41,6 +41,7 @@ import {
 } from "./utility";
 
 import {
+    NoteConfiguration,
     BibliosidianConfiguration,
 } from "./settings";
 
@@ -328,6 +329,19 @@ async function generateSourceFrontmatter(
     	// refBodyLines,
     	true,
     )
+
+    Object.keys(this.configuration.settings.associatedNoteConfigurations).forEach( (noteConfigKey: string) => {
+        const noteConfig: NoteConfiguration = this.configuration.settings.associatedNoteConfigurations[noteConfigKey];
+        if (noteConfig.isAutoCreate) {
+            openAssociatedNote(
+                app,
+                configuration.biblioNoteConfiguration,
+                noteConfig,
+                false,
+            )
+        }
+
+    });
 
 }
 
