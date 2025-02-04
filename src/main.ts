@@ -362,7 +362,12 @@ class BibTexResultsModal extends Modal {
                         )
                             .forEach( (sourceFilePath: string) => {
                                 try {
-                                    importHolding(
+                                    // interface ImportResult {
+                                    //     success: boolean;
+                                    //     destinationPath: string;
+                                    //     error?: string;
+                                    // }
+                                    const importResult = importHolding(
                                         this.app,
                                         this.configuration,
                                         hostFilePath,
