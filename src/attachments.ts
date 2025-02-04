@@ -25,6 +25,10 @@ import {
 } from "./fileProperties";
 
 import {
+    importHolding,
+} from "./fileServices";
+
+import {
     ensureDirectoryExists,
     ensureUniquePath,
     // formatAttachmentPath,
@@ -254,32 +258,55 @@ export class ImportHoldingModal extends Modal {
 
     private async importFile() {
         const sourceFilePath = _path.resolve(this.sourcePath.value.trim());
-        let destinationPath = this.cleanDestinationPath;
-        if (!destinationPath) {
+
+        if (!this.activeFile) {
+            new Notice('No active file selected');
             return;
         }
-        try {
-            await ensureDirectoryExists(
-                this.app,
-                _path.dirname(destinationPath),
-            );
-        } catch (error) {
-            new Notice(`Error ensuring parent directory for destination '${destinationPath}': ` + error);
-            console.log(destinationPath + ": " + error);
-        }
-        destinationPath = await ensureUniquePath(this.app, destinationPath);
-        this.destinationPath.value = destinationPath; // update with unique path
-        let fullDestinationPath = _path.join(this.getVaultBasePath(), destinationPath);
-        try {
-            // await this.app.vault.rename(sourceFile, destinationPath);
-            // await this.app.fileManager.renameFile(sourceFile, destinationPath);
-            await copyFileAsync(sourceFilePath, fullDestinationPath);
-            new Notice(`File imported from '${sourceFilePath}' to '${destinationPath}'`);
-        } catch (error) {
-            new Notice(`Error moving '${sourceFilePath}' to '${destinationPath}': ` + error);
-            console.log(error);
+
+        const result = await importHolding(
+            this.app,
+            this.configuration,
+            this.activeFile.path,
+            sourceFilePath
+        );
+
+        if (result.success) {
+            this.destinationPath.value = result.destinationPath;
+            new Notice(`File imported to '${result.destinationPath}'`);
+        } else {
+            new Notice(result.error || 'Import failed');
         }
     }
+
+    // private async importFile() {
+    //     const sourceFilePath = _path.resolve(this.sourcePath.value.trim());
+    //     let destinationPath = this.cleanDestinationPath;
+    //     if (!destinationPath) {
+    //         return;
+    //     }
+    //     try {
+    //         await ensureDirectoryExists(
+    //             this.app,
+    //             _path.dirname(destinationPath),
+    //         );
+    //     } catch (error) {
+    //         new Notice(`Error ensuring parent directory for destination '${destinationPath}': ` + error);
+    //         console.log(destinationPath + ": " + error);
+    //     }
+    //     destinationPath = await ensureUniquePath(this.app, destinationPath);
+    //     this.destinationPath.value = destinationPath; // update with unique path
+    //     let fullDestinationPath = _path.join(this.getVaultBasePath(), destinationPath);
+    //     try {
+    //         // await this.app.vault.rename(sourceFile, destinationPath);
+    //         // await this.app.fileManager.renameFile(sourceFile, destinationPath);
+    //         await copyFileAsync(sourceFilePath, fullDestinationPath);
+    //         new Notice(`File imported from '${sourceFilePath}' to '${destinationPath}'`);
+    //     } catch (error) {
+    //         new Notice(`Error moving '${sourceFilePath}' to '${destinationPath}': ` + error);
+    //         console.log(error);
+    //     }
+    // }
 }
 
 
