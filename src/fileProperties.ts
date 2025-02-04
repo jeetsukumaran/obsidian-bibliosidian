@@ -24,11 +24,28 @@ export {
 	stringifyYaml,
 };
 
+import {
+    BibliosidianConfiguration,
+} from "./settings";
+
 
 export type FilePropertyData = {
     [key: string]: any;
 };
 
+
+export function getMetadataCache(app: App, filePath: string): CachedMetadata {
+    const sourceFile = app.vault.getAbstractFileByPath(filePath) as TFile
+    return app.metadataCache.getFileCache(sourceFile) || {};
+}
+
+export function getSourceFilesFromFrontmatter(app: App, configuration: BibliosidianConfiguration, filePath: string ): string[] {
+    const cachedMetadata = getMetadataCache(app, filePath);
+    console.log(cachedMetadata);
+    // const fileProperties = new FileProperties(this.app, filePath);
+    // const data = fileProperties.readPropertyList(configuration.referenceSourceFilesPropertyName);
+    return [];
+}
 
 export class FileProperties {
 	app: App

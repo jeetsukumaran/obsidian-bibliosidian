@@ -49,6 +49,7 @@ import {
 import {
     openAssociatedNote,
     importHolding,
+    getSourceFilesFromFrontmatter,
 } from "./fileServices";
 
 
@@ -352,19 +353,29 @@ class BibTexResultsModal extends Modal {
                 btn
                 .setButtonText('Import ALL file attachments')
                 .onClick(async () => {
-                    // try {
-                    //     authors = new Authors(fieldValue);
-                    // } catch(error) {
-                    //     console.log(`Error creating author for value ${fieldValue}: ${error}`);
-                    //     continue;
-                    // }
-                    importHolding(
-                        this.app,
-                        this.configuration,
-                        hostFilePath,
-                        sourceFilePath,
-                        "prompt-user",
-                    );
+                    filteredResults.forEach ( (result: ProcessedBibTexResult) => {
+                        const hostFilePath = result.filePath;
+                        getSourceFilesFromFrontmatter(this.app, this.configuration, hostFilePath);
+                        // successful: boolean,
+                        // citeKey: string,
+                        // citation: string,
+                        // title: string,
+                        // filePath: string,
+                        // linkFilePath: string,
+                        // fileLink: string,
+                        // try {
+                        //     importHolding(
+                        //         this.app,
+                        //         this.configuration,
+                        //         hostFilePath,
+                        //         sourceFilePath,
+                        //         "prompt-user",
+                        //     );
+                        // } catch(error) {
+                        //     console.log(error);
+                        //     continue;
+                        // }
+                    });
                 })
             )
             .addButton((btn) =>

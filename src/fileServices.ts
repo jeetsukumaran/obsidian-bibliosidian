@@ -32,6 +32,7 @@ import {
 } from "./utility";
 
 import {
+	getMetadataCache,
 	FileProperties,
 	FilePropertyData,
 	updateFrontMatter,
@@ -394,8 +395,11 @@ export async function openAssociatedNote(
     );
 }
 
-function getSourceFilesFromFrontmatter(app: App, ): Promise<string[]> {
-    const fileProperties = new FileProperties(this.app, filePath);
-    return fileProperties.readPropertyList(this.configuration.referenceSourceFilesPropertyName);
+export function getSourceFilesFromFrontmatter(app: App, configuration: BibliosidianConfiguration, filePath: string ): string[] {
+    const cachedMetadata = getMetadataCache(app, filePath);
+    console.log(cachedMetadata);
+    // const fileProperties = new FileProperties(this.app, filePath);
+    // const data = fileProperties.readPropertyList(configuration.referenceSourceFilesPropertyName);
+    return [];
 }
 
