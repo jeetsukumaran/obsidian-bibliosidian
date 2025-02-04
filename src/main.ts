@@ -353,27 +353,30 @@ class BibTexResultsModal extends Modal {
                 btn
                 .setButtonText('Import ALL file attachments')
                 .onClick(async () => {
-                    filteredResults.forEach ( (result: ProcessedBibTexResult) => {
+                    filteredResults.forEach ( async (result: ProcessedBibTexResult) => {
                         const hostFilePath = result.filePath;
                         getSourceFilesExternalAttachmentLocations(
                             this.app,
                             this.configuration,
                             hostFilePath,
                         )
-                            .forEach( (sourceFilePath: string) => {
+                            .forEach( async (sourceFilePath: string) => {
                                 try {
                                     // interface ImportResult {
                                     //     success: boolean;
                                     //     destinationPath: string;
                                     //     error?: string;
                                     // }
-                                    const importResult = importHolding(
+                                    const importResult = await importHolding(
                                         this.app,
                                         this.configuration,
                                         hostFilePath,
                                         sourceFilePath,
                                         "prompt-user",
                                     );
+                                    if (importResult.error) {
+                                    } else {
+                                    }
                                 } catch(error) {
                                     const errMsg = `Error importing holding '${sourceFilePath}': ${error}`
                                     console.log(errMsg);

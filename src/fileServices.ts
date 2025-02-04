@@ -210,7 +210,7 @@ export async function importHolding(
 
         if (isDestinationExists) {
             let resolution: ConflictResolution = globalResolution ?? { action: 'skip', applyToAll: false };
-
+            console.log(globalResolution);
             if (!globalResolution || globalResolution.applyToAll === false) {
                 if (importConflict === 'prompt-user') {
                     resolution = await new Promise<ConflictResolution>((resolve) => {
@@ -224,6 +224,7 @@ export async function importHolding(
                 if (resolution.applyToAll) {
                     globalResolution = resolution; // Persist choice for future files
                 }
+                console.log(globalResolution);
             }
 
             switch (resolution.action) {
