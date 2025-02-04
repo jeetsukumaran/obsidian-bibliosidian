@@ -325,7 +325,7 @@ async function generateSourceFrontmatter(
     	this.app,
     	args.targetFilepath,
         {
-            ... tagProperties,
+            "tags": tagProperties,
             // ... refProperties.map( (p) => configuration.composeBiblioNotePropertyName(p) ),
             ...Object.fromEntries(
                 Object.entries(refProperties).map(
