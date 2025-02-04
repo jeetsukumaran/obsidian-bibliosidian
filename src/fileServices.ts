@@ -394,3 +394,8 @@ export async function openAssociatedNote(
     );
 }
 
+function getSourceFilesFromFrontmatter(app: App, ): Promise<string[]> {
+    const fileProperties = new FileProperties(this.app, filePath);
+    return fileProperties.readPropertyList(this.configuration.referenceSourceFilesPropertyName);
+}
+

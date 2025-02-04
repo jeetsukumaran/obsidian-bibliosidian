@@ -139,6 +139,15 @@ export class BibliosidianConfiguration {
     get citationKeyPostfix(): string {
         return this.settings.citationKeyPostfix ?? "";
     }
+
+
+    get biblioNotePropertyNamePrefix(): string {
+        return this.biblioNoteConfiguration.frontmatterPropertyNamePrefix;
+    }
+
+    composeBiblioNotePropertyName(name: string): string {
+        return `${this.biblioNotePropertyNamePrefix}${name}`;
+    }
 }
 
 export const DEFAULT_SETTINGS: BibliosidianSettings = {

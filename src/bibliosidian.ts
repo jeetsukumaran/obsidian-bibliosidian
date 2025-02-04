@@ -170,9 +170,12 @@ async function generateSourceFrontmatter(
     	return
     }
 
-    let refProperties: FilePropertyData = {};
-
 	let citationKey = bibEntry._id.toLowerCase();
+    let noteProperties: FilePropertyData = {}; // unprefixed, part of the knowledge network or semantic layer: e.g. "title", "abstract", "authors"
+    let refProperties: FilePropertyData = {}; // prefixed by namespace, e.g. "reference-"
+    let refBibliographicalData: FilePropertyData = {}; // in subdictionary
+
+    refProperties["data"] = refBibliographicalData;
 
 	let authorLastNames: string[] = [];
 	// let auFieldNames: string[] = [
@@ -224,14 +227,6 @@ async function generateSourceFrontmatter(
 	const updateDate = new Date();
 	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
 
-    refProperties["tags"] = configuration.biblioNoteConfiguration.tagMetadata.map( (s) => s.replace(/^#/,"") );
-    composeMetadata(
-        fileProperties,
-        refProperties,
-        configuration.biblioNoteConfiguration.frontmatterMetadata,
-        true,
-    )
-
 	// let entryTitle = `${inTextCitation} *${compositeTitle}*`
 	let unformattedEntryTitle = `${inTextCitation}: ${compositeTitle}`
 	let abstract = cleanText( (bibEntry.getFieldAsString("abstract")?.toString() || "") )
@@ -262,15 +257,11 @@ async function generateSourceFrontmatter(
     const composeRefPropertyKey = (key: string) => {
         return `${configuration.biblioNoteConfiguration.frontmatterPropertyNamePrefix || ""}${key}`;
     };
-    const entryUpdatedKey = composeRefPropertyKey("updated");
-	refProperties[entryUpdatedKey] = fileProperties.concatItems(entryUpdatedKey, [updateDateStamp])
+    // const entryUpdatedKey = composeRefPropertyKey("updated");
+	// refProperties[entryUpdatedKey] = fileProperties.concatItems(entryUpdatedKey, [updateDateStamp])
 
-    const fa = getFieldAsStringArray(bibEntry, "file");
-    refProperties[composeRefPropertyKey("files")] = fa
-    let refBibliographicalData: FilePropertyData = {};
-    refProperties[composeRefPropertyKey("data")] = refBibliographicalData;
 
-    refBibliographicalData["citekey"] = citationKey;
+    refBibliographicalData["citation-key"] = citationKey;
     refBibliographicalData["cite-as"] = citationStrings;
     for (const [key, value] of Object.entries(creatorNames)) {
         if (!bibEntry) {
@@ -284,9 +275,9 @@ async function generateSourceFrontmatter(
             `${inTextCitation} ${compositeTitle}`,
             [value],
         );
-        // let authorBareLinks = authorLinks.map((link) => link.bareLink);
+        refBibliographicalData[key] = authorLinks.map((link) => link.displayName);
+	let citationKey = bibEntry._id.toLowerCase();
         let refKey: string = key.endsWith("s") ? key : key + "s";
-        refBibliographicalData[refKey] = authorLinks.map((link) => link.displayName);
         refProperties[composeRefPropertyKey(refKey)] = authorLinks.map((link) => link.aliasedLink);
     }
 
@@ -312,24 +303,37 @@ async function generateSourceFrontmatter(
 	refBibliographicalData["school"] = bibEntry.getFieldAsString("school")
 	refBibliographicalData["thesis"] = bibEntry.getFieldAsString("thesis")
 	refBibliographicalData["howpublished"] = bibEntry.getFieldAsString("howpublished")
+	refBibliographicalData["shorttitle"] = bibEntry.getFieldAsString("shorttitle")
 	refBibliographicalData["bibtex"] = bibtexStr
+    refBibliographicalData["file"] = getFieldAsStringArray(bibEntry, "file");
+	refBibliographicalData["last-updated"] = updateDateStamp
 
-	refProperties["aliases"] = [
+    const tagProperties = configuration.biblioNoteConfiguration.tagMetadata.map( (s) => s.replace(/^#/,"") );
+	noteProperties["aliases"] = [
 			`@${citationKey}`,
 			inTextCitation,
 			compositeTitle,
 			unformattedEntryTitle,
 	]
-	refProperties["title"] = `${inTextCitation}: ${compositeTitle}`
+	noteProperties["title"] = `${inTextCitation}: ${compositeTitle}`
 	if (abstract) {
-		refProperties["abstract"] = abstract
+		noteProperties["abstract"] = abstract
 	}
     // process attachments
     // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
     await updateFrontMatter(
     	this.app,
     	args.targetFilepath,
-        refProperties,
+        {
+            ... tagProperties,
+            // ... refProperties.map( (p) => configuration.composeBiblioNotePropertyName(p) ),
+            ...Object.fromEntries(
+                Object.entries(refProperties).map(
+                    ([key, value]) => [configuration.composeBiblioNotePropertyName(key), value]
+                )
+            ),
+            ... noteProperties
+        },
     	// refBodyLines,
     	true,
     )
@@ -484,12 +488,12 @@ async function generateAuthorLinks(
                 let fileProperties = new FileProperties(app, targetFilepath);
                 let authorProperties: FilePropertyData = {};
                 authorProperties["tags"] = configuration.authorNoteConfiguration.tagMetadata.map( (s) => s.replace(/^#/,"") );
-                composeMetadata(
-                    fileProperties,
-                    authorProperties,
-                    configuration.authorNoteConfiguration.frontmatterMetadata,
-                    true,
-                )
+                // composeMetadata(
+                //     fileProperties,
+                //     authorProperties,
+                //     configuration.authorNoteConfiguration.frontmatterMetadata,
+                //     true,
+                // )
                 authorProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp]);
                 authorProperties["title"] = authorDisplayName;
                 authorProperties["aliases"] = fileProperties.concatItems("aliases", [authorDisplayName]);
@@ -518,36 +522,36 @@ async function generateAuthorLinks(
     return results;
 }
 
-function composeMetadata(
-    fileProperties: FileProperties,
-    refProperties: FilePropertyData,
-    additionalMetadata: FilePropertyData,
-    isReplace: boolean,
-): FilePropertyData {
-    if (!additionalMetadata) {
-        return refProperties;
-    }
-    // return refProperties;
-    if (isReplace) {
-        refProperties = {
-            ... refProperties,
-            ... additionalMetadata,
-        }
-    } else {
-        for (const propertyKey of Object.keys(additionalMetadata)) {
-            let propertyValue = additionalMetadata[propertyKey];
-            if (Array.isArray(propertyValue)) {
-                refProperties[propertyKey] = fileProperties.concatItems(
-                    propertyKey,
-                    propertyValue,
-                )
-            } else {
-                refProperties[propertyKey] = propertyValue;
-            }
-        }
-    }
-    return refProperties;
-}
+// function composeMetadata(
+//     fileProperties: FileProperties,
+//     refProperties: FilePropertyData,
+//     additionalMetadata: FilePropertyData,
+//     isReplace: boolean,
+// ): FilePropertyData {
+//     if (!additionalMetadata) {
+//         return refProperties;
+//     }
+//     // return refProperties;
+//     if (isReplace) {
+//         refProperties = {
+//             ... refProperties,
+//             ... additionalMetadata,
+//         }
+//     } else {
+//         for (const propertyKey of Object.keys(additionalMetadata)) {
+//             let propertyValue = additionalMetadata[propertyKey];
+//             if (Array.isArray(propertyValue)) {
+//                 refProperties[propertyKey] = fileProperties.concatItems(
+//                     propertyKey,
+//                     propertyValue,
+//                 )
+//             } else {
+//                 refProperties[propertyKey] = propertyValue;
+//             }
+//         }
+//     }
+//     return refProperties;
+// }
 
 async function generateBiblioNote(
 	app: App,
