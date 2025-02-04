@@ -37,6 +37,10 @@ import {
 } from "./fileProperties";
 
 import {
+	openAssociatedNote,
+} from "./fileServices";
+
+import {
     createOrOpenNote,
 } from "./utility";
 
@@ -330,11 +334,12 @@ async function generateSourceFrontmatter(
     	true,
     )
 
-    Object.keys(this.configuration.settings.associatedNoteConfigurations).forEach( (noteConfigKey: string) => {
-        const noteConfig: NoteConfiguration = this.configuration.settings.associatedNoteConfigurations[noteConfigKey];
+    Object.keys(configuration.settings.associatedNoteConfigurations).forEach( (noteConfigKey: string) => {
+        const noteConfig: NoteConfiguration = configuration.settings.associatedNoteConfigurations[noteConfigKey];
         if (noteConfig.isAutoCreate) {
             openAssociatedNote(
                 app,
+    	        args.targetFilepath,
                 configuration.biblioNoteConfiguration,
                 noteConfig,
                 false,
