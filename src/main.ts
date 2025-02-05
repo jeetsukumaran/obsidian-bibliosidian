@@ -38,9 +38,9 @@ import {
 	ProcessedBibTexResult,
 } from "./bibliosidian";
 
-import {
-    CitationList,
-} from "./citationList";
+// import {
+//     CitationList,
+// } from "./citationList";
 
 import {
     fileDataService,
@@ -112,26 +112,26 @@ export default class Bibliosidian extends Plugin {
 			callback: () => this.addHolding(),
 		});
 
-        this.addCommand({
-            id: 'generate-biblionote-citation-list',
-            name: 'Generate citation list',
-            editorCallback: (editor: Editor) => {
-                let activeFile = this.app.workspace.getActiveFile();
-                if (!activeFile) {
-                    return;
-                }
-                let citationList = new CitationList(
-                    activeFile,
-		            this.dataService,
-                    this.configuration,
-                );
-                let results = citationList.generate();
-                editor.replaceRange(
-                    results,
-                    editor.getCursor(),
-                );
-            },
-        });
+        // this.addCommand({
+        //     id: 'generate-biblionote-citation-list',
+        //     name: 'Generate citation list',
+        //     editorCallback: (editor: Editor) => {
+        //         let activeFile = this.app.workspace.getActiveFile();
+        //         if (!activeFile) {
+        //             return;
+        //         }
+        //         let citationList = new CitationList(
+        //             activeFile,
+		            // this.dataService,
+        //             this.configuration,
+        //         );
+        //         let results = citationList.generate();
+        //         editor.replaceRange(
+        //             results,
+        //             editor.getCursor(),
+        //         );
+        //     },
+        // });
 
         this.addSettingTab(new BibliosidianSettingsTab(
             this,
