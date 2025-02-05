@@ -234,21 +234,22 @@ async function generateSourceFrontmatter(
     let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
     let basenameWithoutExtension: string = _path.basename(args.targetFilepath, ".md");
     let citationStrings: string[] = [
-        `[@${citeKey}]: *[[${internalLinkPath}|${compositeTitle}]]*`,
-        `@${citationKey}`,
-        `[@${citationKey}]`,
-        `[[@${citationKey}]]`,
-        `${inTextCitation}`,
-        `"[[${internalLinkPath}]]"`,
-        `[[${internalLinkPath}|${unformattedEntryTitle}]]`,
-        `[[${internalLinkPath}|@${citationKey}]]`,
+        `[[@${citeKey}]]: *[[${internalLinkPath}|${compositeTitle}]]*`,
+        // `@${citationKey}`,
+        // `[@${citationKey}]`,
+        // `[[@${citationKey}]]`,
+        `${unformattedEntryTitle}`,
+        // `${inTextCitation}`,
+        // `"[[${internalLinkPath}]]"`,
+        // `[[${internalLinkPath}|${unformattedEntryTitle}]]`,
+        // `[[${internalLinkPath}|@${citationKey}]]`,
     ];
     let quotedAbstractLines: string[] = [
         "> [!quote] Abstract",
         ">",
         `> > ${abstract ? abstract : '...'}`,
         ">",
-        `> -- [@${citationKey}]: [[${internalLinkPath}|${compositeTitle}]]`,
+        `> -- [[@${citationKey}]]: [[${internalLinkPath}|${compositeTitle}]]`,
         "",
     ]
     // special meta-metadata for bibliosidian management
