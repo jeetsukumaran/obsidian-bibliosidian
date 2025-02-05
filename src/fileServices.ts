@@ -341,3 +341,8 @@ export function getSourceFilesExternalAttachmentLocations(app: App, configuratio
     return filePaths;
 }
 
+export function getCitationKey(app: App, configuration: BibliosidianConfiguration, filePath: string ): string[] {
+    const refData = readPropertyDict(app, filePath, configuration.biblioNoteDataPropertyName);
+    return refData["citation-key"];
+}
+
