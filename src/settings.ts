@@ -194,7 +194,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
         "reading": {
             className: "Reading",
             description: "Notes on your readings, analyses, or processing of sources.",
-            parentFolderPath: "journals/readings",
+            parentFolderPath: "journals/reading",
             isSubdirectorizeLexically: true,
             namePrefix: "",
             namePostfix: "_reading",
