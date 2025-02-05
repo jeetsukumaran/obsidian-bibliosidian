@@ -262,7 +262,7 @@ async function generateSourceFrontmatter(
 
 
     refBibliographicalData["citation-key"] = citationKey;
-    refBibliographicalData["cite-as"] = citationStrings;
+    refBibliographicalData["citation-strings"] = citationStrings;
     for (const [key, value] of Object.entries(creatorNames)) {
         if (!bibEntry) {
             continue;
@@ -276,9 +276,8 @@ async function generateSourceFrontmatter(
             [value],
         );
         refBibliographicalData[key] = authorLinks.map((link) => link.displayName);
-	let citationKey = bibEntry._id.toLowerCase();
         let refKey: string = key.endsWith("s") ? key : key + "s";
-        refProperties[composeRefPropertyKey(refKey)] = authorLinks.map((link) => link.aliasedLink);
+        noteProperties[refKey] = authorLinks.map((link) => link.aliasedLink);
     }
 
     refBibliographicalData["date"] = sourceYear
