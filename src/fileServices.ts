@@ -190,7 +190,8 @@ export async function importHolding(
 
         let parentPath = configuration.holdingsParentFolder;
         const destExtension = _path.extname(sourceFilePath);
-        let destinationFilename = _path.basename(hostFile.path, _path.extname(hostFile.path)) + destExtension;
+        let destinationFilename = _path.basename(hostFile.path, _path.extname(hostFile.path)) + destExtension
+            .replace(/^@/,"");
 
         if (configuration.biblioNoteConfiguration.isSubdirectorizeLexically) {
             const subDir = destinationFilename[0] === "@" ? destinationFilename[1] : destinationFilename[0];
