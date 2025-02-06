@@ -386,7 +386,7 @@ class BibTexResultsModal extends Modal {
 
         new Setting(contentEl)
             .setName("Source attachments")
-            .setDesc("Management of source attachments (PDF's, etc.).")
+            .setDesc("Import of source attachments (PDF's, etc.).")
             .addButton((btn) =>
                 btn
                 .setButtonText('Import file attachments')
@@ -414,15 +414,15 @@ class BibTexResultsModal extends Modal {
         new Setting(contentEl)
             .setName("Reference view")
             .setDesc("View updated references.")
-            .addButton((btn) =>
-                btn
-                .setButtonText('Open first imported reference and close')
-                .onClick(async () => {
-                    let firstResult = filteredResults[0];
-                    await createOrOpenNote(this.app, firstResult.linkFilePath);
-                    this.close();
-                })
-            )
+            // .addButton((btn) =>
+            //     btn
+            //     .setButtonText('Open first imported reference and close')
+            //     .onClick(async () => {
+            //         let firstResult = filteredResults[0];
+            //         await createOrOpenNote(this.app, firstResult.linkFilePath);
+            //         this.close();
+            //     })
+            // )
             .addButton((btn) =>
                 btn
                 .setButtonText('Open first imported reference')
