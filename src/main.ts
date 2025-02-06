@@ -356,6 +356,24 @@ class BibTexResultsModal extends Modal {
                     referencesTextArea.value = valueGroups[currentGroupIndex];
                 })
             )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Copy report')
+                .onClick(async () => {
+                    // Copy to clipboard
+                    await navigator.clipboard.writeText(referencesTextArea.value);
+                    new Notice('Report copied to clipboard');
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Copy report and close')
+                .onClick(async () => {
+                    await navigator.clipboard.writeText(referencesTextArea.value);
+                    new Notice('Report copied to clipboard');
+                    this.close();
+                })
+            )
 
         let referencesTextArea = this.createReadonlyTextArea(
             contentEl,
@@ -377,24 +395,6 @@ class BibTexResultsModal extends Modal {
             )
             .addButton((btn) =>
                 btn
-                .setButtonText('Copy report')
-                .onClick(async () => {
-                    // Copy to clipboard
-                    await navigator.clipboard.writeText(referencesTextArea.value);
-                    new Notice('Report copied to clipboard');
-                })
-            )
-            .addButton((btn) =>
-                btn
-                .setButtonText('Copy report and close')
-                .onClick(async () => {
-                    await navigator.clipboard.writeText(referencesTextArea.value);
-                    new Notice('Report copied to clipboard');
-                    this.close();
-                })
-            )
-            .addButton((btn) =>
-                btn
                 .setButtonText('Import file attachments and close')
                 .onClick(async () => {
                     await importHoldingsFromBibRecords(
@@ -405,6 +405,25 @@ class BibTexResultsModal extends Modal {
                     this.close();
                 })
             )
+        new Setting(contentEl)
+            .addButton((btn) =>
+                btn
+                .setButtonText('Open first imported reference and close')
+                .onClick(async () => {
+                    let firstResult = filteredResults[0];
+                    await createOrOpenNote(this.app, firstResult.linkFilePath);
+                    this.close();
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Open first imported reference')
+                .onClick(async () => {
+                    let firstResult = filteredResults[0];
+                    await createOrOpenNote(this.app, firstResult.linkFilePath);
+                })
+            )
+        new Setting(contentEl)
             .addButton((btn) =>
                 btn
                 .setButtonText('Import file attachments, close, and open first imported reference')
@@ -419,23 +438,14 @@ class BibTexResultsModal extends Modal {
                     this.close();
                 })
             )
-            .addButton((btn) =>
-                btn
-                .setButtonText('Close and open first imported reference')
-                .onClick(async () => {
-                    let firstResult = filteredResults[0];
-                    await createOrOpenNote(this.app, firstResult.linkFilePath);
-                    this.close();
-                })
-            )
-            .addButton((btn) =>
-                btn
-                .setButtonText('Close')
-                .setCta()
-                .onClick(() => {
-                    this.close();
-                })
-            );
+            // .addButton((btn) =>
+            //     btn
+            //     .setButtonText('Close')
+            //     .setCta()
+            //     .onClick(() => {
+            //         this.close();
+            //     })
+            // );
     }
 
     createReadonlyTextArea(container: HTMLElement, value: string): HTMLTextAreaElement {
