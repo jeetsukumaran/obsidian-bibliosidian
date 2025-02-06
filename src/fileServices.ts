@@ -210,7 +210,7 @@ export async function importHolding(
 
         if (isDestinationExists) {
             let resolution: ConflictResolution = globalResolution ?? { action: 'skip', applyToAll: false };
-            console.log(globalResolution);
+            // console.log(globalResolution);
             if (!globalResolution || globalResolution.applyToAll === false) {
                 if (importConflict === 'prompt-user') {
                     resolution = await new Promise<ConflictResolution>((resolve) => {
@@ -224,7 +224,7 @@ export async function importHolding(
                 if (resolution.applyToAll) {
                     globalResolution = resolution; // Persist choice for future files
                 }
-                console.log(globalResolution);
+                // console.log(globalResolution);
             }
 
             switch (resolution.action) {
@@ -239,11 +239,15 @@ export async function importHolding(
             }
         }
 
-        await copyFile(sourceFilePath, fullDestinationPath);
-        updateHostFileHoldingsData(app, configuration, hostFilePath, destinationPath);
+        if (sourceFilePath && fullDestinationPath) {
+            await copyFile(sourceFilePath, fullDestinationPath);
+            updateHostFileHoldingsData(app, configuration, hostFilePath, destinationPath);
+            if (!isSilent) new Notice(`Imported: ${destinationPath}`);
+            return { success: true, destinationPath };
+        }
 
-        if (!isSilent) new Notice(`Imported: ${destinationPath}`);
-        return { success: true, destinationPath };
+        return {success: true, destinationPath: "", error: "File was not imported"}
+
 
     } catch (error) {
         return { success: false, destinationPath: '', error: `Import failed: ${error}` };
