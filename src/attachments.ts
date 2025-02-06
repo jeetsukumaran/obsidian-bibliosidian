@@ -272,9 +272,11 @@ export class ImportHoldingModal extends Modal {
             sourceFilePath
         );
 
-        if (result.success) {
+        if (result.success && result.destinationPath) {
             this.destinationPath.value = result.destinationPath;
             new Notice(`File imported to '${result.destinationPath}'`);
+        } else if (result.success) {
+            new Notice(`File was not imported`);
         } else {
             new Notice(result.error || 'Import failed');
         }
