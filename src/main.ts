@@ -338,10 +338,12 @@ class BibTexResultsModal extends Modal {
         ];
         let currentGroupIndex = 0;
 
-        contentEl.createEl('h2', { text: `References imported: ${filteredResults.length}` });
+        // contentEl.createEl('h2', { text: `References updated: ${filteredResults.length}` });
+        contentEl.createEl('h2', { text: "Updated references" });
+        // contentEl.createEl('p', { text: `Number of references updated: ${filteredResults.length}` });
         new Setting(contentEl)
-            .setName("Transaction summary")
-            .setDesc("Citation of and links to updated references")
+            .setName("Reference report")
+            .setDesc(`Number of references updated: ${filteredResults.length}`)
             .addButton((btn) =>
                 btn
                 .setButtonText('Prev format')
@@ -367,15 +369,15 @@ class BibTexResultsModal extends Modal {
                     new Notice('Report copied to clipboard');
                 })
             )
-            .addButton((btn) =>
-                btn
-                .setButtonText('Copy report and close')
-                .onClick(async () => {
-                    await navigator.clipboard.writeText(referencesTextArea.value);
-                    new Notice('Report copied to clipboard');
-                    this.close();
-                })
-            )
+            // .addButton((btn) =>
+            //     btn
+            //     .setButtonText('Copy report and close')
+            //     .onClick(async () => {
+            //         await navigator.clipboard.writeText(referencesTextArea.value);
+            //         new Notice('Report copied to clipboard');
+            //         this.close();
+            //     })
+            // )
 
         let referencesTextArea = this.createReadonlyTextArea(
             contentEl,
@@ -397,18 +399,18 @@ class BibTexResultsModal extends Modal {
                     btn.setDisabled(true);
                 })
             )
-            .addButton((btn) =>
-                btn
-                .setButtonText('Import file attachments and close')
-                .onClick(async () => {
-                    await importHoldingsFromBibRecords(
-                        this.app,
-                        this.configuration,
-                        filteredResults,
-                    );
-                    this.close();
-                })
-            )
+            // .addButton((btn) =>
+            //     btn
+            //     .setButtonText('Import file attachments and close')
+            //     .onClick(async () => {
+            //         await importHoldingsFromBibRecords(
+            //             this.app,
+            //             this.configuration,
+            //             filteredResults,
+            //         );
+            //         this.close();
+            //     })
+            // )
         new Setting(contentEl)
             .setName("Reference view")
             .setDesc("View updated references.")
