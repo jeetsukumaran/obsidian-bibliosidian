@@ -340,6 +340,34 @@ class BibTexResultsModal extends Modal {
 
         // contentEl.createEl('h2', { text: `References updated: ${filteredResults.length}` });
         contentEl.createEl('h2', { text: "Updated references" });
+
+        new Setting(contentEl)
+            .setName("Source attachments")
+            .setDesc("Import of source attachments (PDF's, etc.).")
+            .addButton((btn) =>
+                btn
+                .setButtonText('Import file attachments')
+                .onClick(async () => {
+                    await importHoldingsFromBibRecords(
+                        this.app,
+                        this.configuration,
+                        filteredResults,
+                    );
+                    btn.setDisabled(true);
+                })
+            )
+        new Setting(contentEl)
+            .setName("Reference view")
+            .setDesc("View updated references.")
+            .addButton((btn) =>
+                btn
+                .setButtonText('Open first imported reference')
+                .onClick(async () => {
+                    let firstResult = filteredResults[0];
+                    await createOrOpenNote(this.app, firstResult.linkFilePath);
+                })
+            )
+
         // contentEl.createEl('p', { text: `Number of references updated: ${filteredResults.length}` });
         new Setting(contentEl)
             .setName("Reference report")
@@ -369,93 +397,37 @@ class BibTexResultsModal extends Modal {
                     new Notice('Report copied to clipboard');
                 })
             )
-            // .addButton((btn) =>
-            //     btn
-            //     .setButtonText('Copy report and close')
-            //     .onClick(async () => {
-            //         await navigator.clipboard.writeText(referencesTextArea.value);
-            //         new Notice('Report copied to clipboard');
-            //         this.close();
-            //     })
-            // )
 
         let referencesTextArea = this.createReadonlyTextArea(
             contentEl,
             valueGroups[currentGroupIndex]
         );
 
-        new Setting(contentEl)
-            .setName("Source attachments")
-            .setDesc("Import of source attachments (PDF's, etc.).")
-            .addButton((btn) =>
-                btn
-                .setButtonText('Import file attachments')
-                .onClick(async () => {
-                    await importHoldingsFromBibRecords(
-                        this.app,
-                        this.configuration,
-                        filteredResults,
-                    );
-                    btn.setDisabled(true);
-                })
-            )
-            // .addButton((btn) =>
-            //     btn
-            //     .setButtonText('Import file attachments and close')
-            //     .onClick(async () => {
-            //         await importHoldingsFromBibRecords(
-            //             this.app,
-            //             this.configuration,
-            //             filteredResults,
-            //         );
-            //         this.close();
-            //     })
-            // )
-        new Setting(contentEl)
-            .setName("Reference view")
-            .setDesc("View updated references.")
-            // .addButton((btn) =>
-            //     btn
-            //     .setButtonText('Open first imported reference and close')
-            //     .onClick(async () => {
-            //         let firstResult = filteredResults[0];
-            //         await createOrOpenNote(this.app, firstResult.linkFilePath);
-            //         this.close();
-            //     })
-            // )
-            .addButton((btn) =>
-                btn
-                .setButtonText('Open first imported reference')
-                .onClick(async () => {
-                    let firstResult = filteredResults[0];
-                    await createOrOpenNote(this.app, firstResult.linkFilePath);
-                })
-            )
-        new Setting(contentEl)
-            .setName("Batch operations")
-            .setDesc("Complete full import (including attachements) and view results.")
-            .addButton((btn) =>
-                btn
-                .setButtonText('Import file attachments, close, and open first imported reference')
-                .onClick(async () => {
-                    await importHoldingsFromBibRecords(
-                        this.app,
-                        this.configuration,
-                        filteredResults,
-                    );
-                    let firstResult = filteredResults[0];
-                    await createOrOpenNote(this.app, firstResult.linkFilePath);
-                    this.close();
-                })
-            )
-            // .addButton((btn) =>
-            //     btn
-            //     .setButtonText('Close')
-            //     .setCta()
-            //     .onClick(() => {
-            //         this.close();
-            //     })
-            // );
+        // new Setting(contentEl)
+        //     .setName("Batch operations")
+        //     .setDesc("Complete full import (including attachements) and view results.")
+        //     .addButton((btn) =>
+        //         btn
+        //         .setButtonText('Import file attachments, close, and open first imported reference')
+        //         .onClick(async () => {
+        //             await importHoldingsFromBibRecords(
+        //                 this.app,
+        //                 this.configuration,
+        //                 filteredResults,
+        //             );
+        //             let firstResult = filteredResults[0];
+        //             await createOrOpenNote(this.app, firstResult.linkFilePath);
+        //             this.close();
+        //         })
+        //     )
+        //     // .addButton((btn) =>
+        //     //     btn
+        //     //     .setButtonText('Close')
+        //     //     .setCta()
+        //     //     .onClick(() => {
+        //     //         this.close();
+        //     //     })
+        //     // );
     }
 
     createReadonlyTextArea(container: HTMLElement, value: string): HTMLTextAreaElement {
