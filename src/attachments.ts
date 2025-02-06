@@ -27,6 +27,7 @@ import {
 import {
     updateHostFileHoldingsData,
     importHolding,
+    getSourceFilesExternalAttachmentLocations,
 } from "./fileServices";
 
 import {
@@ -93,8 +94,7 @@ export class ImportHoldingModal extends Modal {
         if (!this.activeFile) {
             return [];
         }
-        const fileProperties = new FileProperties(this.app, this.activeFile.path);
-        return fileProperties.readPropertyList(`${this.configuration.biblioNoteConfiguration.frontmatterPropertyNamePrefix}files`);
+        return getSourceFilesExternalAttachmentLocations(this.app, this.configuration, this.activeFile.path);
     }
 
     async validateSourceFile(path: string): Promise<boolean> {

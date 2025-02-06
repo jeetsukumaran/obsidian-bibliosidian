@@ -505,7 +505,6 @@ async function generateAuthorLinks(
                     app,
                     targetFilepath,
                     authorProperties,
-                    // bodyLines,
                     true,
                 );
             }
