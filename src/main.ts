@@ -365,33 +365,58 @@ class BibTexResultsModal extends Modal {
         new Setting(contentEl)
             .addButton((btn) =>
                 btn
-                .setButtonText('Copy')
-                .onClick(async () => {
-                    // Copy to clipboard
-                    await navigator.clipboard.writeText(referencesTextArea.value);
-                    new Notice('Copied to clipboard');
-                })
-            )
-            .addButton((btn) =>
-                btn
-                .setButtonText('Copy and close')
-                .onClick(async () => {
-                    // Copy to clipboard
-                    await navigator.clipboard.writeText(referencesTextArea.value);
-                    new Notice('Copied to clipboard');
-                    // Close the modal
-                    this.close();
-                })
-            )
-            .addButton((btn) =>
-                btn
-                .setButtonText('Import ALL file attachments')
+                .setButtonText('Import file attachments')
                 .onClick(async () => {
                     await importHoldingsFromBibRecords(
                         this.app,
                         this.configuration,
                         filteredResults,
                     );
+                    btn.setDisabled(true);
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Copy report')
+                .onClick(async () => {
+                    // Copy to clipboard
+                    await navigator.clipboard.writeText(referencesTextArea.value);
+                    new Notice('Report copied to clipboard');
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Copy report and close')
+                .onClick(async () => {
+                    await navigator.clipboard.writeText(referencesTextArea.value);
+                    new Notice('Report copied to clipboard');
+                    this.close();
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Import file attachments and close')
+                .onClick(async () => {
+                    await importHoldingsFromBibRecords(
+                        this.app,
+                        this.configuration,
+                        filteredResults,
+                    );
+                    this.close();
+                })
+            )
+            .addButton((btn) =>
+                btn
+                .setButtonText('Import file attachments, close, and open first imported reference')
+                .onClick(async () => {
+                    await importHoldingsFromBibRecords(
+                        this.app,
+                        this.configuration,
+                        filteredResults,
+                    );
+                    let firstResult = filteredResults[0];
+                    await createOrOpenNote(this.app, firstResult.linkFilePath);
+                    this.close();
                 })
             )
             .addButton((btn) =>
