@@ -370,7 +370,7 @@ class BibTexResultsModal extends Modal {
 
         // contentEl.createEl('p', { text: `Number of references updated: ${filteredResults.length}` });
         new Setting(contentEl)
-            .setName("Reference report")
+            .setName("Transaction report")
             .setDesc(`Number of references updated: ${filteredResults.length}`)
             .addButton((btn) =>
                 btn
@@ -402,32 +402,6 @@ class BibTexResultsModal extends Modal {
             contentEl,
             valueGroups[currentGroupIndex]
         );
-
-        // new Setting(contentEl)
-        //     .setName("Batch operations")
-        //     .setDesc("Complete full import (including attachements) and view results.")
-        //     .addButton((btn) =>
-        //         btn
-        //         .setButtonText('Import file attachments, close, and open first imported reference')
-        //         .onClick(async () => {
-        //             await importHoldingsFromBibRecords(
-        //                 this.app,
-        //                 this.configuration,
-        //                 filteredResults,
-        //             );
-        //             let firstResult = filteredResults[0];
-        //             await createOrOpenNote(this.app, firstResult.linkFilePath);
-        //             this.close();
-        //         })
-        //     )
-        //     // .addButton((btn) =>
-        //     //     btn
-        //     //     .setButtonText('Close')
-        //     //     .setCta()
-        //     //     .onClick(() => {
-        //     //         this.close();
-        //     //     })
-        //     // );
     }
 
     createReadonlyTextArea(container: HTMLElement, value: string): HTMLTextAreaElement {
