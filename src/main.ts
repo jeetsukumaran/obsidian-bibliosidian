@@ -324,16 +324,22 @@ class BibTexResultsModal extends Modal {
                 .filter(result => result.successful);
         let valueGroups = [
             filteredResults
-                .map(result => `- [@${result.citeKey}]: *[[${result.linkFilePath}|${result.title}]]*.`)
+                .map(result => `- [[@${result.citeKey}]]: *[[${result.linkFilePath}|${result.title}]]*.`)
                 .join('\n'),
             filteredResults
-                .map(result => `- "[[${result.linkFilePath}]]*"`)
+                .map(result => `- [@${result.citeKey}]: *${result.title}*.`)
                 .join('\n'),
             filteredResults
-                .map(result => `- [@${result.citeKey}]`)
+                .map(result => `- [@${result.citeKey}]: ${result.title}.`)
                 .join('\n'),
             filteredResults
                 .map(result => `- "[[${result.linkFilePath}|${result.title}]]"`)
+                .join('\n'),
+            filteredResults
+                .map(result => `- "[[${result.linkFilePath}]]"`)
+                .join('\n'),
+            filteredResults
+                .map(result => `- [@${result.citeKey}]`)
                 .join('\n'),
         ];
         let currentGroupIndex = 0;
