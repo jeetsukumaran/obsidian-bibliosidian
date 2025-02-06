@@ -338,8 +338,8 @@ class BibTexResultsModal extends Modal {
         ];
         let currentGroupIndex = 0;
 
-        // contentEl.createEl('h2', { text: `References updated: ${filteredResults.length}` });
-        contentEl.createEl('h2', { text: "Updated references" });
+        contentEl.createEl('h2', { text: `References updated: ${filteredResults.length}` });
+        // contentEl.createEl('h2', { text: "Updated references" });
 
         new Setting(contentEl)
             .setName("Source attachments")
