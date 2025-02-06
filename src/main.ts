@@ -340,6 +340,8 @@ class BibTexResultsModal extends Modal {
 
         contentEl.createEl('h2', { text: `References imported: ${filteredResults.length}` });
         new Setting(contentEl)
+            .setName("Transaction summary")
+            .setDesc("Citation of and links to updated references")
             .addButton((btn) =>
                 btn
                 .setButtonText('Prev format')
@@ -381,6 +383,8 @@ class BibTexResultsModal extends Modal {
         );
 
         new Setting(contentEl)
+            .setName("Source attachments")
+            .setDesc("Management of source attachments (PDF's, etc.).")
             .addButton((btn) =>
                 btn
                 .setButtonText('Import file attachments')
@@ -406,6 +410,8 @@ class BibTexResultsModal extends Modal {
                 })
             )
         new Setting(contentEl)
+            .setName("Reference view")
+            .setDesc("View updated references.")
             .addButton((btn) =>
                 btn
                 .setButtonText('Open first imported reference and close')
@@ -424,6 +430,8 @@ class BibTexResultsModal extends Modal {
                 })
             )
         new Setting(contentEl)
+            .setName("Batch operations")
+            .setDesc("Complete full import (including attachements) and view results.")
             .addButton((btn) =>
                 btn
                 .setButtonText('Import file attachments, close, and open first imported reference')
