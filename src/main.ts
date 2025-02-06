@@ -42,9 +42,9 @@ import {
 //     CitationList,
 // } from "./citationList";
 
-import {
-    fileDataService,
-} from "./fileDataService";
+// import {
+//     fileDataService,
+// } from "./fileDataService";
 
 import {
     openAssociatedNote,
@@ -71,11 +71,11 @@ interface Footnote {
 
 export default class Bibliosidian extends Plugin {
 	configuration: BibliosidianConfiguration;
-    dataService: fileDataService;
+    // dataService: fileDataService;
 
     async onload() {
         await this.loadConfiguration();
-		this.dataService = new fileDataService();
+		// this.dataService = new fileDataService();
 
 		// this.addRibbonIcon("book-up-2", "Create or update a single bibliographic note from BibTeX data", () => {
 		// 	this.updateBiblioNoteFromBibTex()
