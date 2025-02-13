@@ -34,7 +34,7 @@ export function getMetadataCache(app: App, filePath: string): CachedMetadata {
     return app.metadataCache.getFileCache(sourceFile) || {};
 }
 
-export function xreadPropertyDict(app: App, filePath: string, key: string): FilePropertyData {
+export function readPropertyDict(app: App, filePath: string, key: string): FilePropertyData {
     const cachedMetadata = getMetadataCache(app, filePath);
     const data = cachedMetadata?.frontmatter?.[key]
     return data || {};
