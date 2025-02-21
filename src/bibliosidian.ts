@@ -175,7 +175,7 @@ async function generateSourceFrontmatter(
     let refProperties: FilePropertyData = {}; // prefixed by namespace, e.g. "reference-"
     let refBibliographicalData: FilePropertyData = {}; // in subdictionary
 
-    refProperties["data"] = refBibliographicalData;
+    refProperties["index"] = refBibliographicalData;
 
 	let authorLastNames: string[] = [];
 	// let auFieldNames: string[] = [
