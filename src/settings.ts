@@ -105,7 +105,7 @@ export class BibliosidianConfiguration {
     }
 
     get biblioNoteDataPropertyName(): string {
-        return `${this.composeBiblioNotePropertyName("data")}`;
+        return `${this.composeBiblioNotePropertyName("index")}`;
     }
 
 

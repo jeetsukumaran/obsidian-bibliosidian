@@ -173,6 +173,7 @@ export async function importHolding(
     isSilent: boolean = false // Controls detailed feedback
 ): Promise<ImportResult> {
     try {
+        console.log("OK")
         if (!hostFilePath || !sourceFilePath) {
             return { success: false, destinationPath: '', error: 'Host or source file path is empty' };
         }
@@ -339,8 +340,16 @@ export async function openAssociatedNote(
     );
 }
 
-export function getSourceFilesExternalAttachmentLocations(app: App, configuration: BibliosidianConfiguration, filePath: string ): string[] {
-    const refData = readPropertyDict(app, filePath, configuration.biblioNoteDataPropertyName);
+export function getSourceFilesExternalAttachmentLocations(
+    app: App,
+    configuration: BibliosidianConfiguration,
+    filePath: string
+): string[] {
+    const refData = readPropertyDict(
+        app,
+        filePath,
+        configuration.biblioNoteDataPropertyName
+    );
     const filePaths: string[] = Array.isArray(refData?.["file"]) && refData["file"].every(f => typeof f === "string") ? refData["file"] : [];
     return filePaths;
 }

@@ -268,7 +268,11 @@ class BibTexCaptureModal extends Modal {
     }
 }
 
-export async function importHoldingsFromBibRecords(app: App, configuration: BibliosidianConfiguration, bibRecords: ProcessedBibTexResult[]) {
+export async function importHoldingsFromBibRecords(
+    app: App,
+    configuration: BibliosidianConfiguration,
+    bibRecords: ProcessedBibTexResult[]
+) {
     for (const result of bibRecords) {
         const hostFilePath = result.filePath;
         const sourceFilePaths = getSourceFilesExternalAttachmentLocations(
