@@ -309,13 +309,10 @@ async function generateSourceFrontmatter(
 	refBibliographicalData["last-updated"] = updateDateStamp
 
     const tagProperties = configuration.biblioNoteConfiguration.tagMetadata.map( (s) => s.replace(/^#/,"") );
-	noteProperties["aliases"] = [
-			`@${citationKey}`,
-			inTextCitation,
-			compositeTitle,
-			unformattedEntryTitle,
-	]
 	noteProperties["title"] = `${inTextCitation}: ${compositeTitle}`
+	noteProperties["aliases"] = [
+        noteProperties["title"],
+	]
 	if (abstract) {
 		noteProperties["abstract"] = abstract
 	}
