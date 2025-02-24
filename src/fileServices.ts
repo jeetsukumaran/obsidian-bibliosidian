@@ -338,6 +338,13 @@ export async function openAssociatedNote(
             "title": newNoteTitle,
         } ,
     );
+
+    // yuck, but till we migrate to new code base ....
+    // "extract-" -> "extracts", reading- -> readings
+    // let refNoteBacklinkedName = linkedNoteConfig.frontmatterPropertyNamePrefix.replace(/-$/, "") + "s";
+
+    // E.g. "readings"
+    let backlinkedRefNoteOutlinkingPropretyName = `${refNoteConfig.frontmatterPropertyNamePrefix}${linkedNoteConfig.associatedNotesOutlinkPropertyName}`;
 }
 
 export function getSourceFilesExternalAttachmentLocations(
