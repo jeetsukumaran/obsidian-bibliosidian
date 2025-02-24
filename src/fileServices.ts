@@ -11,7 +11,8 @@ import {
 	Notice,
 	Plugin,
 	PluginSettingTab,
-	Setting
+	Setting,
+	normalizePath,
 } from 'obsidian';
 import * as _path from "path";
 import * as fs from 'fs';
@@ -302,6 +303,7 @@ export async function openAssociatedNote(
     // }
 
     // const refFilePath = activeFile.path;
+    refFilePath = normalizePath(refFilePath);
     refFileTitle = refFileTitle || resolveFileTitle(app, refFilePath, titlePropertyNames);
     const noteLocation = composeNoteLocation(
         refFilePath,
@@ -326,6 +328,7 @@ export async function openAssociatedNote(
             noteLocation.newFilePath,
         )
     }
+    newNotePath = normalizePath(newNotePath);
     let newNoteTitle = `${refFileTitle} ~ ${linkedNoteConfig.className}`;
     let refNoteLinkName = `${linkedNoteConfig.frontmatterPropertyNamePrefix}${refNoteConfig.associatedNotesOutlinkPropertyName}`
     await updateFrontMatter(
@@ -344,7 +347,19 @@ export async function openAssociatedNote(
     // let refNoteBacklinkedName = linkedNoteConfig.frontmatterPropertyNamePrefix.replace(/-$/, "") + "s";
 
     // E.g. "readings"
-    let backlinkedRefNoteOutlinkingPropretyName = `${refNoteConfig.frontmatterPropertyNamePrefix}${linkedNoteConfig.associatedNotesOutlinkPropertyName}`;
+    let backlinkedRefNoteOutlinkingPropertyName = `${refNoteConfig.frontmatterPropertyNamePrefix}${linkedNoteConfig.associatedNotesOutlinkPropertyName}`;
+    let backlinkedRefNoteOutlinkingDisplayText = linkedNoteConfig.className;
+    let backlinkedRefNoteOutlink = `[[${newNotePath}|${backlinkedRefNoteOutlinkingDisplayText}]]`;
+    let updatedMetadata = {
+        [backlinkedRefNoteOutlinkingPropertyName]: backlinkedRefNoteOutlink,
+    };
+    await updateFrontMatter(
+        app,
+        refFilePath,
+        {
+            [backlinkedRefNoteOutlinkingPropertyName]: [ `[[${newNotePath.replace(/\.md$/,"")}|${backlinkedRefNoteOutlinkingDisplayText}]]`, ],
+        } ,
+    );
 }
 
 export function getSourceFilesExternalAttachmentLocations(
