@@ -349,7 +349,7 @@ export async function openAssociatedNote(
     // E.g. "readings"
     let backlinkedRefNoteOutlinkingPropertyName = `${refNoteConfig.frontmatterPropertyNamePrefix}${linkedNoteConfig.associatedNotesOutlinkPropertyName}`;
     let backlinkedRefNoteOutlinkingDisplayText = linkedNoteConfig.className;
-    let backlinkedRefNoteOutlink = `[[${newNotePath}|${backlinkedRefNoteOutlinkingDisplayText}]]`;
+    let backlinkedRefNoteOutlink =  `[[${newNotePath.replace(/\.md$/,"")}|${backlinkedRefNoteOutlinkingDisplayText}s]]`;
     let updatedMetadata = {
         [backlinkedRefNoteOutlinkingPropertyName]: backlinkedRefNoteOutlink,
     };
@@ -357,7 +357,7 @@ export async function openAssociatedNote(
         app,
         refFilePath,
         {
-            [backlinkedRefNoteOutlinkingPropertyName]: [ `[[${newNotePath.replace(/\.md$/,"")}|${backlinkedRefNoteOutlinkingDisplayText}]]`, ],
+            [backlinkedRefNoteOutlinkingPropertyName]: [ backlinkedRefNoteOutlink ],
         } ,
     );
 }
