@@ -316,6 +316,11 @@ async function generateSourceFrontmatter(
 	if (abstract) {
 		noteProperties["abstract"] = abstract
 	}
+
+	// if (refBibliographicalData["shorttitle"]) {
+	// 	noteProperties["legend"] = refBibliographicalData["shorttitle"]
+	// }
+
     // process attachments
     // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
     await updateFrontMatter(
