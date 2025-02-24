@@ -255,7 +255,7 @@ export async function importHolding(
     }
 }
 
-export function updateHostFileHoldingsData(
+export async function updateHostFileHoldingsData(
     app: App,
     configuration: BibliosidianConfiguration,
     hostFilePath: string,
@@ -269,7 +269,7 @@ export function updateHostFileHoldingsData(
     let refProperties: FilePropertyData = {}
     let formattedNewHoldingPath = `[[${newHoldingPath}]]`;
     refProperties[holdingsPropertyName] = fileProperties.concatItems(holdingsPropertyName, [formattedNewHoldingPath])
-    updateFrontMatter(
+    await updateFrontMatter(
         app,
         hostFilePath,
         refProperties,
@@ -328,7 +328,7 @@ export async function openAssociatedNote(
     }
     let newNoteTitle = `${refFileTitle} ~ ${linkedNoteConfig.className}`;
     let refNoteLinkName = `${linkedNoteConfig.frontmatterPropertyNamePrefix}${refNoteConfig.associatedNotesOutlinkPropertyName}`
-    updateFrontMatter(
+    await updateFrontMatter(
         app,
         newNotePath,
         {
