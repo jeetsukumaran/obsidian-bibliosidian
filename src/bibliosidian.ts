@@ -234,7 +234,7 @@ async function generateSourceFrontmatter(
     let internalLinkPath = args.targetFilepath.replace(/\.md$/, "");
     let basenameWithoutExtension: string = _path.basename(args.targetFilepath, ".md");
     let citationStrings: string[] = [
-        `[[@${citeKey}]]: *[[${internalLinkPath}|${compositeTitle}]]*`,
+        `[@${citeKey}]: *[[${internalLinkPath}|${compositeTitle}]]*`,
         // `@${citationKey}`,
         // `[@${citationKey}]`,
         // `[[@${citationKey}]]`,

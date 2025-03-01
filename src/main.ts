@@ -328,6 +328,9 @@ class BibTexResultsModal extends Modal {
                 .filter(result => result.successful);
         let valueGroups = [
             filteredResults
+                .map(result => `- [@${result.citeKey}]: *[[${result.linkFilePath}|${result.title}]]*.`)
+                .join('\n'),
+            filteredResults
                 .map(result => `- [[@${result.citeKey}]]: *[[${result.linkFilePath}|${result.title}]]*.`)
                 .join('\n'),
             filteredResults
