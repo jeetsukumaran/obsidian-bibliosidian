@@ -288,21 +288,93 @@ export function resolveFileTitle(
     return refFileTitle;
 }
 
-export async function openAssociatedNote(
-        app: App,
-        refFilePath: string,
-        refFileTitle: string,
-        refNoteConfig: NoteConfiguration,
-        linkedNoteConfig: NoteConfiguration,
-        isForceNew: boolean = false,
-        titlePropertyNames: string[] = ["shorttitle", "title"],
-    ) {
-    // let activeFile = app.workspace.getActiveFile();
-    // if (!activeFile) {
-    //     return;
-    // }
+class ReferenceIndexModal extends Modal {
+    private file: TFile;
 
-    // const refFilePath = activeFile.path;
+    constructor(app: App, file: TFile) {
+        super(app);
+        this.file = file;
+    }
+
+    onOpen() {
+        const { contentEl } = this;
+
+        contentEl.createEl('h2', { text: 'Reference index data not found' });
+
+        contentEl.createEl('p', { text: `Base note: ${this.file.path}` });
+
+        // Fetch metadata
+        const metadata = this.app.metadataCache.getFileCache(this.file);
+        const frontmatter = metadata?.frontmatter || {};
+        const title = frontmatter.title ? frontmatter.title.trim() : '';
+
+        // Create the three disabled text fields
+        this.createDisabledTextField(contentEl, 'Title', title);
+        this.createDisabledTextField(contentEl, 'Basename', this.file.basename);
+        this.createDisabledTextField(contentEl, 'Folder', this.file.parent?.path || '');
+
+        // Confirmation buttons
+        const buttonContainer = contentEl.createDiv({ cls: 'modal-button-container' });
+
+        new ButtonComponent(buttonContainer)
+            .setButtonText('Attach Auxiliary Note')
+            .setCta()
+            .onClick(() => {
+                this.close();
+                // Implement the logic to proceed with auxiliary note attachment
+            });
+
+        new ButtonComponent(buttonContainer)
+            .setButtonText('Cancel')
+            .onClick(() => {
+                this.close();
+            });
+    }
+
+    private createDisabledTextField(container: HTMLElement, label: string, value: string) {
+        const wrapper = container.createDiv({ cls: 'disabled-text-field' });
+
+        wrapper.createEl('label', { text: label, attr: { style: 'font-weight: bold; display: block; margin-bottom: 3px;' } });
+
+        const input = wrapper.createEl('input', {
+            attr: { type: 'text', value: value, readonly: 'true' }
+        });
+
+        input.style.width = '100%';
+        input.style.marginBottom = '0.5em';
+    }
+
+    onClose() {
+        this.contentEl.empty();
+    }
+}
+
+// Function to trigger the modal
+function showReferenceIndexModal(app: App, file: TFile) {
+    new ReferenceIndexModal(app, file).open();
+}
+
+// Modify `openAssociatedNote` function to trigger the modal
+export async function openAssociatedNote(
+    app: App,
+    refFilePath: string,
+    refFileTitle: string,
+    refNoteConfig: NoteConfiguration,
+    linkedNoteConfig: NoteConfiguration,
+    isForceNew: boolean = false,
+    titlePropertyNames: string[] = ["shorttitle", "title"],
+) {
+    const referenceNoteTypeIndexPropertyName = refNoteConfig.frontmatterPropertyNamePrefix + "index";
+    const referenceNoteTypePropertyValue = getMetadataCache(app, refFilePath)?.frontmatter?.[referenceNoteTypeIndexPropertyName];
+
+    if (!referenceNoteTypePropertyValue) {
+        const file = app.vault.getAbstractFileByPath(refFilePath);
+        if (file instanceof TFile) {
+            showReferenceIndexModal(app, file);
+        }
+        return;
+    }
+
     refFilePath = normalizePath(refFilePath);
     refFileTitle = refFileTitle || resolveFileTitle(app, refFilePath, titlePropertyNames);
     const noteLocation = composeNoteLocation(
@@ -321,46 +393,40 @@ export async function openAssociatedNote(
             noteLocation.newFileParentDir,
             "",
             undefined,
-        )
+        );
     } else {
         newNotePath = await createOrOpenNote(
             app,
             noteLocation.newFilePath,
-        )
+        );
     }
+
     newNotePath = normalizePath(newNotePath);
     let newNoteTitle = `${refFileTitle} ~ ${linkedNoteConfig.className}`;
-    let refNoteLinkName = `${linkedNoteConfig.frontmatterPropertyNamePrefix}${refNoteConfig.associatedNotesOutlinkPropertyName}`
+    let refNoteLinkName = `${linkedNoteConfig.frontmatterPropertyNamePrefix}${refNoteConfig.associatedNotesOutlinkPropertyName}`;
     await updateFrontMatter(
         app,
         newNotePath,
         {
-            "tags": linkedNoteConfig.tagMetadata.map( (tag) => tag.replace(/^#/,"") ),
-            // [refNoteConfig.associatedNotesOutlinkPropertyName]: [ `[[${refFilePath.replace(/\.md$/,"")}|${refFileTitle}]]`, ],
-            [refNoteLinkName]: [ `[[${refFilePath.replace(/\.md$/,"")}|${refFileTitle}]]`, ],
+            "tags": linkedNoteConfig.tagMetadata.map(tag => tag.replace(/^#/, "")),
+            [refNoteLinkName]: [`[[${refFilePath.replace(/\.md$/, "")}|${refFileTitle}]]`],
             "title": newNoteTitle,
-        } ,
+        },
     );
 
-    // yuck, but till we migrate to new code base ....
-    // "extract-" -> "extracts", reading- -> readings
-    // let refNoteBacklinkedName = linkedNoteConfig.frontmatterPropertyNamePrefix.replace(/-$/, "") + "s";
-
-    // E.g. "readings"
     let backlinkedRefNoteOutlinkingPropertyName = `${refNoteConfig.frontmatterPropertyNamePrefix}${linkedNoteConfig.associatedNotesOutlinkPropertyName}`;
     let backlinkedRefNoteOutlinkingDisplayText = linkedNoteConfig.className;
-    let backlinkedRefNoteOutlink =  `[[${newNotePath.replace(/\.md$/,"")}|${backlinkedRefNoteOutlinkingDisplayText}s]]`;
-    let updatedMetadata = {
-        [backlinkedRefNoteOutlinkingPropertyName]: backlinkedRefNoteOutlink,
-    };
+    let backlinkedRefNoteOutlink = `[[${newNotePath.replace(/\.md$/, "")}|${backlinkedRefNoteOutlinkingDisplayText}s]]`;
+
     await updateFrontMatter(
         app,
         refFilePath,
         {
-            [backlinkedRefNoteOutlinkingPropertyName]: [ backlinkedRefNoteOutlink ],
-        } ,
+            [backlinkedRefNoteOutlinkingPropertyName]: [backlinkedRefNoteOutlink],
+        },
     );
 }
+
 
 export function getSourceFilesExternalAttachmentLocations(
     app: App,
