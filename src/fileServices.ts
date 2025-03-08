@@ -289,10 +289,12 @@ export function resolveFileTitle(
 }
 
 class ReferenceIndexModal extends Modal {
+    private onConfirm: () => void;
     private file: TFile;
 
-    constructor(app: App, file: TFile) {
+    constructor(app: App, file: TFile, onConfirm: () => void) {
         super(app);
+        this.onConfirm = onConfirm;
         this.file = file;
     }
 
@@ -321,7 +323,7 @@ class ReferenceIndexModal extends Modal {
             .setCta()
             .onClick(() => {
                 this.close();
-                // Implement the logic to proceed with auxiliary note attachment
+                this.onConfirm();
             });
 
         new ButtonComponent(buttonContainer)
@@ -349,11 +351,6 @@ class ReferenceIndexModal extends Modal {
     }
 }
 
-// Function to trigger the modal
-function showReferenceIndexModal(app: App, file: TFile) {
-    new ReferenceIndexModal(app, file).open();
-}
-
 // Modify `openAssociatedNote` function to trigger the modal
 export async function openAssociatedNote(
     app: App,
@@ -367,12 +364,28 @@ export async function openAssociatedNote(
     const referenceNoteTypeIndexPropertyName = refNoteConfig.frontmatterPropertyNamePrefix + "index";
     const referenceNoteTypePropertyValue = getMetadataCache(app, refFilePath)?.frontmatter?.[referenceNoteTypeIndexPropertyName];
 
+    // Do nothing if file already exists
+    const newNotePath = composeNoteLocation(
+        refFilePath,
+        linkedNoteConfig.parentFolderPath,
+        linkedNoteConfig.namePrefix,
+        linkedNoteConfig.namePostfix,
+        linkedNoteConfig.isSubdirectorizeLexically,
+    ).newFilePath;
+
+    const existingFile = app.vault.getAbstractFileByPath(newNotePath);
+    if (existingFile) return;
+
+    // If reference index data is missing, show modal
     if (!referenceNoteTypePropertyValue) {
         const file = app.vault.getAbstractFileByPath(refFilePath);
         if (file instanceof TFile) {
-            showReferenceIndexModal(app, file);
+            await new Promise<void>((resolve) => {
+                new ReferenceIndexModal(app, file, resolve).open();
+            });
+        } else {
+            return; // Abort if file is invalid
         }
-        return;
     }
 
     refFilePath = normalizePath(refFilePath);
@@ -385,9 +398,9 @@ export async function openAssociatedNote(
         linkedNoteConfig.isSubdirectorizeLexically,
     );
 
-    let newNotePath = "";
+    let finalNewNotePath = "";
     if (isForceNew) {
-        newNotePath = await createUniqueNote(
+        finalNewNotePath = await createUniqueNote(
             app,
             noteLocation.newFileBasename,
             noteLocation.newFileParentDir,
@@ -395,18 +408,18 @@ export async function openAssociatedNote(
             undefined,
         );
     } else {
-        newNotePath = await createOrOpenNote(
+        finalNewNotePath = await createOrOpenNote(
             app,
             noteLocation.newFilePath,
         );
     }
 
-    newNotePath = normalizePath(newNotePath);
+    finalNewNotePath = normalizePath(finalNewNotePath);
     let newNoteTitle = `${refFileTitle} ~ ${linkedNoteConfig.className}`;
     let refNoteLinkName = `${linkedNoteConfig.frontmatterPropertyNamePrefix}${refNoteConfig.associatedNotesOutlinkPropertyName}`;
     await updateFrontMatter(
         app,
-        newNotePath,
+        finalNewNotePath,
         {
             "tags": linkedNoteConfig.tagMetadata.map(tag => tag.replace(/^#/, "")),
             [refNoteLinkName]: [`[[${refFilePath.replace(/\.md$/, "")}|${refFileTitle}]]`],
@@ -416,7 +429,7 @@ export async function openAssociatedNote(
 
     let backlinkedRefNoteOutlinkingPropertyName = `${refNoteConfig.frontmatterPropertyNamePrefix}${linkedNoteConfig.associatedNotesOutlinkPropertyName}`;
     let backlinkedRefNoteOutlinkingDisplayText = linkedNoteConfig.className;
-    let backlinkedRefNoteOutlink = `[[${newNotePath.replace(/\.md$/, "")}|${backlinkedRefNoteOutlinkingDisplayText}s]]`;
+    let backlinkedRefNoteOutlink = `[[${finalNewNotePath.replace(/\.md$/, "")}|${backlinkedRefNoteOutlinkingDisplayText}s]]`;
 
     await updateFrontMatter(
         app,
@@ -426,6 +439,7 @@ export async function openAssociatedNote(
         },
     );
 }
+
 
 
 export function getSourceFilesExternalAttachmentLocations(
