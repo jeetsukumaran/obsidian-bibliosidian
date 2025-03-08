@@ -303,7 +303,7 @@ class ReferenceIndexModal extends Modal {
 
         contentEl.createEl('h2', { text: 'Reference index data not found' });
 
-        contentEl.createEl('p', { text: `Base note: ${this.file.path}` });
+        contentEl.createEl('p', { text: `The base note does not appear to be an indexed source reference:` });
 
         // Fetch metadata
         const metadata = this.app.metadataCache.getFileCache(this.file);
