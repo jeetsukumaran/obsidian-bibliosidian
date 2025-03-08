@@ -315,11 +315,13 @@ class ReferenceIndexModal extends Modal {
         this.createDisabledTextField(contentEl, 'Basename', this.file.basename);
         this.createDisabledTextField(contentEl, 'Folder', this.file.parent?.path || '');
 
+        contentEl.createEl('p', { text: "Do you want to proceed with creating an auxiliary note?"});
+
         // Confirmation buttons
         const buttonContainer = contentEl.createDiv({ cls: 'modal-button-container' });
 
         new ButtonComponent(buttonContainer)
-            .setButtonText('Attach Auxiliary Note')
+            .setButtonText('Yes')
             .setCta()
             .onClick(() => {
                 this.close();
@@ -327,7 +329,7 @@ class ReferenceIndexModal extends Modal {
             });
 
         new ButtonComponent(buttonContainer)
-            .setButtonText('Cancel')
+            .setButtonText('No')
             .onClick(() => {
                 this.close();
             });
