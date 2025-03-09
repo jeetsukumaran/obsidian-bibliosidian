@@ -290,32 +290,48 @@ export function resolveFileTitle(
 
 class ReferenceIndexModal extends Modal {
     private onConfirm: () => void;
-    private file: TFile;
+    baseNotePath: string;
+    linkedNotePath: string;
+    indexMetadataPropertyName: string;
 
-    constructor(app: App, file: TFile, onConfirm: () => void) {
+    constructor(
+        app: App,
+        baseNotePath: string,
+        linkedNotePath: string,
+        indexMetadataPropertyName: string,
+        onConfirm: () => void,
+    ) {
         super(app);
         this.onConfirm = onConfirm;
-        this.file = file;
+        this.baseNotePath = baseNotePath;
+        this.linkedNotePath = linkedNotePath;
+        this.indexMetadataPropertyName = indexMetadataPropertyName;
     }
 
     onOpen() {
         const { contentEl } = this;
 
-        contentEl.createEl('h2', { text: 'Reference index data not found' });
+        contentEl.createEl('h2', { text: 'Confirm auxiliary note creation' });
 
-        contentEl.createEl('p', { text: `The base note does not appear to be an indexed source reference:` });
+        contentEl.createEl('p', { text: `The base note is missing the property: '${this.indexMetadataPropertyName}').` });
+        contentEl.createEl('p', { text: "This may not be a reference index note" });
 
         // Fetch metadata
-        const metadata = this.app.metadataCache.getFileCache(this.file);
+        const metadata = getMetadataCache(app, this.baseNotePath);
         const frontmatter = metadata?.frontmatter || {};
-        const title = frontmatter.title ? frontmatter.title.trim() : '';
+        let title = frontmatter.title ? frontmatter.title.trim() : '';
 
-        // Create the three disabled text fields
         this.createDisabledTextField(contentEl, 'Title', title);
-        this.createDisabledTextField(contentEl, 'Basename', this.file.basename);
-        this.createDisabledTextField(contentEl, 'Folder', this.file.parent?.path || '');
+        const baseFile = app.vault.getAbstractFileByPath(this.baseNotePath);
+        if (baseFile && (baseFile instanceof TFile)) {
+            this.createDisabledTextField(contentEl, 'Basename', baseFile.basename);
+            this.createDisabledTextField(contentEl, 'Folder', baseFile.parent?.path || '');
+        } else {
+            this.createDisabledTextField(contentEl, 'Invalid note filepath', this.baseNotePath);
+        }
 
-        contentEl.createEl('p', { text: "Do you want to proceed with creating an auxiliary note?"});
+
+        contentEl.createEl('p', { text: "Do you want to proceed with creating and attaching an auxiliary note?"});
 
         // Confirmation buttons
         const buttonContainer = contentEl.createDiv({ cls: 'modal-button-container' });
@@ -366,7 +382,6 @@ export async function openAssociatedNote(
     const referenceNoteTypeIndexPropertyName = refNoteConfig.frontmatterPropertyNamePrefix + "index";
     const referenceNoteTypePropertyValue = getMetadataCache(app, refFilePath)?.frontmatter?.[referenceNoteTypeIndexPropertyName];
 
-    // Do nothing if file already exists
     const newNotePath = composeNoteLocation(
         refFilePath,
         linkedNoteConfig.parentFolderPath,
@@ -376,14 +391,18 @@ export async function openAssociatedNote(
     ).newFilePath;
 
     const existingFile = app.vault.getAbstractFileByPath(newNotePath);
-    if (existingFile) return;
 
     // If reference index data is missing, show modal
-    if (!referenceNoteTypePropertyValue) {
-        const file = app.vault.getAbstractFileByPath(refFilePath);
-        if (file instanceof TFile) {
+    if (!referenceNoteTypePropertyValue && !existingFile) {
+        if (true) {
             await new Promise<void>((resolve) => {
-                new ReferenceIndexModal(app, file, resolve).open();
+                new ReferenceIndexModal(
+                    app,
+                    refFilePath,
+                    referenceNoteTypeIndexPropertyName,
+                    newNotePath,
+                    resolve
+                ).open();
             });
         } else {
             return; // Abort if file is invalid
