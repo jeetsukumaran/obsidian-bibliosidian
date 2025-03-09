@@ -322,6 +322,20 @@ class ReferenceIndexModal extends Modal {
         }
     }
 
+    private disabledTextArea(contentEl: HTMLElement, value: string) {
+        const input = contentEl.createEl('textarea', {
+            attr: {
+                type: 'text',
+                text: value,
+                readonly: 'true',
+                disabled: 'true',
+            }
+        });
+        input.value = value;
+        input.style.width = '100%';
+        input.style.marginBottom = '0.5em';
+    }
+
     onOpen() {
         const { contentEl } = this;
 
@@ -333,9 +347,10 @@ class ReferenceIndexModal extends Modal {
         contentEl.createEl('pre', { text: this.indexMetadataPropertyName });
         contentEl.createEl('p', { text: "This may not be a reference index note" });
         contentEl.createEl('p', { text: "Do you want to proceed with creating and attaching the new auxiliary note:"});
-        contentEl.createEl('pre', { text: this.linkedNotePath });
 
-        // Confirmation buttons
+        // contentEl.createEl('pre', { text: this.linkedNotePath });
+        this.disabledTextArea(contentEl, this.linkedNotePath);
+
         const buttonContainer = contentEl.createDiv({ cls: 'modal-button-container' });
 
         new ButtonComponent(buttonContainer)
