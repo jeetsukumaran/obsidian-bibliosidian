@@ -308,30 +308,32 @@ class ReferenceIndexModal extends Modal {
         this.indexMetadataPropertyName = indexMetadataPropertyName;
     }
 
+    private displayNote(contentEl: HTMLElement, noteFilePath: string) {
+        const noteFile = app.vault.getAbstractFileByPath(noteFilePath);
+        if (noteFile && (noteFile instanceof TFile)) {
+            const metadata = getMetadataCache(app, noteFilePath);
+            const frontmatter = metadata?.frontmatter || {};
+            let title = frontmatter?.title ? frontmatter?.title.trim() : '';
+            this.createDisabledTextField(contentEl, 'Title', title);
+            this.createDisabledTextField(contentEl, 'Basename', noteFile.basename);
+            this.createDisabledTextField(contentEl, 'Folder', noteFile.parent?.path || '');
+        } else {
+            this.createDisabledTextField(contentEl, 'Invalid note filepath', noteFilePath);
+        }
+    }
+
     onOpen() {
         const { contentEl } = this;
 
         contentEl.createEl('h2', { text: 'Confirm auxiliary note creation' });
 
-        contentEl.createEl('p', { text: `The base note is missing the property: '${this.indexMetadataPropertyName}'.` });
+        contentEl.createEl('p', { text: "The base note:" });
+        this.displayNote(contentEl, this.baseNotePath);
+        contentEl.createEl('p', { text: "is missing the property:" });
+        contentEl.createEl('pre', { text: this.indexMetadataPropertyName });
         contentEl.createEl('p', { text: "This may not be a reference index note" });
-
-        // Fetch metadata
-        const metadata = getMetadataCache(app, this.baseNotePath);
-        const frontmatter = metadata?.frontmatter || {};
-        let title = frontmatter.title ? frontmatter.title.trim() : '';
-
-        this.createDisabledTextField(contentEl, 'Title', title);
-        const baseFile = app.vault.getAbstractFileByPath(this.baseNotePath);
-        if (baseFile && (baseFile instanceof TFile)) {
-            this.createDisabledTextField(contentEl, 'Basename', baseFile.basename);
-            this.createDisabledTextField(contentEl, 'Folder', baseFile.parent?.path || '');
-        } else {
-            this.createDisabledTextField(contentEl, 'Invalid note filepath', this.baseNotePath);
-        }
-
-
-        contentEl.createEl('p', { text: "Do you want to proceed with creating and attaching an auxiliary note?"});
+        contentEl.createEl('p', { text: "Do you want to proceed with creating and attaching the new auxiliary note:"});
+        contentEl.createEl('pre', { text: this.linkedNotePath });
 
         // Confirmation buttons
         const buttonContainer = contentEl.createDiv({ cls: 'modal-button-container' });
