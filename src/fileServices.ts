@@ -313,7 +313,7 @@ class ReferenceIndexModal extends Modal {
 
         contentEl.createEl('h2', { text: 'Confirm auxiliary note creation' });
 
-        contentEl.createEl('p', { text: `The base note is missing the property: '${this.indexMetadataPropertyName}').` });
+        contentEl.createEl('p', { text: `The base note is missing the property: '${this.indexMetadataPropertyName}'.` });
         contentEl.createEl('p', { text: "This may not be a reference index note" });
 
         // Fetch metadata
@@ -399,8 +399,8 @@ export async function openAssociatedNote(
                 new ReferenceIndexModal(
                     app,
                     refFilePath,
-                    referenceNoteTypeIndexPropertyName,
                     newNotePath,
+                    referenceNoteTypeIndexPropertyName,
                     resolve
                 ).open();
             });
