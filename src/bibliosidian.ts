@@ -193,7 +193,7 @@ async function generateSourceFrontmatter(
         try {
             authors = new Authors(fieldValue);
         } catch(error) {
-            console.log(`Error creating author for value ${fieldValue}: ${error}`);
+            console.error(`Error creating author for value ${fieldValue}: ${error}`);
             continue;
         }
         creatorNames[creatorTypeName] = authors;
@@ -205,8 +205,7 @@ async function generateSourceFrontmatter(
                 }
             });
         } catch (error) {
-            console.log(`Error creating author for value ${fieldValue}: ${error}`);
-            console.log(error);
+            console.error(`Error creating author for value ${fieldValue}: ${error}`);
         }
 
     };
@@ -226,6 +225,7 @@ async function generateSourceFrontmatter(
 	let fileProperties = new FileProperties(this.app, args.targetFilepath)
 	const updateDate = new Date();
 	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
+    noteProperties["date-modified"] = updateDateStamp;
 
 	// let entryTitle = `${inTextCitation} *${compositeTitle}*`
 	let unformattedEntryTitle = `${inTextCitation}: ${compositeTitle}`
@@ -253,7 +253,6 @@ async function generateSourceFrontmatter(
         "",
     ]
     // special meta-metadata for bibliosidian management
-    // console.log(configuration);
 
     const composeRefPropertyKey = (key: string) => {
         return `${configuration.biblioNoteConfiguration.frontmatterPropertyNamePrefix || ""}${key}`;
@@ -306,7 +305,7 @@ async function generateSourceFrontmatter(
 	refBibliographicalData["shorttitle"] = bibEntry.getFieldAsString("shorttitle")
 	refBibliographicalData["bibtex"] = bibtexStr
     refBibliographicalData["file"] = getFieldAsStringArray(bibEntry, "file");
-	refBibliographicalData["last-updated"] = updateDateStamp
+	refBibliographicalData["date-modified"] = updateDateStamp
 
     const tagProperties = configuration.biblioNoteConfiguration.tagMetadata.map( (s) => s.replace(/^#/,"") );
 	noteProperties["title"] = `${inTextCitation}: ${compositeTitle}`
@@ -496,7 +495,7 @@ async function generateAuthorLinks(
                 //     configuration.authorNoteConfiguration.frontmatterMetadata,
                 //     true,
                 // )
-                authorProperties["entry-updated"] = fileProperties.concatItems("entry-updated", [updateDateStamp]);
+                authorProperties["date-modified"] = fileProperties.concatItems("date-modified", [updateDateStamp]);
                 authorProperties["title"] = authorDisplayName;
                 authorProperties["aliases"] = fileProperties.concatItems("aliases", [authorDisplayName]);
                 let sourceLink = `[[${args.targetFilepath.replace(/\.md$/, "")}|${entryTitle}]]`;
@@ -669,7 +668,7 @@ class xBibTexModal extends Modal {
                 }
                 // createFilePropertyDataTable(refPropertiesSetting.descEl, refProperties)
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 let messageStr = "Parse error: " + error.message;
                 let messageNode = document.createTextNode(messageStr);
                 descEl.empty()
@@ -869,8 +868,6 @@ export async function generateBiblioNoteLibrary(
         // Replace forEach with for...of to properly handle async operations
         for (const citeKey of Object.keys(bibFile.entries$)) {
             let entry: BibEntry = bibFile.entries$[citeKey];
-            // console.log(entry);
-            // console.log(entry.title$);
             let compositeTitle = resolveBibtexTitle(entry);
             let result: ProcessedBibTexResult = {
                 successful: false,
@@ -909,7 +906,7 @@ export async function generateBiblioNoteLibrary(
             }
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
         new Notice(`BibTex parsing error:\n\n${error}`);
     }
     return processedResults;
