@@ -42,6 +42,7 @@ import {
 
 import {
     createOrOpenNote,
+    getDateStamp,
 } from "./utility";
 
 import {
@@ -223,8 +224,7 @@ async function generateSourceFrontmatter(
 	let inTextCitation: string = `(${inTextCitationAuthors.trim()} ${inTextCitationYear?.toString().trim()})`
 
 	let fileProperties = new FileProperties(this.app, args.targetFilepath)
-	const updateDate = new Date();
-	const updateDateStamp: string = `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
+    const updateDateStamp = getDateStamp();
     noteProperties["date-modified"] = updateDateStamp;
 
 	// let entryTitle = `${inTextCitation} *${compositeTitle}*`

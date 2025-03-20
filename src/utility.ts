@@ -1,5 +1,3 @@
-import { FilePropertyData } from './fileProperties'; // Import the correct type
-
 import {
     App,
     TAbstractFile,
@@ -9,6 +7,17 @@ import {
     Notice,
 } from 'obsidian';
 import * as path from 'path';
+import {
+	FileProperties,
+	FilePropertyData,
+	updateFrontMatter,
+} from "./fileProperties";
+
+
+export const getDateStamp = (): string => {
+    const updateDate = new Date();
+    return `${updateDate.getFullYear()}-${String(updateDate.getMonth() + 1).padStart(2, '0')}-${String(updateDate.getDate()).padStart(2, '0')}T${String(updateDate.getHours()).padStart(2, '0')}:${String(updateDate.getMinutes()).padStart(2, '0')}:${String(updateDate.getSeconds()).padStart(2, '0')}`;
+}
 
 export async function createOrOpenNote(
     app: App,
@@ -39,6 +48,12 @@ export async function createOrOpenNote(
         if (!noteExists) {
             // If the note does not exist, create it
             await app.vault.create(notePath, "");
+            await updateFrontMatter(
+                app,
+                notePath,
+                { "date-created": getDateStamp() },
+                true,
+            );
         }
 		if (isOpenNote) {
 			app.workspace.openLinkText(notePath, '', mode);
