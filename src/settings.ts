@@ -22,9 +22,10 @@ export type NoteConfiguration = {
 	isAutoCreate: boolean;
 }
 
-const BIBLIO_NOTE_KEY = "reference"
-const AUTHOR_NOTE_KEY = "author"
-const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
+export const BIBLIO_NOTE_KEY = "reference"
+export const BIBLIO_NOTE_RECORD_SUFFIX = "authority"
+export const AUTHOR_NOTE_KEY = "author"
+export const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
     [BIBLIO_NOTE_KEY]: {
         className: "Reference",
         description: "Primary reference notes to index sources and fundamental bibliographical data.",
@@ -105,7 +106,7 @@ export class BibliosidianConfiguration {
     }
 
     get biblioNoteDataPropertyName(): string {
-        return `${this.composeBiblioNotePropertyName("index")}`;
+        return `${this.composeBiblioNotePropertyName(BIBLIO_NOTE_RECORD_SUFFIX)}`;
     }
 
 

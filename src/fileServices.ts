@@ -19,6 +19,7 @@ import * as fs from 'fs';
 import { promisify } from 'util';
 
 import {
+    BIBLIO_NOTE_RECORD_SUFFIX,
     BibliosidianConfiguration,
     NoteConfiguration,
 } from "./settings";
@@ -345,7 +346,7 @@ class ReferenceIndexModal extends Modal {
         this.displayNote(contentEl, this.baseNotePath);
         contentEl.createEl('p', { text: "is missing the property:" });
         contentEl.createEl('pre', { text: this.indexMetadataPropertyName });
-        contentEl.createEl('p', { text: "This may not be a reference index note" });
+        contentEl.createEl('p', { text: "This may not be a reference authority note" });
         contentEl.createEl('p', { text: "Do you want to proceed with creating and attaching the new auxiliary note:"});
 
         // contentEl.createEl('pre', { text: this.linkedNotePath });
@@ -396,8 +397,8 @@ export async function openAssociatedNote(
     isForceNew: boolean = false,
     titlePropertyNames: string[] = ["shorttitle", "title"],
 ) {
-    const referenceNoteTypeIndexPropertyName = refNoteConfig.frontmatterPropertyNamePrefix + "index";
-    const referenceNoteTypePropertyValue = getMetadataCache(app, refFilePath)?.frontmatter?.[referenceNoteTypeIndexPropertyName];
+    const referenceNoteTypeAuthorityPropertyName = refNoteConfig.frontmatterPropertyNamePrefix + BIBLIO_NOTE_RECORD_SUFFIX;
+    const referenceNoteTypePropertyValue = getMetadataCache(app, refFilePath)?.frontmatter?.[referenceNoteTypeAuthorityPropertyName];
 
     const newNotePath = composeNoteLocation(
         refFilePath,
@@ -417,7 +418,7 @@ export async function openAssociatedNote(
                     app,
                     refFilePath,
                     newNotePath,
-                    referenceNoteTypeIndexPropertyName,
+                    referenceNoteTypeAuthorityPropertyName,
                     resolve
                 ).open();
             });
