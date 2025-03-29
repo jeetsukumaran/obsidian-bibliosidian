@@ -174,7 +174,7 @@ async function generateSourceFrontmatter(
 
 	let citationKey = bibEntry._id.toLowerCase();
     let noteProperties: FilePropertyData = {}; // unprefixed, part of the knowledge network or semantic layer: e.g. "title", "abstract", "authors"
-    let refProperties: FilePropertyData = {}; // prefixed by namespace, e.g. "reference-"
+    let refProperties: FilePropertyData = {}; // will be prefixed by namespace, e.g. "bibliographic-reference-"
     let refBibliographicalData: FilePropertyData = {}; // in subdictionary
 
     // refProperties["authority"] = refBibliographicalData;
@@ -280,7 +280,8 @@ async function generateSourceFrontmatter(
         );
         refBibliographicalData[key] = authorLinks.map((link) => link.displayName);
         let refKey: string = key.endsWith("s") ? key : key + "s";
-        noteProperties[refKey] = authorLinks.map((link) => link.aliasedLink);
+        // noteProperties[refKey] = authorLinks.map((link) => link.aliasedLink);
+        refProperties[refKey] = authorLinks.map((link) => link.aliasedLink);
     }
 
     refBibliographicalData["date"] = sourceYear
