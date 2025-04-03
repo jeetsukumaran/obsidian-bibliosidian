@@ -52,7 +52,7 @@ export const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         frontmatterPropertyNamePrefix: "author-",
 	    associatedNotesOutlinkPropertyName: "authors",
         tagMetadata: [
-            "#bibliographic/author",
+            "#bibliographics/author",
         ],
         frontmatterMetadata: {
         },
@@ -172,7 +172,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             frontmatterPropertyNamePrefix: "",
             associatedNotesOutlinkPropertyName: "readings",
             tagMetadata: [
-                "#source/reading",
+                "#bibliographics/reading",
             ],
             frontmatterMetadata: {},
             isAutoCreate: false,
@@ -187,7 +187,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             frontmatterPropertyNamePrefix: "",
             associatedNotesOutlinkPropertyName: "extracts",
             tagMetadata: [
-                "#bibliographic/extract",
+                "#bibliographics/extract",
             ],
             frontmatterMetadata: {},
             isAutoCreate: false,
@@ -202,7 +202,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
             frontmatterPropertyNamePrefix: "",
             associatedNotesOutlinkPropertyName: "outlines",
             tagMetadata: [
-                "#source/outline",
+                "#bibliographics/outline",
             ],
             frontmatterMetadata: {},
             isAutoCreate: false,
