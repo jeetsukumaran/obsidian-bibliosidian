@@ -195,7 +195,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
         "outline": {
             className: "Outline",
             description: "Outlines, table of contents, guides to the organization of contents of sources.",
-            parentFolderPath: "literature/readings",
+            parentFolderPath: "literature/outlines",
             isSubdirectorizeLexically: true,
             namePrefix: "",
             namePostfix: "_outline",
