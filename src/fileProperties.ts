@@ -5,6 +5,7 @@ import {
 	// Editor,
 	// MarkdownView,
 	// Modal,
+	normalizePath,
 	Notice,
 	// Plugin,
 	// PluginSettingTab,
@@ -192,7 +193,7 @@ export async function updateFrontMatter(
     isClearEmpty: boolean = true,
     isAddUpdateNotice: boolean = false,
 ) {
-    const file = app.vault.getAbstractFileByPath(filePath);
+    const file = app.vault.getAbstractFileByPath(normalizePath(filePath));
     if (!(file instanceof TFile)) {
         console.error("File not found to update front matter: " + filePath);
         return;

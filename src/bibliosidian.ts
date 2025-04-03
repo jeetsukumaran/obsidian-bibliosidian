@@ -260,8 +260,6 @@ async function generateSourceFrontmatter(
     const composeRefPropertyKey = (key: string) => {
         return `${configuration.biblioNoteConfiguration.frontmatterPropertyNamePrefix || ""}${key}`;
     };
-    // const entryUpdatedKey = composeRefPropertyKey("updated");
-	// refProperties[entryUpdatedKey] = fileProperties.concatItems(entryUpdatedKey, [updateDateStamp])
 
 
     refBibliographicalData["citation-key"] = citationKey;
@@ -284,6 +282,7 @@ async function generateSourceFrontmatter(
         refProperties[refKey] = authorLinks.map((link) => link.aliasedLink);
     }
 
+	refBibliographicalData["registration-date"] = updateDateStamp
     refBibliographicalData["date"] = sourceYear
     refBibliographicalData["title"] = compositeTitle
 	refBibliographicalData["journal"] = bibEntry.getFieldAsString("journal")
@@ -309,7 +308,6 @@ async function generateSourceFrontmatter(
 	refBibliographicalData["shorttitle"] = bibEntry.getFieldAsString("shorttitle")
 	refBibliographicalData["bibtex"] = bibtexStr
     refBibliographicalData["file"] = getFieldAsStringArray(bibEntry, "file");
-	refBibliographicalData["date-modified"] = updateDateStamp
 
     const tagProperties = configuration.biblioNoteConfiguration.tagMetadata.map( (s) => s.replace(/^#/,"") );
 	noteProperties["title"] = `${inTextCitation}: ${compositeTitle}`
