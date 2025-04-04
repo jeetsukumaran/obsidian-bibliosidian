@@ -23,7 +23,7 @@ export type NoteConfiguration = {
 }
 
 export const BIBLIO_NOTE_KEY = "reference"
-export const BIBLIO_NOTE_RECORD_SUFFIX = "authority"
+export const BIBLIO_NOTE_RECORD_SUFFIX = "authority-record"
 export const AUTHOR_NOTE_KEY = "author"
 export const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
     [BIBLIO_NOTE_KEY]: {
