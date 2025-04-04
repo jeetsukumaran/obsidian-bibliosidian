@@ -163,16 +163,16 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
     coreNoteConfigurations: Object.assign({}, CORE_NOTE_CONFIGURATIONS),
     associatedNoteConfigurations: {
         "reading": {
-            className: "Annotations",
+            className: "Remarks",
             description: "Your observations, summaries, interpretations, analyses, or processing of sources.",
-            parentFolderPath: "readings/analyses",
+            parentFolderPath: "readings/remarks",
             isSubdirectorizeLexically: true,
             namePrefix: "",
-            namePostfix: "_annotations",
+            namePostfix: "_remarks",
             frontmatterPropertyNamePrefix: "",
-            associatedNotesOutlinkPropertyName: "annotations",
+            associatedNotesOutlinkPropertyName: "remarks",
             tagMetadata: [
-                "#readings/annotations",
+                "#readings/remarks",
             ],
             frontmatterMetadata: {},
             isAutoCreate: false,
