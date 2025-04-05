@@ -285,6 +285,7 @@ async function generateSourceFrontmatter(
 	refBibliographicalData["registration-date"] = updateDateStamp
     refBibliographicalData["date"] = sourceYear
     refBibliographicalData["title"] = compositeTitle
+    refBibliographicalData["abstract"] = abstract;
 	refBibliographicalData["journal"] = bibEntry.getFieldAsString("journal")
 	refBibliographicalData["volume"] = bibEntry.getFieldAsString("volume")
 	refBibliographicalData["number"] = bibEntry.getFieldAsString("number")
