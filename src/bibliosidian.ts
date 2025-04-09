@@ -315,9 +315,9 @@ async function generateSourceFrontmatter(
 	noteProperties["aliases"] = [
         noteProperties["title"],
 	]
-	if (abstract) {
-		noteProperties["abstract"] = abstract
-	}
+	// if (abstract) {
+	// 	noteProperties["abstract"] = abstract
+	// }
 
 	// if (refBibliographicalData["shorttitle"]) {
 	// 	noteProperties["legend"] = refBibliographicalData["shorttitle"]
