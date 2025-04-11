@@ -164,7 +164,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
     associatedNoteConfigurations: {
         "reading": {
             className: "Remarks",
-            description: "Your observations, summaries, interpretations, analyses, or processing of sources.",
+            description: "Observations, summaries, interpretations, remarks, or processing of sources.",
             parentFolderPath: "readings/remarks",
             isSubdirectorizeLexically: true,
             namePrefix: "",
