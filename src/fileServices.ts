@@ -454,7 +454,7 @@ export async function openAssociatedNote(
     }
 
     finalNewNotePath = normalizePath(finalNewNotePath);
-    let newNoteTitle = `${refFileTitle} ~ ${linkedNoteConfig.className}`;
+    let newNoteTitle = `${refFileTitle} — ${linkedNoteConfig.className}`;
     let refNoteLinkName = `${linkedNoteConfig.frontmatterPropertyNamePrefix}${refNoteConfig.associatedNotesOutlinkPropertyName}`;
     await updateFrontMatter(
         app,
@@ -468,7 +468,7 @@ export async function openAssociatedNote(
 
     let backlinkedRefNoteOutlinkingPropertyName = `${refNoteConfig.frontmatterPropertyNamePrefix}${linkedNoteConfig.associatedNotesOutlinkPropertyName}`;
     let backlinkedRefNoteOutlinkingDisplayText = linkedNoteConfig.className;
-    let backlinkedRefNoteOutlink = `[[${finalNewNotePath.replace(/\.md$/, "")}|${backlinkedRefNoteOutlinkingDisplayText}s]]`;
+    let backlinkedRefNoteOutlink = `[[${finalNewNotePath.replace(/\.md$/, "")}|${backlinkedRefNoteOutlinkingDisplayText}]]`;
 
     await updateFrontMatter(
         app,
