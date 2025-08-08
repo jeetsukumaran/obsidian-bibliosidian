@@ -399,6 +399,7 @@ export async function openAssociatedNote(
 ) {
     const referenceNoteTypeAuthorityPropertyName = refNoteConfig.frontmatterPropertyNamePrefix + BIBLIO_NOTE_RECORD_SUFFIX;
     const referenceNoteTypePropertyValue = getMetadataCache(app, refFilePath)?.frontmatter?.[referenceNoteTypeAuthorityPropertyName];
+    const citationKey = referenceNoteTypePropertyValue["citation-key"]
 
     const newNotePath = composeNoteLocation(
         refFilePath,
@@ -462,6 +463,7 @@ export async function openAssociatedNote(
         {
             "tags": linkedNoteConfig.tagMetadata.map(tag => tag.replace(/^#/, "")),
             [refNoteLinkName]: [`[[${refFilePath.replace(/\.md$/, "")}|${refFileTitle}]]`],
+            "bibliographic-reference-citation-key": citationKey,
             "title": newNoteTitle,
         },
     );
