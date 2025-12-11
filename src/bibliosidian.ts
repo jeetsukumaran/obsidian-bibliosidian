@@ -16,6 +16,7 @@ import {
 	TextAreaComponent,
 	// WorkspaceLeaf,
 	// setIcon,
+    normalizePath,
 } from 'obsidian';
 
 import {
@@ -475,7 +476,7 @@ async function generateAuthorLinks(
             } else {
                 authorParentFolderPath = configuration.authorNoteConfiguration.parentFolderPath;
             }
-            const authorFilePath = _path.join(authorParentFolderPath, authorFileName);
+            const authorFilePath = normalizePath(_path.join(authorParentFolderPath, authorFileName));
 
             if (args.isCreateAuthorNotes && (configuration.authorNoteConfiguration.isAutoCreate ?? false)) {
                 let targetFilepath = authorFilePath;
@@ -589,7 +590,7 @@ function computeBibEntryTargetFilePath(
 	if (configuration.biblioNoteConfiguration.isSubdirectorizeLexically) {
 		parentPath = _path.join(parentPath, replaceProblematicChars(citationKey[0]))
 	}
-	return _path.join(parentPath, citekeyMarkedUp + ".md")
+	return normalizePath(_path.join(parentPath, citekeyMarkedUp + ".md"))
 }
 
 function replaceProblematicChars(input: string): string {
