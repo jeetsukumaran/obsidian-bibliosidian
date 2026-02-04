@@ -325,10 +325,15 @@ async function generateSourceFrontmatter(
 
     // process attachments
     // refProperties[bibToYamlLabelFn("files")] = bibEntry.getFieldAsString("file")
+
+    // Merge in user-defined default frontmatter metadata
+    const defaultFrontmatter = configuration.biblioNoteConfiguration.frontmatterMetadata || {};
+
     await updateFrontMatter(
     	this.app,
     	args.targetFilepath,
         {
+            ...defaultFrontmatter,  // Apply default properties first (can be overwritten)
             "tags": tagProperties,
             // ... refProperties.map( (p) => configuration.composeBiblioNotePropertyName(p) ),
             ...Object.fromEntries(
@@ -491,13 +496,12 @@ async function generateAuthorLinks(
 
                 let fileProperties = new FileProperties(app, targetFilepath);
                 let authorProperties: FilePropertyData = {};
+
+                // Apply user-defined default frontmatter metadata first
+                const authorDefaultFrontmatter = configuration.authorNoteConfiguration.frontmatterMetadata || {};
+                Object.assign(authorProperties, authorDefaultFrontmatter);
+
                 authorProperties["tags"] = configuration.authorNoteConfiguration.tagMetadata.map( (s) => s.replace(/^#/,"") );
-                // composeMetadata(
-                //     fileProperties,
-                //     authorProperties,
-                //     configuration.authorNoteConfiguration.frontmatterMetadata,
-                //     true,
-                // )
                 authorProperties["date-modified"] = fileProperties.concatItems("date-modified", [updateDateStamp]);
                 authorProperties["title"] = authorDisplayName;
                 authorProperties["aliases"] = fileProperties.concatItems("aliases", [authorDisplayName]);

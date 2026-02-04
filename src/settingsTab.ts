@@ -58,10 +58,16 @@ interface SettingOptionConfiguration<T extends keyof NoteConfiguration> {
     isDisabled?: boolean;             // Whether the settingOptionConfiguration should be disabled
 }
 
+type SettingTypeExtended = SettingType | "yaml";
+
+interface SettingOptionConfigurationExtended<T extends keyof NoteConfiguration> extends Omit<SettingOptionConfiguration<T>, 'type'> {
+    type: SettingTypeExtended;
+}
+
 function createSetting<T extends keyof NoteConfiguration>(
     containerEl: HTMLElement,
     noteConfig: NoteConfiguration,
-    settingOptionConfiguration: SettingOptionConfiguration<T>,
+    settingOptionConfiguration: SettingOptionConfigurationExtended<T>,
     saveSettings: () => Promise<void>,
     // excludeElements: { [key: string]: boolean },
 ) {
@@ -94,6 +100,56 @@ function createSetting<T extends keyof NoteConfiguration>(
                         await saveSettings();
                     })
         );
+    } else if (settingOptionConfiguration.type === "yaml") {
+        // Get current value as YAML string
+        let currentYamlString = "";
+        const currentValue = noteConfig[settingOptionConfiguration.key];
+        if (currentValue && typeof currentValue === 'object' && Object.keys(currentValue).length > 0) {
+            try {
+                currentYamlString = stringifyYaml(currentValue);
+            } catch {
+                currentYamlString = "";
+            }
+        }
+
+        settingEl.addTextArea(textarea => {
+            textarea.setPlaceholder(expandVars(settingOptionConfiguration.placeholder || ""))
+                    .setValue(currentYamlString)
+                    .setDisabled(settingOptionConfiguration.isDisabled ?? false);
+
+            // Add blur event listener to parse YAML
+            textarea.inputEl.addEventListener("blur", async () => {
+                const yamlText = textarea.getValue().trim();
+                if (!yamlText) {
+                    // Empty input - set to empty object
+                    noteConfig[settingOptionConfiguration.key] = {} as NoteConfiguration[T];
+                    settingEl.setDesc(settingOptionConfiguration.description);
+                    await saveSettings();
+                    return;
+                }
+
+                try {
+                    const parsedYaml: FilePropertyData = parseYaml(yamlText);
+                    if (parsedYaml === null || parsedYaml === undefined) {
+                        noteConfig[settingOptionConfiguration.key] = {} as NoteConfiguration[T];
+                    } else {
+                        noteConfig[settingOptionConfiguration.key] = parsedYaml as NoteConfiguration[T];
+                    }
+                    // Show success feedback with parsed keys
+                    const keys = Object.keys(parsedYaml || {});
+                    if (keys.length > 0) {
+                        settingEl.setDesc(`${settingOptionConfiguration.description}\nParsed properties: ${keys.join(", ")}`);
+                    } else {
+                        settingEl.setDesc(settingOptionConfiguration.description);
+                    }
+                    await saveSettings();
+                } catch (error: any) {
+                    // Show error feedback
+                    settingEl.setDesc(`${settingOptionConfiguration.description}\nYAML Parse Error: ${error.message || error}`);
+                    new Notice(`YAML Parse Error: ${error.message || error}`);
+                }
+            });
+        });
     } else { // "text"
         settingEl.addText(text => {
             let tempValue = noteConfig[settingOptionConfiguration.key] as string;
@@ -119,7 +175,8 @@ function createSetting<T extends keyof NoteConfiguration>(
     }
 }
 
-const settingOptionConfigurations: SettingOptionConfiguration<keyof NoteConfiguration>[] = [
+
+const settingOptionConfigurations: SettingOptionConfigurationExtended<keyof NoteConfiguration>[] = [
     {
         key: "isAutoCreate",
         name: "Create automatically",
@@ -182,6 +239,14 @@ const settingOptionConfigurations: SettingOptionConfiguration<keyof NoteConfigur
         description: "Enter tags to be added, separated by newlines, spaces, commas, or semicolons.",
         type: "textarea",
         placeholder: "(E.g. '#source/{{notetype}}')"
+    },
+
+    {
+        key: "frontmatterMetadata",
+        name: "Default front matter properties",
+        description: "Additional front matter properties to add to new notes of this type, specified in YAML format.",
+        type: "yaml",
+        placeholder: "(E.g. 'content-type: BibliographicReference')"
     },
 ];
 

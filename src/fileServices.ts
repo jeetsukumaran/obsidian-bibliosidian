@@ -457,10 +457,15 @@ export async function openAssociatedNote(
     finalNewNotePath = normalizePath(finalNewNotePath);
     let newNoteTitle = `${refFileTitle} — ${linkedNoteConfig.className}`;
     let refNoteLinkName = `${linkedNoteConfig.frontmatterPropertyNamePrefix}${refNoteConfig.associatedNotesOutlinkPropertyName}`;
+
+    // Apply user-defined default frontmatter metadata first
+    const linkedNoteDefaultFrontmatter = linkedNoteConfig.frontmatterMetadata || {};
+
     await updateFrontMatter(
         app,
         finalNewNotePath,
         {
+            ...linkedNoteDefaultFrontmatter,  // Apply default properties first (can be overwritten)
             "tags": linkedNoteConfig.tagMetadata.map(tag => tag.replace(/^#/, "")),
             [refNoteLinkName]: [`[[${refFilePath.replace(/\.md$/, "")}|${refFileTitle}]]`],
             "bibliographic-reference-citation-key": citationKey,
