@@ -396,8 +396,10 @@ export async function openAssociatedNote(
     linkedNoteConfig: NoteConfiguration,
     isForceNew: boolean = false,
     titlePropertyNames: string[] = ["shorttitle", "title"],
+    configuration?: BibliosidianConfiguration,
 ) {
-    const referenceNoteTypeAuthorityPropertyName = refNoteConfig.frontmatterPropertyNamePrefix + BIBLIO_NOTE_RECORD_SUFFIX;
+    const biblioNoteRecordSuffix = configuration?.biblioNoteRecordSuffix ?? BIBLIO_NOTE_RECORD_SUFFIX;
+    const referenceNoteTypeAuthorityPropertyName = refNoteConfig.frontmatterPropertyNamePrefix + biblioNoteRecordSuffix;
     const referenceNoteTypePropertyValue = getMetadataCache(app, refFilePath)?.frontmatter?.[referenceNoteTypeAuthorityPropertyName];
     const citationKey = referenceNoteTypePropertyValue["citation-key"]
 

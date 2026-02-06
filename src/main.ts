@@ -209,6 +209,8 @@ export default class Bibliosidian extends Plugin {
             this.configuration.biblioNoteConfiguration,
             this.configuration.getAssociatedNoteConfiguration(noteConfigurationKey),
             false,
+            ["shorttitle", "title"],
+            this.configuration,
         )
 	}
 

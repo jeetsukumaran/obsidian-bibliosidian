@@ -71,6 +71,7 @@ export interface BibliosidianSettings {
     citationKeyPropertyNames: string[];
     citationKeyPrefix: string;
     citationKeyPostfix: string;
+	biblioNoteRecordSuffix: string;
 }
 
 
@@ -106,7 +107,11 @@ export class BibliosidianConfiguration {
     }
 
     get biblioNoteDataPropertyName(): string {
-        return `${this.composeBiblioNotePropertyName(BIBLIO_NOTE_RECORD_SUFFIX)}`;
+        return `${this.composeBiblioNotePropertyName(this.biblioNoteRecordSuffix)}`;
+    }
+
+    get biblioNoteRecordSuffix(): string {
+        return this.settings.biblioNoteRecordSuffix ?? BIBLIO_NOTE_RECORD_SUFFIX;
     }
 
 
@@ -228,5 +233,6 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
     ],
     citationKeyPrefix: "[@",
     citationKeyPostfix: "]",
+	biblioNoteRecordSuffix: BIBLIO_NOTE_RECORD_SUFFIX,
 }
 

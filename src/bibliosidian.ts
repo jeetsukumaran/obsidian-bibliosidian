@@ -48,7 +48,6 @@ import {
 import {
     NoteConfiguration,
     BibliosidianConfiguration,
-    BIBLIO_NOTE_RECORD_SUFFIX,
 } from "./settings";
 
 // import { parseBibFile } from "bibtex";
@@ -178,7 +177,7 @@ async function generateSourceFrontmatter(
     let refBibliographicalData: FilePropertyData = {}; // in subdictionary
 
     // refProperties["authority"] = refBibliographicalData;
-    refProperties[BIBLIO_NOTE_RECORD_SUFFIX] = refBibliographicalData;
+    refProperties[configuration.biblioNoteRecordSuffix] = refBibliographicalData;
 
 
 	let authorLastNames: string[] = [];
@@ -357,6 +356,8 @@ async function generateSourceFrontmatter(
                 configuration.biblioNoteConfiguration,
                 noteConfig,
                 false,
+                ["shorttitle", "title"],
+                configuration,
             )
         }
 
