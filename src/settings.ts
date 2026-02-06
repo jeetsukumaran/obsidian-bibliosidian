@@ -208,7 +208,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
     },
 
 	holdingsParentFolder: _path.join("sources", "holdings"),
-    holdingsPropertyName: "bibliographic-holdings",
+    holdingsPropertyName: "source-holdings",
 
     citationOutlinkPropertyNames: [
         "references",
