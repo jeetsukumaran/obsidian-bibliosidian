@@ -246,7 +246,7 @@ const settingOptionConfigurations: SettingOptionConfigurationExtended<keyof Note
         name: "Default front matter properties",
         description: "Additional front matter properties to add to new notes of this type, specified in YAML format.",
         type: "yaml",
-        placeholder: "(E.g. 'content-type: BibliographicReference')"
+        placeholder: "(E.g. 'content-type: SourceReference')"
     },
 ];
 
