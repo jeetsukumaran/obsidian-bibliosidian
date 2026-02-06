@@ -397,7 +397,7 @@ export async function openAssociatedNote(
     titlePropertyNames: string[] = ["shorttitle", "title"],
     configuration?: BibliosidianConfiguration,
 ) {
-    const referenceNoteTypeAuthorityPropertyName = configuration?.biblioNoteDataPropertyName ?? "source-reference";
+    const referenceNoteTypeAuthorityPropertyName = configuration?.biblioNoteDataPropertyName ?? "source-record";
     const referenceNoteTypePropertyValue = getMetadataCache(app, refFilePath)?.frontmatter?.[referenceNoteTypeAuthorityPropertyName];
     const citationKey = referenceNoteTypePropertyValue["citation-key"]
 

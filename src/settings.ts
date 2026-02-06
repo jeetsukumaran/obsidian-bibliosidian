@@ -104,7 +104,7 @@ export class BibliosidianConfiguration {
     }
 
     get biblioNoteDataPropertyName(): string {
-        return this.settings.biblioNoteDataPropertyName ?? "source-reference";
+        return this.settings.biblioNoteDataPropertyName ?? "source-record";
     }
 
 
@@ -226,6 +226,6 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
     ],
     citationKeyPrefix: "[@",
     citationKeyPostfix: "]",
-	biblioNoteDataPropertyName: "source-reference",
+	biblioNoteDataPropertyName: "source-record",
 }
 

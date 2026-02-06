@@ -305,7 +305,7 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 			.setName("Bibliographic data property name")
 			.setDesc("Property name that stores bibliographic reference data.")
 			.addText(text => text
-				.setPlaceholder("(E.g. 'source-reference' or 'bibliographic-data')")
+				.setPlaceholder("(E.g. 'source-record' or 'bibliographic-data')")
 				.setValue(this.configuration.settings.biblioNoteDataPropertyName)
 				.onChange(async (value) => {
 					this.configuration.settings.biblioNoteDataPropertyName = value;
