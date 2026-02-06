@@ -180,6 +180,10 @@ async function generateSourceFrontmatter(
     noteProperties[configuration.biblioNoteDataPropertyName] = refBibliographicalData;
     // refProperties[configuration.biblioNoteDataPropertyName] = refBibliographicalData;
 
+    //
+    // TODO: support option for exposing bibtex directly if user specifies bibtex field
+    // (if) noteProperties[configuration.bibltexDataPropertyName] = bibtexStr;
+
 
 	let authorLastNames: string[] = [];
 	// let auFieldNames: string[] = [
