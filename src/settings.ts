@@ -23,7 +23,6 @@ export type NoteConfiguration = {
 }
 
 export const BIBLIO_NOTE_KEY = "reference"
-export const BIBLIO_NOTE_RECORD_SUFFIX = "reference"
 export const AUTHOR_NOTE_KEY = "author"
 export const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
     [BIBLIO_NOTE_KEY]: {
@@ -69,7 +68,7 @@ export interface BibliosidianSettings {
     citationKeyPropertyNames: string[];
     citationKeyPrefix: string;
     citationKeyPostfix: string;
-	biblioNoteRecordSuffix: string;
+	biblioNoteDataPropertyName: string;
 }
 
 
@@ -105,11 +104,7 @@ export class BibliosidianConfiguration {
     }
 
     get biblioNoteDataPropertyName(): string {
-        return `${this.composeBiblioNotePropertyName(this.biblioNoteRecordSuffix)}`;
-    }
-
-    get biblioNoteRecordSuffix(): string {
-        return this.settings.biblioNoteRecordSuffix ?? BIBLIO_NOTE_RECORD_SUFFIX;
+        return this.settings.biblioNoteDataPropertyName ?? "source-reference";
     }
 
 
@@ -231,6 +226,6 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
     ],
     citationKeyPrefix: "[@",
     citationKeyPostfix: "]",
-	biblioNoteRecordSuffix: BIBLIO_NOTE_RECORD_SUFFIX,
+	biblioNoteDataPropertyName: "source-reference",
 }
 
