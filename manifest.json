@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-bibliosidian",
 	"name": "Bibliosidian",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"minAppVersion": "0.15.0",
 	"description": "From BibTex in your clipboard to literature notes in your vault.",
 	"author": "Jeet Sukumaran",
