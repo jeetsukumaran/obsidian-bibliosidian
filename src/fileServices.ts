@@ -19,7 +19,7 @@ import * as fs from 'fs';
 import { promisify } from 'util';
 
 import {
-    BIBLIO_NOTE_RECORD_PROPERTY_NAME,
+    BIBLIO_NOTE_RECORD_SUFFIX,
     BibliosidianConfiguration,
     NoteConfiguration,
 } from "./settings";
@@ -398,8 +398,8 @@ export async function openAssociatedNote(
     titlePropertyNames: string[] = ["shorttitle", "title"],
     configuration?: BibliosidianConfiguration,
 ) {
-    const biblioNoteRecordPropertyName = configuration?.biblioNoteRecordPropertyName ?? BIBLIO_NOTE_RECORD_PROPERTY_NAME;
-    const referenceNoteTypeAuthorityPropertyName = refNoteConfig.frontmatterPropertyNamePrefix + biblioNoteRecordPropertyName;
+    const biblioNoteRecordSuffix = configuration?.biblioNoteRecordSuffix ?? BIBLIO_NOTE_RECORD_SUFFIX;
+    const referenceNoteTypeAuthorityPropertyName = refNoteConfig.frontmatterPropertyNamePrefix + biblioNoteRecordSuffix;
     const referenceNoteTypePropertyValue = getMetadataCache(app, refFilePath)?.frontmatter?.[referenceNoteTypeAuthorityPropertyName];
     const citationKey = referenceNoteTypePropertyValue["citation-key"]
 

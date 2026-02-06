@@ -177,7 +177,7 @@ async function generateSourceFrontmatter(
     let refBibliographicalData: FilePropertyData = {}; // in subdictionary
 
     // refProperties["authority"] = refBibliographicalData;
-    refProperties[configuration.biblioNoteRecordPropertyName] = refBibliographicalData;
+    refProperties[configuration.biblioNoteRecordSuffix] = refBibliographicalData;
 
 
 	let authorLastNames: string[] = [];

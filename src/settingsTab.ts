@@ -302,13 +302,13 @@ export class BibliosidianSettingsTab extends PluginSettingTab {
 		containerEl.createEl("h2", { text: "Bibliographic data" })
 
 		new Setting(containerEl)
-			.setName("Bibliographic note record property name")
-			.setDesc("Name of property for primary bibliographic data storage")
+			.setName("Bibliographic note record fieldname suffix")
+			.setDesc("Suffix for the property name that stores bibliographic reference data (e.g., citation key, DOI, etc.)")
 			.addText(text => text
-				.setPlaceholder("(E.g. 'bibliographic-record' or 'bibdata')")
-				.setValue(this.configuration.settings.biblioNoteRecordPropertyName)
+				.setPlaceholder("(E.g. 'authority-record' or 'bibdata')")
+				.setValue(this.configuration.settings.biblioNoteRecordSuffix)
 				.onChange(async (value) => {
-					this.configuration.settings.biblioNoteRecordPropertyName = value;
+					this.configuration.settings.biblioNoteRecordSuffix = value;
 					await this.saveSettings();
 		}));
 
