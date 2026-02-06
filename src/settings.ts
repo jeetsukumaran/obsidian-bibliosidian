@@ -33,7 +33,7 @@ export const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         isSubdirectorizeLexically: true,
         namePrefix: "@",
         namePostfix: "",
-        frontmatterPropertyNamePrefix: "source-reference-",
+        frontmatterPropertyNamePrefix: "source-",
 	    associatedNotesOutlinkPropertyName: "source-references",
         tagMetadata: [
         ],
