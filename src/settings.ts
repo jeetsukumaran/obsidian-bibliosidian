@@ -28,15 +28,14 @@ export const AUTHOR_NOTE_KEY = "author"
 export const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
     [BIBLIO_NOTE_KEY]: {
         className: "Reference",
-        description: "Primary reference notes to index sources and fundamental bibliographical data.",
-        parentFolderPath: "bibliographics/references",
+        description: "Notes indexing reference and containing primary bibliographic data.",
+        parentFolderPath: "sources/references",
         isSubdirectorizeLexically: true,
         namePrefix: "@",
         namePostfix: "",
-        frontmatterPropertyNamePrefix: "bibliographic-reference-",
-	    associatedNotesOutlinkPropertyName: "bibliographic-references",
+        frontmatterPropertyNamePrefix: "source-reference-",
+	    associatedNotesOutlinkPropertyName: "source-references",
         tagMetadata: [
-            "#bibliographic/reference",
         ],
         frontmatterMetadata: {
         },
@@ -44,15 +43,14 @@ export const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
     },
     [AUTHOR_NOTE_KEY]: {
         className: "Author",
-        description: "Notes to index and link authors across references.",
-        parentFolderPath: "bibliographics/authors",
+        description: "Notes indexing source authors.",
+        parentFolderPath: "sources/authors",
         isSubdirectorizeLexically: true,
         namePrefix: "",
         namePostfix: "",
         frontmatterPropertyNamePrefix: "author-",
 	    associatedNotesOutlinkPropertyName: "authors",
         tagMetadata: [
-            "#bibliographics/author",
         ],
         frontmatterMetadata: {
         },
@@ -214,7 +212,7 @@ export const DEFAULT_SETTINGS: BibliosidianSettings = {
         },
     },
 
-	holdingsParentFolder: _path.join("bibliographics", "holdings"),
+	holdingsParentFolder: _path.join("sources", "holdings"),
     holdingsPropertyName: "bibliographic-holdings",
 
     citationOutlinkPropertyNames: [
