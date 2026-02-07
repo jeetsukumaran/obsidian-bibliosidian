@@ -47,8 +47,8 @@ export const CORE_NOTE_CONFIGURATIONS: { [key: string]: any } = {
         isSubdirectorizeLexically: true,
         namePrefix: "",
         namePostfix: "",
-        frontmatterPropertyNamePrefix: "author-",
-	    associatedNotesOutlinkPropertyName: "authors",
+        frontmatterPropertyNamePrefix: "",
+	    associatedNotesOutlinkPropertyName: "source-authors",
         tagMetadata: [
         ],
         frontmatterMetadata: {
